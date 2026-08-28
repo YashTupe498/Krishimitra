@@ -1,0 +1,26 @@
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  padding: var(--space-12);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.success {
+  background-color: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.error {
+  background-color: var(--error-bg);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}

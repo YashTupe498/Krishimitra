@@ -1,0 +1,41 @@
+.card {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-resting);
+  overflow: hidden;
+  transition: all 0.2s ease-out;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.card.interactive:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-signal);
+}
+
+.recommended {
+  position: relative;
+}
+
+.recommended::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius-lg) + 1px);
+  padding: 1px;
+  background: var(--recommended-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .card.interactive:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,85 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  width: 100%;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+}
+
+.select {
+  height: 48px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--surface);
+  padding: 0 var(--space-16);
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--accent-signal);
+  box-shadow: var(--focus-ring);
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.passwordToggle {
+  position: absolute;
+  right: var(--space-16);
+  top: 36px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.strengthBar {
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--border);
+  display: flex;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.strengthSegment {
+  flex: 1;
+  background-color: var(--border);
+  transition: background-color 0.3s;
+}
+
+.strength-weak .strengthSegment:nth-child(1) { background-color: var(--error); }
+.strength-fair .strengthSegment:nth-child(1),
+.strength-fair .strengthSegment:nth-child(2) { background-color: var(--warning); }
+.strength-strong .strengthSegment { background-color: var(--success); }
+
+.forgotPassword {
+  font-size: 14px;
+  color: var(--accent-signal);
+  text-decoration: none;
+  text-align: right;
+  margin-top: -8px;
+}
+
+.forgotPassword:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}

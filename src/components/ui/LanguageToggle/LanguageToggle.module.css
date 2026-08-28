@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  background: var(--surface);
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.icon {
+  color: var(--text-secondary);
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  color: var(--brand-primary);
+  background: rgba(196, 98, 45, 0.1);
+}
+
+.btn.active {
+  color: var(--brand-primary);
+  background: rgba(196, 98, 45, 0.1);
+}
+
+.divider {
+  color: var(--border-strong);
+  font-size: 12px;
+}

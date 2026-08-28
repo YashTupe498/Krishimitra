@@ -1,0 +1,130 @@
+.section {
+  padding: var(--space-96) var(--space-24);
+  background-color: var(--surface-alt);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-64);
+}
+
+.title {
+  color: var(--text-primary);
+  margin-bottom: var(--space-16);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.visualization {
+  background-color: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-48);
+  box-shadow: var(--shadow-resting);
+  border: 1px solid var(--border);
+}
+
+.visGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-32);
+}
+
+.visCard {
+  padding: var(--space-32);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  position: relative;
+}
+
+.visCard.recommended {
+  border: none;
+}
+
+.visCard.recommended::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--radius-lg) + 1px);
+  padding: 1px;
+  background: var(--recommended-border);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-24);
+  padding-bottom: var(--space-16);
+  border-bottom: 1px solid var(--border);
+}
+
+.cardTitle {
+  font-weight: 600;
+  font-size: 20px;
+}
+
+.dataRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-16);
+  color: var(--text-secondary);
+}
+
+.dataRow.negative {
+  color: var(--error);
+}
+
+.netRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-32);
+  padding-top: var(--space-16);
+  border-top: 1px dashed var(--border-strong);
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.netValue {
+  color: var(--accent-signal);
+}
+
+.netValue.muted {
+  color: var(--text-secondary);
+}
+
+.equation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-16);
+  margin-top: var(--space-48);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .visGrid {
+    grid-template-columns: 1fr;
+  }
+  .visualization {
+    padding: var(--space-24);
+  }
+  .equation {
+    flex-direction: column;
+    text-align: center;
+  }
+}

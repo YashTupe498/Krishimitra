@@ -1,0 +1,264 @@
+.section {
+  padding: var(--space-96) var(--space-24);
+  background-color: var(--bg);
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-64);
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 13px;
+  color: var(--brand-primary);
+  margin-bottom: var(--space-16);
+}
+
+.title {
+  margin-bottom: var(--space-16);
+  color: var(--brand-deep);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+}
+
+/* Bento Grid System */
+.bentoGrid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--space-24);
+}
+
+.bentoCard {
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+  position: relative;
+}
+
+.mainCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+}
+
+.cardImageBg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+
+.cardImageBg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+}
+
+.mainCardContent {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-48);
+}
+
+.floatingReceipt {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-md);
+  padding: var(--space-24);
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,1);
+  transform: rotate(-2deg);
+  transition: transform 0.3s ease;
+}
+
+.mainCard:hover .floatingReceipt {
+  transform: rotate(0deg) translateY(-8px);
+}
+
+.receiptHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--brand-deep);
+  margin-bottom: var(--space-16);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px dashed var(--border-strong);
+}
+
+.receiptBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  font-size: 14px;
+}
+
+.receiptRow {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+.receiptDivider {
+  height: 1px;
+  background-color: var(--border);
+  margin: var(--space-8) 0;
+}
+
+.receiptTotal {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--brand-deep);
+  margin-top: var(--space-4);
+}
+
+.highlightText {
+  color: var(--accent-signal);
+}
+
+.mainCardText {
+  color: white;
+}
+
+.mainCardText h3 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  margin-bottom: var(--space-8);
+}
+
+.mainCardText p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.9);
+  max-width: 400px;
+}
+
+.sideCards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.sideCard {
+  flex: 1;
+  padding: var(--space-32);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: rgba(42, 111, 119, 0.1);
+  color: var(--accent-signal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-24);
+}
+
+.sideCard h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: var(--space-12);
+  color: var(--text-primary);
+}
+
+.sideCard p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@media (max-width: 992px) {
+  .bentoGrid {
+    grid-template-columns: 1fr;
+  }
+  .mainCard {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainCardContent {
+    padding: var(--space-24);
+  }
+  .floatingReceipt {
+    max-width: 100%;
+    transform: none;
+  }
+  .mainCard:hover .floatingReceipt {
+    transform: none;
+  }
+}
+
+.chainItem {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  padding: var(--space-16) var(--space-24);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  transition: transform 0.2s;
+}
+
+.chainItem:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-signal);
+}
+
+.chainItem.highlight {
+  background-color: var(--accent-signal-soft);
+  color: var(--accent-signal);
+  border-color: var(--accent-signal);
+  box-shadow: 0 4px 12px rgba(42, 111, 119, 0.15);
+}
+
+.arrow {
+  color: var(--accent-signal);
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .chain {
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+  .arrow {
+    transform: rotate(90deg);
+  }
+  .chainItem {
+    width: 100%;
+  }
+}

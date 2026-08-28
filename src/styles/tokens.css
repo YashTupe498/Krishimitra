@@ -1,0 +1,63 @@
+:root {
+  /* Colors */
+  --brand-primary: #C4622D;
+  --brand-primary-hover: #A84F22;
+  --brand-deep: #1F4B3F;
+  --brand-deep-hover: #163A31;
+  --accent-signal: #2A6F77;
+  --accent-signal-soft: #EAF3F2;
+  --accent-warm: #D99A3E;
+  
+  --bg: #FBF8F3;
+  --surface: #FFFFFF;
+  --surface-alt: #F5EFE4;
+  --border: #E4DCCC;
+  --border-strong: #D2C6AE;
+  
+  --text-primary: #2A241C;
+  --text-secondary: #6B6153;
+  --text-placeholder: #A79D8B;
+  
+  --success: #2E7D4F;
+  --success-bg: #E7F3EA;
+  --warning: #B8792A;
+  --warning-bg: #FBF0DF;
+  --error: #B4442E;
+  --error-bg: #FBEAE5;
+  --info: #2A6F77;
+  --info-bg: #EAF3F2;
+
+  /* Gradients */
+  --hero-wash: linear-gradient(180deg, #FBF8F3 0%, #F5EFE4 100%);
+  --recommended-border: linear-gradient(135deg, #2A6F77, #1F4B3F);
+
+  /* Spacing Scale (px) */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-128: 128px;
+
+  /* Radius */
+  --radius-sm: 8px; /* inputs/small controls */
+  --radius-md: 10px; /* buttons */
+  --radius-lg: 16px; /* cards */
+  --radius-xl: 20px; /* hero panel */
+
+  /* Shadows */
+  --shadow-resting: 0 1px 2px rgba(42,36,28,0.04), 0 2px 8px rgba(42,36,28,0.03);
+  --shadow-hover: 0 4px 12px rgba(42,36,28,0.08), 0 8px 24px rgba(42,36,28,0.06);
+
+  /* Typography */
+  --font-display: 'Fraunces', serif;
+  --font-ui: 'Inter', 'Noto Sans Devanagari', sans-serif;
+  
+  /* Focus Ring */
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px rgba(42, 111, 119, 0.4);
+}
