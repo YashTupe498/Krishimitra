@@ -1,0 +1,197 @@
+<USER_REQUEST>
+APPROVED — PROCEED WITH MARKET INTELLIGENCE DATA IMPORT
+
+I have reviewed your dataset audit.
+
+Proceed with the Market Intelligence import pipeline ONLY.
+
+IMPORTANT:
+Do not implement any future phase.
+
+====================================================
+SOURCE OF TRUTH
+====================================================
+
+Use:
+
+market_prices_normalized.csv
+
+as the canonical standardized market-price input.
+
+Use:
+
+arrivals_trends.csv
+
+only for RAW arrival_quantity and arrival_unit.
+
+Do NOT use:
+
+market_price_trends.csv
+market_data_freshness.csv
+
+for backend-derived trend/freshness calculations.
+
+Do NOT use their precomputed trend/freshness fields.
+
+====================================================
+IMPORTANT SOURCE CLASSIFICATION
+====================================================
+
+The supplied dataset is NOT LIVE.
+
+Do NOT expose it as:
+
+LIVE
+REAL-TIME
+LIVE GOVERNMENT DATA
+
+Use:
+
+source_type = INGESTED
+
+and preserve the actual source_name:
+
+AGMARKNET-attributed observed market data
+
+However, because the audit identified that the supplied ZIP contains a mixture of SOURCE/CURATED records, preserve provenance metadata wherever possible.
+
+Do not falsely claim direct live API integration.
+
+====================================================
+IMPORT PIPELINE
+====================================================
+
+Implement:
+
+market_prices_normalized.csv
+        +
+arrivals_trends.csv
+        ↓
+in-memory join
+        ↓
+RawMarketRecord validation
+        ↓
+normalize_record
+        ↓
+duplicate validation
+        ↓
+SQLAlchemy
+        ↓
+market_observations
+
+Use the compound join key:
+
+date
++
+market_name
++
+standard_commodity
+
+Do NOT join only on date.
+
+Do NOT join only on market.
+
+Do NOT create duplicate observations.
+
+====================================================
+IMPORTANT — CHECK THE JOIN
+====================================================
+
+Before importing:
+
+report:
+
+price rows
+arriv
+<truncated 6269 bytes>
+====================
+
+The following files must remain unused by Market Intelligence computation:
+
+market_price_trends.csv
+market_data_freshness.csv
+sale_window_recommendations.csv
+cached_recommendations.csv
+decision_audit_log.csv
+
+They belong to later/derived architecture.
+
+====================================================
+TESTS
+====================================================
+
+After import, test:
+
+1. Onion/Nashik Market Snapshot
+2. Onion price trend
+3. Onion market pressure
+4. Freshness
+5. Source metadata
+6. Missing arrival data
+7. No market data
+8. Potato request
+9. Farmer ownership
+10. Unauthenticated request
+11. Duplicate import
+12. Invalid dataset row
+13. Rerunning importer
+14. API response
+
+====================================================
+FINAL REPORT
+====================================================
+
+Return:
+
+1. Number of price rows processed
+2. Number of arrival rows processed
+3. Number of successful joins
+4. Number of unmatched rows
+5. Number of invalid rows
+6. Number of imported observations
+7. Number of skipped duplicates
+8. Database table used
+9. Database migration created, if any
+10. Exact source classification
+11. Nashik Onion verification
+12. Potato result
+13. Market Snapshot test
+14. Trend test
+15. Pressure test
+16. Freshness test
+17. API test
+18. Security test
+19. Rerun/idempotency test
+20. Any remaining issues
+
+====================================================
+STOP CONDITION
+====================================================
+
+STOP after Market Intelligence import + verification.
+
+DO NOT IMPLEMENT:
+
+Buyer Matching
+Opportunity Engine
+Transport
+Net Realization
+Decision Engine
+Recommendation Engine
+Offers
+Transactions
+Logistics
+Payments
+Grievances
+
+Those are future phases.
+
+DO NOT redesign the architecture.
+
+DO NOT create another architecture version.
+
+MARKET INTELLIGENCE PHASE ONLY.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-29T15:46:01+05:30.
+</ADDITIONAL_METADATA>

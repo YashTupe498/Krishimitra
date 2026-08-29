@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Package, MapPin, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Plus, Package, MapPin, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { mockLots } from '../../data/mockLots';

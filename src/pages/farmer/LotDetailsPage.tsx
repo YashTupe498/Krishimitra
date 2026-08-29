@@ -194,7 +194,7 @@ export const LotDetailsPage: React.FC = () => {
                   </>
                 )}
               </div>
-              <Button variant="secondary" className="w-full md:w-auto text-brand-primary font-semibold" onClick={() => navigate('/farmer/market')}>
+              <Button variant="secondary" className="w-full md:w-auto text-brand-primary font-semibold" onClick={() => navigate(`/farmer/market?lotId=${id}`)}>
                 {t('lotDetails.viewMarketAnalysis', 'View Market Analysis')} <ChevronRight size={18} className="ml-1" />
               </Button>
             </div>

@@ -10,6 +10,7 @@ import { supabase } from '../../../services/supabase/client';
 import type { AccountType } from '../../../types/auth';
 import { ROUTES } from '../../../constants/routes';
 import styles from './AuthForm.module.css';
+import { getAuthErrorMessage } from '../../../utils/authErrors';
 
 export const FarmerSignupForm: React.FC = () => {
   const navigate = useNavigate();
@@ -67,12 +68,12 @@ export const FarmerSignupForm: React.FC = () => {
           role: 'FARMER' as const,
           account_type: formData.accountType,
           full_name: formData.fullName,
-          phone: formData.phone || null,
-          district: formData.district || null,
-          state: formData.state || null,
+          phone: formData.phone || '',
+          district: formData.district || '',
+          state: formData.state || '',
           preferred_language: 'en',
-          organization_name: formData.accountType === 'FPO' ? formData.organizationName : null,
-          registration_reference: formData.accountType === 'FPO' ? formData.registrationReference : null,
+          organization_name: formData.accountType === 'FPO' ? formData.organizationName : '',
+          registration_reference: formData.accountType === 'FPO' ? formData.registrationReference : '',
         };
 
         console.log('[Signup] Inserting profile:', profilePayload);
@@ -101,7 +102,7 @@ export const FarmerSignupForm: React.FC = () => {
       }
     } catch (err: any) {
       console.error('[Signup] Error:', err);
-      setError(err.message || t('authPages.errorOccurred'));
+      setError(getAuthErrorMessage(err, t('authPages.errorOccurred')));
     } finally {
       setIsLoading(false);
     }
