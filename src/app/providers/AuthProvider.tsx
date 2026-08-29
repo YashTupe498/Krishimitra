@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
-import type { Profile } from '../types/user';
+import { auth } from '../../services/supabase/auth';
+import { profileService } from '../../services/supabase/profile';
+import type { Profile } from '../../types/auth';
 
 interface AuthContextType {
   session: Session | null;
@@ -9,6 +10,7 @@ interface AuthContextType {
   profile: Profile | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   isLoading: true,
   signOut: async () => {},
+  refreshProfile: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -25,30 +28,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchProfile = async (userId: string) => {
+    try {
+      const p = await profileService.getProfile(userId);
+      setProfile(p);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      setProfile(null);
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
 
-    async function fetchSession() {
+    async function initAuth() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        const { session: currentSession } = await auth.getSession();
         
         if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
+          setSession(currentSession);
+          setUser(currentSession?.user ?? null);
           
-          if (session?.user) {
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single();
-              
-            setProfile(profile);
+          if (currentSession?.user) {
+            await fetchProfile(currentSession.user.id);
           }
         }
       } catch (error) {
-        console.error('Error fetching session:', error);
+        console.error('Error in initAuth:', error);
       } finally {
         if (mounted) {
           setIsLoading(false);
@@ -56,19 +62,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    fetchSession();
+    initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: any, currentSession: any) => {
+    const { data: { subscription } } = auth.onAuthStateChange(async (_event, currentSession) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', currentSession.user.id)
-          .single();
-        setProfile(profile);
+        await fetchProfile(currentSession.user.id);
       } else {
         setProfile(null);
       }
@@ -82,12 +83,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await auth.signOut();
+  };
+  
+  const refreshProfile = async () => {
+    if (user) {
+      await fetchProfile(user.id);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, isLoading, signOut }}>
-      {children}
+    <AuthContext.Provider value={{ session, user, profile, isLoading, signOut, refreshProfile }}>
+      {isLoading ? (
+        <div className="flex h-screen w-screen items-center justify-center bg-background">
+          <div className="text-brand-DEFAULT animate-pulse font-medium text-lg">Loading...</div>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

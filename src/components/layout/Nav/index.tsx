@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { Button } from '../../ui/Button';
 import { LanguageToggle } from '../../ui/LanguageToggle';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../app/providers/AuthProvider';
 import styles from './Nav.module.css';
 
 export const Nav: React.FC = () => {
@@ -29,7 +29,8 @@ export const Nav: React.FC = () => {
   return (
     <nav className={clsx(styles.nav, scrolled && styles.scrolled)}>
       <Link to="/" className={styles.logo}>
-        KrishiMitra
+        <img src="/logo.jpg" alt="KrishiMitra Logo" style={{ height: '32px', borderRadius: '50%' }} />
+        <span>KrishiMitra</span>
       </Link>
 
       <div className={styles.links}>
@@ -42,7 +43,12 @@ export const Nav: React.FC = () => {
         
         {session ? (
           <>
-            <Button variant="ghost" onClick={() => navigate(`/${profile?.role.toLowerCase()}/dashboard`)}>
+            <Button variant="ghost" onClick={() => {
+              const dashRoute = (profile?.role === 'FARMER') 
+                ? '/farmer/dashboard' 
+                : '/buyer/dashboard';
+              navigate(dashRoute);
+            }}>
               {t('nav.dashboard')}
             </Button>
             <Button variant="secondary" onClick={signOut}>{t('nav.logout')}</Button>

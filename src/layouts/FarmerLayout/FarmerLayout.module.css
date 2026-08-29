@@ -1,0 +1,192 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg);
+}
+
+.sidebar {
+  width: 260px;
+  background-color: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 40;
+}
+
+.logo {
+  padding: var(--space-24) var(--space-24);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background-color: white; /* Match logo background if needed */
+}
+
+.logoImage {
+  max-width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+}
+
+.navGroup {
+  padding: var(--space-16) var(--space-12) 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-placeholder);
+  margin-bottom: var(--space-4);
+}
+
+.primaryNav {
+  padding: 0 var(--space-12) var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.secondaryNav {
+  padding: var(--space-16) var(--space-12);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background-color: var(--bg);
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.15s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.navItem:hover {
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
+}
+
+.navItem.active {
+  background-color: var(--surface-alt);
+  color: var(--brand-primary);
+  font-weight: 600;
+  border-right: 3px solid var(--brand-primary);
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.navItem.active .navIcon {
+  color: var(--brand-primary);
+}
+
+.navIcon {
+  color: var(--text-placeholder);
+  transition: color 0.15s ease;
+}
+
+.navItem:hover .navIcon {
+  color: var(--brand-primary);
+}
+
+.logout {
+  color: var(--error);
+  margin-top: var(--space-8);
+  font-weight: 500;
+}
+
+.logout .navIcon {
+  color: var(--error);
+}
+
+.logout:hover {
+  background-color: var(--error-bg);
+  color: var(--error);
+}
+
+.main {
+  flex: 1;
+  margin-left: 260px;
+  padding: var(--space-32);
+}
+
+.contentContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.bottomNav {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+  .main {
+    margin-left: 220px;
+    padding: var(--space-24);
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  
+  .main {
+    margin-left: 0;
+    padding: var(--space-16);
+    padding-bottom: 80px; /* Space for bottom nav */
+  }
+  
+  .bottomNav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: var(--space-8) var(--space-12);
+    justify-content: space-around;
+    z-index: 40;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .bottomNavItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-placeholder);
+    text-decoration: none;
+    padding: var(--space-8) 0;
+    min-width: 64px;
+  }
+  
+  .bottomNavItem.active {
+    color: var(--brand-primary);
+  }
+  
+  .bottomNavText {
+    font-size: 11px;
+    font-weight: 500;
+  }
+}

@@ -159,5 +159,258 @@
     "processor": "Food Processor",
     "retailer": "Retailer / Supermarket",
     "gstin": "GSTIN (Optional)"
+  },
+  "farmerNav": {
+    "menu": "Menu",
+    "preferences": "Preferences",
+    "dashboard": "Dashboard",
+    "myLots": "My Lots",
+    "marketIntelligence": "Market Intelligence",
+    "myDecisions": "My Decisions",
+    "offers": "Offers",
+    "transactions": "Transactions",
+    "issues": "Issues & Grievances",
+    "language": "Language",
+    "voiceAssistant": "Voice Assistant",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "goodMorning": "Good morning",
+    "mattersToday": "Here's what matters for your produce today.",
+    "demoData": "Demo Data",
+    "createNewLot": "Create New Lot",
+    "createNewLotContext": "Add your produce to explore selling opportunities",
+    "priorityAction": "Your Priority Action",
+    "recommendedSellingOp": "Recommended selling opportunity",
+    "estimatedNetRealization": "Estimated Net Realization",
+    "betterEstimatedOutcome": "Better estimated outcome",
+    "highestHeadlinePrice": "Highest headline price",
+    "whyThisRecommendation": "Why this recommendation?",
+    "whyNotRecommended": "Why not recommended?",
+    "viewFullDecision": "View Full Decision",
+    "yourActiveLots": "Your Active Lots",
+    "viewAll": "View All",
+    "noActiveLots": "No active lots yet",
+    "addFirstCrop": "Add your first crop to start comparing selling opportunities.",
+    "marketSnapshot": "Market Snapshot",
+    "yourActionItems": "Your Action Items",
+    "askVoiceAssistant": "Ask in English, हिंदी or मराठी",
+    "greetingSub": "Here's what matters for your produce today.",
+    "voiceAssistantHover": "Ask in English, हिंदी or मराठी",
+    "whyNotHighestPriceTitle": "🤔 WHY NOT THE HIGHEST PRICE?",
+    "institutionalBuyer": "Institutional Buyer",
+    "headlineValue": "Headline Value",
+    "yourRequirement": "Your requirement",
+    "notFeasibleResult": "Not feasible for your needs",
+    "compareOptions": "Compare Options",
+    "marketPressureTitle": "📊 MARKET PRESSURE + SALE WINDOW",
+    "marketPressureLabel": "MARKET PRESSURE",
+    "pressureLevel": {
+      "MODERATE": "MODERATE",
+      "LOW": "LOW",
+      "HIGH": "HIGH"
+    },
+    "arrivalsLabel": "Arrivals",
+    "arrivalsValue": "Lower than recent average",
+    "priceTrendLabel": "Price trend",
+    "priceTrendValue": "Slight upward movement",
+    "saleWindowLabel": "SALE WINDOW",
+    "saleWindowStatus": "Current selling window looks favorable",
+    "saleWindowRecommendation": "Consider selling in the near term",
+    "viewMarketAnalysis": "VIEW MARKET ANALYSIS",
+    "viewAllLots": "[ VIEW ALL LOTS ]"
+  },
+  "data": {
+    "crops": {
+      "Onion": "Onion",
+      "Potato": "Potato"
+    },
+    "locations": {
+      "Nashik": "Nashik",
+      "Pune": "Pune",
+      "Pimpalgaon Market": "Pimpalgaon Market"
+    },
+    "status": {
+      "Decision Ready": "Decision Ready",
+      "Market Analysis": "Market Analysis",
+      "Moderate": "Moderate",
+      "DRAFT": "Draft",
+      "QUALITY_PENDING": "Quality Pending",
+      "MARKET_ANALYSIS_READY": "Market Analysis Ready",
+      "DECISION_READY": "Decision Ready",
+      "OFFER_RECEIVED": "Offer Received",
+      "TRANSACTION_ACTIVE": "Transaction Active",
+      "COMPLETED": "Completed"
+    },
+    "decisions": {
+      "dec-101": {
+        "pro1": "Better estimated net realization after costs",
+        "pro2": "Lower transport burden",
+        "pro3": "Payment timing fits your requirement",
+        "con1": "Higher transport cost",
+        "con2": "Longer payment period (7-14 days)",
+        "timestamp": "2 hours ago"
+      }
+    },
+    "marketSnapshot": {
+      "ms-1": {
+        "label": "Best nearby price",
+        "explanation": "Highest price offered within 50km radius",
+        "subValue": "Nashik"
+      },
+      "ms-2": {
+        "label": "Market pressure",
+        "explanation": "Current arrivals indicate moderate selling pressure",
+        "value": "Moderate"
+      },
+      "ms-3": {
+        "label": "Estimated transport",
+        "explanation": "Based on current fuel rates and selected destination",
+        "subValue": "Local avg."
+      }
+    },
+    "actionItems": {
+      "act-1": {
+        "title": "3 selling opportunities found",
+        "description": "New matches available for your Onion lot.",
+        "actionLabel": "View matches"
+      },
+      "act-2": {
+        "title": "Your potato lot may benefit from aggregation",
+        "description": "Volume is too low for wholesale premium.",
+        "actionLabel": "Explore FPO"
+      },
+      "act-3": {
+        "title": "New offer received from buyer",
+        "description": "FreshMart Ltd. placed a counter-offer on onions.",
+        "actionLabel": "Review offer"
+      }
+    },
+    "lots": {
+      "lot-1": {
+        "updatedAt": "Updated today"
+      },
+      "lot-2": {
+        "updatedAt": "Updated 2 days ago"
+      }
+    },
+    "constraints": {
+      "Within7days": "Within 7 days",
+      "Canarrangetransport": "Can arrange transport",
+      "Canstoreproduce": "Can store produce",
+      "Within3days": "Within 3 days",
+      "Needtransportassistance": "Need transport assistance",
+      "Cannotstoreproduce": "Cannot store produce"
+    }
+  },
+  "decisions": {
+    "title": "Where should you sell?",
+    "subtitle": "Compare the likely outcome, costs and constraints before deciding.",
+    "status": {
+      "feasible": "Feasible"
+    },
+    "recommendedAction": "⭐ Recommended Action",
+    "sellAt": "Sell at",
+    "enginePowered": "Calculated by KrishiMitra Net Realization Engine™",
+    "netRealizationBreakdown": "Net Realization Breakdown",
+    "highestHeadlinePrice": "Highest Headline Price",
+    "highestPriceContext": "Best raw price offered at market",
+    "actualCosts": "Actual Costs",
+    "transport": "Transport",
+    "transportContext": "Estimated fuel and freight to destination",
+    "handling": "Handling & Other charges",
+    "handlingContext": "Labor, weighing, and mandi taxes",
+    "estimatedNetRealization": "Estimated Net Realization",
+    "netRealizationContext": "The actual money that goes into your pocket",
+    "whyNotHighest": "Why not the highest price?",
+    "whyRecommended": "Why is this recommended?",
+    "callBuyer": "Contact Buyer",
+    "acceptOffer": "Accept & Proceed",
+    "headerTag": "Active Decision",
+    "recommendedContext": "Best feasible option for your current lot.",
+    "benefit1": "Fits payment requirements",
+    "benefit2": "Lower transport burden",
+    "calculationTitle": "How this estimate is calculated",
+    "grossSaleValue": "Gross Sale Value",
+    "grossSaleContext": "Applicable opportunity value",
+    "qualityAdjustment": "Quality",
+    "noAdjustment": "No demo adjustment",
+    "paymentRequirementTitle": "Your Payment Requirement",
+    "paymentRequirement": "Within 7 days",
+    "recommendedOpportunity": "Opportunity payment:",
+    "paymentDays5": "5 days",
+    "fitsRequirement": "Fits your requirement",
+    "alternativeOpportunity": "Alternative (Highest price):",
+    "paymentDays14": "7-14 days",
+    "violatesRequirement": "May not fit requirement",
+    "whyNotHighestTitle": "Why not the highest headline price?",
+    "alternativeHeadline": "Alternative opportunity headline value:",
+    "conTransport": "Higher transport cost to distant market",
+    "conPayment": "Longer payment period (violates constraints)",
+    "notRecommended": "Not recommended for this lot.",
+    "decisionBasis": "Decision Basis",
+    "basisMarket": "Market info: Demo",
+    "basisTerms": "Opportunity terms: Demo data",
+    "basisQuality": "Quality: Grade B",
+    "basisTransport": "Transport: Estimated",
+    "contactBuyer": "Contact Buyer",
+    "acceptProceed": "Accept & Proceed"
+  },
+  "lotDetails": {
+    "backLink": "Back to My Lots",
+    "title": "LOT DETAILS",
+    "pendingQuality": "Quality Pending",
+    "statusTimeline": "STATUS TIMELINE",
+    "qualityAssessment": "QUALITY ASSESSMENT",
+    "currentGrade": "Current Grade",
+    "notAssessed": "Not Assessed",
+    "reassessQuality": "View Quality Assessment",
+    "startQuality": "Start Quality Assessment",
+    "marketAnalysis": "MARKET ANALYSIS",
+    "status": "Status",
+    "marketAnalysisReady": "Market Analysis Ready",
+    "marketPressure": "Market pressure",
+    "bestHeadline": "Best headline price",
+    "bestNetOption": "Best net option",
+    "viewMarketAnalysis": "View Market Analysis",
+    "completeQualityFirst": "Complete quality assessment to unlock market analysis.",
+    "decision": "RECOMMENDED ACTION",
+    "sellThrough": "Sell through",
+    "estimatedNet": "Estimated Net Realization",
+    "viewFullDecision": "View Full Decision",
+    "sellingRequirements": "YOUR SELLING REQUIREMENTS",
+    "payment": "Payment",
+    "transport": "Transport",
+    "storage": "Storage",
+    "offers": "OFFERS",
+    "noOffers": "No offers yet. Your lot is available for matching opportunities.",
+    "transaction": "TRANSACTION",
+    "noTransaction": "No transaction yet"
+  },
+  "quality": {
+    "headerTag": "Quality Assessment",
+    "title": "ASSESS QUALITY",
+    "current": "Current:",
+    "notAssessed": "Not Assessed",
+    "howToAssess": "How would you like to assess quality?",
+    "howToAssessSub": "Choose manual selection or upload images for prototype reference assessment.",
+    "uploadImages": "Upload Produce Images",
+    "uploadDesc": "Use reference-based prototype assessment",
+    "selectManual": "Select Grade Manually",
+    "understandGrades": "UNDERSTAND THE GRADES",
+    "uploadProduceImages": "UPLOAD PRODUCE IMAGES",
+    "photoNum": "PRODUCE PHOTO",
+    "addPhoto": "+ Add Photo",
+    "assessProduce": "Assess Produce",
+    "assessmentComplete": "Assessment Complete",
+    "whyThisGrade": "WHY THIS GRADE?",
+    "manualReason": "This grade was selected manually.",
+    "assessAgain": "Assess Again",
+    "continueToMarket": "Continue to Market Analysis",
+    "unknownImage": "Automated prototype assessment is unavailable for these images. Please select grade manually."
+  },
+  "lots": {
+    "createNew": "CREATE NEW LOT"
   }
 }

@@ -27,7 +27,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && <Loader2 className="animate-spin mr-2" size={18} style={{ marginRight: '8px' }} />}
         {!isLoading && icon && iconPosition === 'left' && <span className={styles['icon-left']}>{icon}</span>}
-        <span style={{ opacity: isLoading ? 0 : 1 }}>{children}</span>
+        <span style={{ opacity: isLoading ? 0 : 1, display: 'inline-flex', alignItems: 'center', gap: '8px' }}>{children}</span>
         {!isLoading && icon && iconPosition === 'right' && <span className={styles['icon-right']}>{icon}</span>}
       </button>
     );

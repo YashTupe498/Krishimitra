@@ -5,11 +5,15 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
 import { FormMessage } from '../../../components/ui/FormMessage';
-import { supabase } from '../../../lib/supabase';
+import { auth } from '../../../services/supabase/auth';
+import { profileService } from '../../../services/supabase/profile';
+import { ROUTES } from '../../../constants/routes';
 import styles from './AuthForm.module.css';
+import { useAuth } from '../../../app/providers/AuthProvider';
 
 export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+  const { refreshProfile } = useAuth();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,26 +29,24 @@ export const LoginForm: React.FC = () => {
     setError('');
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const authData = await auth.signIn({
         email: formData.email,
         password: formData.password
       });
 
-      if (signInError) throw signInError;
-
-      if (data.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-          
+      if (authData.user) {
+        // Fetch profile
+        const profile = await profileService.getProfile(authData.user.id);
+        
+        // Let AuthProvider know to fetch the profile too, just in case
+        await refreshProfile();
+        
         if (profile?.role === 'FARMER') {
-          navigate('/farmer/dashboard');
+          navigate(ROUTES.FARMER_DASHBOARD);
         } else if (profile?.role === 'BUYER') {
-          navigate('/buyer/dashboard');
+          navigate(ROUTES.BUYER_DASHBOARD);
         } else {
-          navigate('/');
+          navigate(ROUTES.HOME);
         }
       }
     } catch (err: any) {

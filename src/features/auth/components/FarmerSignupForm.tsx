@@ -6,7 +6,9 @@ import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
 import { Select } from '../../../components/ui/Select';
 import { FormMessage } from '../../../components/ui/FormMessage';
-import { supabase } from '../../../lib/supabase';
+import { supabase } from '../../../services/supabase/client';
+import type { AccountType } from '../../../types/auth';
+import { ROUTES } from '../../../constants/routes';
 import styles from './AuthForm.module.css';
 
 export const FarmerSignupForm: React.FC = () => {
@@ -15,13 +17,16 @@ export const FarmerSignupForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
-    accountType: 'individual',
+    accountType: 'FARMER' as AccountType,
     state: '',
     district: '',
+    organizationName: '',
+    registrationReference: '',
     password: '',
     confirmPassword: ''
   });
@@ -37,32 +42,65 @@ export const FarmerSignupForm: React.FC = () => {
     setError('');
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Step 1: Create the auth user (NO options.data — avoid trigger issues)
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-            role: 'FARMER',
-            phone: formData.phone
-          }
-        }
       });
 
-      if (authError) throw authError;
-
-      // If email confirmation is required, the user won't be signed in automatically
-      if (authData.user && !authData.session) {
-        // You might want to show a success message here to check email
-        navigate('/auth/farmer', { state: { message: 'Please check your email to verify your account.' } });
-        return;
+      if (signUpError) {
+        console.error('[Signup] Auth error:', signUpError);
+        throw signUpError;
       }
 
-      if (authData.user) {
-        navigate('/farmer/dashboard');
+      if (!authData.user) {
+        throw new Error('Signup failed — no user returned.');
+      }
+
+      console.log('[Signup] Auth user created:', authData.user.id);
+
+      // Step 2: If we have a session, insert the profile row directly
+      if (authData.session) {
+        const profilePayload = {
+          id: authData.user.id,
+          email: formData.email,
+          role: 'FARMER' as const,
+          account_type: formData.accountType,
+          full_name: formData.fullName,
+          phone: formData.phone || null,
+          district: formData.district || null,
+          state: formData.state || null,
+          preferred_language: 'en',
+          organization_name: formData.accountType === 'FPO' ? formData.organizationName : null,
+          registration_reference: formData.accountType === 'FPO' ? formData.registrationReference : null,
+        };
+
+        console.log('[Signup] Inserting profile:', profilePayload);
+
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([profilePayload]);
+
+        if (profileError) {
+          console.error('[Signup] Profile insert error:', JSON.stringify(profileError, null, 2));
+          // User was created in auth but profile failed — show detailed error
+          throw new Error(
+            `Profile creation failed: ${profileError.message}` +
+            (profileError.details ? ` (${profileError.details})` : '') +
+            (profileError.hint ? ` Hint: ${profileError.hint}` : '')
+          );
+        }
+
+        console.log('[Signup] Profile created successfully');
+        navigate(ROUTES.FARMER_DASHBOARD);
+      } else {
+        // Email confirmation is enabled — user needs to verify email first
+        navigate('/auth/farmer', { 
+          state: { message: 'Please check your email to verify your account.' } 
+        });
       }
     } catch (err: any) {
-      console.error(err);
+      console.error('[Signup] Error:', err);
       setError(err.message || t('authPages.errorOccurred'));
     } finally {
       setIsLoading(false);
@@ -88,13 +126,29 @@ export const FarmerSignupForm: React.FC = () => {
         <Select
           label={t('authPages.accountType')}
           options={[
-            { value: 'individual', label: t('authPages.individualFarmer') },
-            { value: 'fpo', label: t('authPages.fpoCooperative') }
+            { value: 'FARMER', label: t('authPages.individualFarmer') },
+            { value: 'FPO', label: t('authPages.fpoCooperative') }
           ]}
           value={formData.accountType}
-          onChange={(value) => setFormData(prev => ({ ...prev, accountType: value }))}
+          onChange={(value) => setFormData(prev => ({ ...prev, accountType: value as AccountType }))}
         />
       </div>
+      
+      {formData.accountType === 'FPO' && (
+        <div className={styles.grid2}>
+          <Input
+            label="Organization Name"
+            required
+            value={formData.organizationName}
+            onChange={(e) => setFormData(prev => ({ ...prev, organizationName: e.target.value }))}
+          />
+          <Input
+            label="Registration Reference"
+            value={formData.registrationReference}
+            onChange={(e) => setFormData(prev => ({ ...prev, registrationReference: e.target.value }))}
+          />
+        </div>
+      )}
 
       <div className={styles.grid2}>
         <Input

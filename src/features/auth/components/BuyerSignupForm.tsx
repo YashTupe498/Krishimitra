@@ -6,7 +6,8 @@ import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
 import { Select } from '../../../components/ui/Select';
 import { FormMessage } from '../../../components/ui/FormMessage';
-import { supabase } from '../../../lib/supabase';
+import { supabase } from '../../../services/supabase/client';
+import { ROUTES } from '../../../constants/routes';
 import styles from './AuthForm.module.css';
 
 export const BuyerSignupForm: React.FC = () => {
@@ -20,8 +21,10 @@ export const BuyerSignupForm: React.FC = () => {
     companyName: '',
     email: '',
     phone: '',
-    buyerType: '',
+    buyerType: 'wholesaler',
     gstin: '',
+    state: '',
+    district: '',
     password: '',
     confirmPassword: ''
   });
@@ -37,30 +40,64 @@ export const BuyerSignupForm: React.FC = () => {
     setError('');
 
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Step 1: Create the auth user (NO options.data — avoid trigger issues)
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-            role: 'BUYER',
-            phone: formData.phone
-          }
-        }
       });
 
-      if (authError) throw authError;
-
-      if (authData.user && !authData.session) {
-        navigate('/auth/buyer', { state: { message: 'Please check your email to verify your account.' } });
-        return;
+      if (signUpError) {
+        console.error('[Signup] Auth error:', signUpError);
+        throw signUpError;
       }
 
-      if (authData.user) {
-        navigate('/buyer/dashboard');
+      if (!authData.user) {
+        throw new Error('Signup failed — no user returned.');
+      }
+
+      console.log('[Signup] Auth user created:', authData.user.id);
+
+      // Step 2: If we have a session, insert the profile row directly
+      if (authData.session) {
+        const profilePayload = {
+          id: authData.user.id,
+          email: formData.email,
+          role: 'BUYER' as const,
+          account_type: 'BUYER' as const,
+          full_name: formData.fullName,
+          phone: formData.phone || null,
+          district: formData.district || null,
+          state: formData.state || null,
+          preferred_language: 'en',
+          organization_name: formData.companyName || null,
+          registration_reference: formData.gstin || null,
+          buyer_type: formData.buyerType || null,
+        };
+
+        console.log('[Signup] Inserting profile:', profilePayload);
+
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([profilePayload]);
+
+        if (profileError) {
+          console.error('[Signup] Profile insert error:', JSON.stringify(profileError, null, 2));
+          throw new Error(
+            `Profile creation failed: ${profileError.message}` +
+            (profileError.details ? ` (${profileError.details})` : '') +
+            (profileError.hint ? ` Hint: ${profileError.hint}` : '')
+          );
+        }
+
+        console.log('[Signup] Profile created successfully');
+        navigate(ROUTES.BUYER_DASHBOARD);
+      } else {
+        navigate('/auth/buyer', { 
+          state: { message: 'Please check your email to verify your account.' } 
+        });
       }
     } catch (err: any) {
-      console.error(err);
+      console.error('[Signup] Error:', err);
       setError(err.message || t('authPages.errorOccurred'));
     } finally {
       setIsLoading(false);
@@ -105,6 +142,29 @@ export const BuyerSignupForm: React.FC = () => {
           required
           value={formData.phone}
           onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+        />
+      </div>
+
+      <div className={styles.grid2}>
+        <Select
+          label={t('authPages.state')}
+          options={[
+            { value: 'MH', label: t('authPages.maharashtra') },
+            { value: 'GJ', label: t('authPages.gujarat') },
+            { value: 'MP', label: t('authPages.madhyaPradesh') }
+          ]}
+          value={formData.state}
+          onChange={(value) => setFormData(prev => ({ ...prev, state: value }))}
+        />
+        <Select
+          label={t('authPages.district')}
+          options={[
+            { value: 'nashik', label: t('authPages.nashik') },
+            { value: 'pune', label: t('authPages.pune') },
+            { value: 'ahmednagar', label: t('authPages.ahmednagar') }
+          ]}
+          value={formData.district}
+          onChange={(value) => setFormData(prev => ({ ...prev, district: value }))}
         />
       </div>
 

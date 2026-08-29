@@ -159,5 +159,258 @@
     "processor": "खाद्य प्रोसेसर",
     "retailer": "रिटेलर / सुपरमार्केट",
     "gstin": "GSTIN (वैकल्पिक)"
+  },
+  "farmerNav": {
+    "menu": "मेनू",
+    "preferences": "प्राथमिकताएं",
+    "dashboard": "डैशबोर्ड",
+    "myLots": "मेरे लॉट",
+    "marketIntelligence": "बाज़ार जानकारी",
+    "myDecisions": "मेरे निर्णय",
+    "offers": "प्रस्ताव",
+    "transactions": "लेन-देन",
+    "issues": "समस्याएं और शिकायतें",
+    "language": "भाषा",
+    "voiceAssistant": "वॉयस असिस्टेंट",
+    "profile": "प्रोफ़ाइल",
+    "logout": "लॉग आउट"
+  },
+  "dashboard": {
+    "goodMorning": "सुप्रभात",
+    "mattersToday": "आज आपकी उपज के लिए महत्वपूर्ण जानकारी यहां दी गई है।",
+    "demoData": "डेमो डेटा",
+    "createNewLot": "नया लॉट बनाएं",
+    "createNewLotContext": "बिक्री के अवसर खोजने के लिए अपनी उपज जोड़ें",
+    "priorityAction": "आपकी प्राथमिक कार्रवाई",
+    "recommendedSellingOp": "अनुशंसित बिक्री अवसर",
+    "estimatedNetRealization": "अनुमानित शुद्ध प्राप्ति",
+    "betterEstimatedOutcome": "बेहतर अनुमानित परिणाम",
+    "highestHeadlinePrice": "उच्चतम हेडलाइन कीमत",
+    "whyThisRecommendation": "यह सिफारिश क्यों?",
+    "whyNotRecommended": "अनुशंसित क्यों नहीं?",
+    "viewFullDecision": "पूरा निर्णय देखें",
+    "yourActiveLots": "आपके सक्रिय लॉट",
+    "viewAll": "सभी देखें",
+    "noActiveLots": "अभी तक कोई सक्रिय लॉट नहीं है",
+    "addFirstCrop": "बिक्री के अवसरों की तुलना करने के लिए अपनी पहली फसल जोड़ें।",
+    "marketSnapshot": "बाज़ार का स्नैपशॉट",
+    "yourActionItems": "आपकी कार्रवाई सूची",
+    "askVoiceAssistant": "English, हिंदी या मराठी में पूछें",
+    "greetingSub": "आज आपकी उपज के लिए यह महत्वपूर्ण है।",
+    "voiceAssistantHover": "English, हिंदी या मराठी में पूछें",
+    "whyNotHighestPriceTitle": "🤔 उच्चतम मूल्य क्यों नहीं?",
+    "institutionalBuyer": "संस्थागत खरीदार",
+    "headlineValue": "हेडलाइन मूल्य",
+    "yourRequirement": "आपकी आवश्यकता",
+    "notFeasibleResult": "आपकी आवश्यकताओं के लिए संभव नहीं",
+    "compareOptions": "विकल्पों की तुलना करें",
+    "marketPressureTitle": "📊 बाज़ार का दबाव + बिक्री का समय",
+    "marketPressureLabel": "बाज़ार का दबाव",
+    "pressureLevel": {
+      "MODERATE": "मध्यम",
+      "LOW": "कम",
+      "HIGH": "अधिक"
+    },
+    "arrivalsLabel": "आवक",
+    "arrivalsValue": "हाल के औसत से कम",
+    "priceTrendLabel": "मूल्य प्रवृत्ति",
+    "priceTrendValue": "मामूली ऊपर की ओर",
+    "saleWindowLabel": "बिक्री का समय",
+    "saleWindowStatus": "वर्तमान बिक्री का समय अनुकूल है",
+    "saleWindowRecommendation": "निकट भविष्य में बेचने पर विचार करें",
+    "viewMarketAnalysis": "बाज़ार विश्लेषण देखें",
+    "viewAllLots": "[ सभी लॉट देखें ]"
+  },
+  "data": {
+    "crops": {
+      "Onion": "प्याज़",
+      "Potato": "आलू"
+    },
+    "locations": {
+      "Nashik": "नासिक",
+      "Pune": "पुणे",
+      "Pimpalgaon Market": "पिंपलगांव मंडी"
+    },
+    "status": {
+      "Decision Ready": "निर्णय के लिए तैयार",
+      "Market Analysis": "बाज़ार विश्लेषण",
+      "Moderate": "मध्यम",
+      "DRAFT": "ड्राफ्ट",
+      "QUALITY_PENDING": "गुणवत्ता लंबित",
+      "MARKET_ANALYSIS_READY": "बाजार विश्लेषण तैयार",
+      "DECISION_READY": "निर्णय तैयार",
+      "OFFER_RECEIVED": "प्रस्ताव प्राप्त",
+      "TRANSACTION_ACTIVE": "लेनदेन सक्रिय",
+      "COMPLETED": "पूर्ण"
+    },
+    "decisions": {
+      "dec-101": {
+        "pro1": "लागत के बाद बेहतर अनुमानित शुद्ध प्राप्ति",
+        "pro2": "कम परिवहन खर्च",
+        "pro3": "भुगतान का समय आपकी आवश्यकता के अनुकूल है",
+        "con1": "उच्च परिवहन लागत",
+        "con2": "लंबी भुगतान अवधि (7-14 दिन)",
+        "timestamp": "2 घंटे पहले"
+      }
+    },
+    "marketSnapshot": {
+      "ms-1": {
+        "label": "आसपास की सर्वोत्तम कीमत",
+        "explanation": "50 किमी के दायरे में दी जाने वाली उच्चतम कीमत",
+        "subValue": "नासिक"
+      },
+      "ms-2": {
+        "label": "बाज़ार का दबाव",
+        "explanation": "वर्तमान आवक मध्यम बिक्री दबाव का संकेत देती है",
+        "value": "मध्यम"
+      },
+      "ms-3": {
+        "label": "अनुमानित परिवहन",
+        "explanation": "वर्तमान ईंधन दरों और चयनित गंतव्य के आधार पर",
+        "subValue": "स्थानीय औसत"
+      }
+    },
+    "actionItems": {
+      "act-1": {
+        "title": "3 बिक्री के अवसर मिले",
+        "description": "आपके प्याज़ के लॉट के लिए नए विकल्प उपलब्ध हैं।",
+        "actionLabel": "विकल्प देखें"
+      },
+      "act-2": {
+        "title": "आपके आलू के लॉट को एकत्रीकरण से लाभ हो सकता है",
+        "description": "थोक प्रीमियम के लिए मात्रा बहुत कम है।",
+        "actionLabel": "FPO देखें"
+      },
+      "act-3": {
+        "title": "खरीदार से नया प्रस्ताव प्राप्त हुआ",
+        "description": "फ्रेशमार्ट लिमिटेड ने प्याज़ पर एक काउंटर-ऑफर रखा है।",
+        "actionLabel": "प्रस्ताव की समीक्षा करें"
+      }
+    },
+    "lots": {
+      "lot-1": {
+        "updatedAt": "आज अपडेट किया गया"
+      },
+      "lot-2": {
+        "updatedAt": "2 दिन पहले अपडेट किया गया"
+      }
+    },
+    "constraints": {
+      "Within7days": "7 दिनों के भीतर",
+      "Canarrangetransport": "परिवहन की व्यवस्था कर सकते हैं",
+      "Canstoreproduce": "उत्पाद स्टोर कर सकते हैं",
+      "Within3days": "3 दिनों के भीतर",
+      "Needtransportassistance": "परिवहन सहायता की आवश्यकता है",
+      "Cannotstoreproduce": "उत्पाद स्टोर नहीं कर सकते"
+    }
+  },
+  "decisions": {
+    "title": "आपको कहाँ बेचना चाहिए?",
+    "subtitle": "निर्णय लेने से पहले संभावित परिणाम, लागत और बाधाओं की तुलना करें।",
+    "status": {
+      "feasible": "संभव (Feasible)"
+    },
+    "recommendedAction": "⭐ अनुशंसित कार्रवाई",
+    "sellAt": "यहाँ बेचें:",
+    "enginePowered": "कृषिमित्र नेट रियलाइज़ेशन इंजन™ द्वारा गणना की गई",
+    "netRealizationBreakdown": "शुद्ध प्राप्ति का विवरण (Net Realization Breakdown)",
+    "highestHeadlinePrice": "उच्चतम हेडलाइन मूल्य",
+    "highestPriceContext": "बाज़ार में प्रस्तावित सर्वोत्तम कच्चा मूल्य",
+    "actualCosts": "वास्तविक लागत (Actual Costs)",
+    "transport": "परिवहन (Transport)",
+    "transportContext": "गंतव्य तक अनुमानित ईंधन और माल ढुलाई",
+    "handling": "हैंडलिंग और अन्य शुल्क",
+    "handlingContext": "श्रम, वजन, और मंडी कर",
+    "estimatedNetRealization": "अनुमानित शुद्ध प्राप्ति",
+    "netRealizationContext": "वास्तविक पैसा जो आपकी जेब में जाएगा",
+    "whyNotHighest": "उच्चतम मूल्य क्यों नहीं?",
+    "whyRecommended": "इसकी अनुशंसा क्यों की गई है?",
+    "callBuyer": "खरीदार से संपर्क करें",
+    "acceptOffer": "स्वीकार करें और आगे बढ़ें",
+    "headerTag": "सक्रिय निर्णय",
+    "recommendedContext": "आपके वर्तमान लॉट के लिए सबसे उपयुक्त विकल्प।",
+    "benefit1": "भुगतान आवश्यकताओं के अनुकूल",
+    "benefit2": "कम परिवहन बोझ",
+    "calculationTitle": "इस अनुमान की गणना कैसे की गई है",
+    "grossSaleValue": "सकल बिक्री मूल्य",
+    "grossSaleContext": "लागू अवसर मूल्य",
+    "qualityAdjustment": "गुणवत्ता (Quality)",
+    "noAdjustment": "कोई डेमो समायोजन नहीं",
+    "paymentRequirementTitle": "आपकी भुगतान आवश्यकता",
+    "paymentRequirement": "7 दिनों के भीतर",
+    "recommendedOpportunity": "अवसर भुगतान:",
+    "paymentDays5": "5 दिन",
+    "fitsRequirement": "आपकी आवश्यकता के अनुरूप",
+    "alternativeOpportunity": "वैकल्पिक (उच्चतम मूल्य):",
+    "paymentDays14": "7-14 दिन",
+    "violatesRequirement": "शायद आवश्यकता के अनुरूप न हो",
+    "whyNotHighestTitle": "उच्चतम हेडलाइन मूल्य क्यों नहीं?",
+    "alternativeHeadline": "वैकल्पिक अवसर का हेडलाइन मूल्य:",
+    "conTransport": "दूरस्थ बाज़ार के लिए उच्च परिवहन लागत",
+    "conPayment": "लंबी भुगतान अवधि (बाधाओं का उल्लंघन)",
+    "notRecommended": "इस लॉट के लिए अनुशंसित नहीं है।",
+    "decisionBasis": "निर्णय का आधार",
+    "basisMarket": "बाज़ार की जानकारी: डेमो",
+    "basisTerms": "अवसर की शर्तें: डेमो डेटा",
+    "basisQuality": "गुणवत्ता: ग्रेड B",
+    "basisTransport": "परिवहन: अनुमानित",
+    "contactBuyer": "खरीदार से संपर्क करें",
+    "acceptProceed": "स्वीकार करें और आगे बढ़ें"
+  },
+  "lotDetails": {
+    "backLink": "मेरे लॉट पर वापस जाएं",
+    "title": "लॉट विवरण",
+    "pendingQuality": "गुणवत्ता लंबित",
+    "statusTimeline": "स्थिति टाइमलाइन",
+    "qualityAssessment": "गुणवत्ता मूल्यांकन",
+    "currentGrade": "वर्तमान ग्रेड",
+    "notAssessed": "मूल्यांकन नहीं किया गया",
+    "reassessQuality": "गुणवत्ता मूल्यांकन देखें",
+    "startQuality": "गुणवत्ता मूल्यांकन शुरू करें",
+    "marketAnalysis": "बाजार विश्लेषण",
+    "status": "स्थिति",
+    "marketAnalysisReady": "बाजार विश्लेषण तैयार",
+    "marketPressure": "बाजार का दबाव",
+    "bestHeadline": "सर्वश्रेष्ठ मुख्य मूल्य",
+    "bestNetOption": "सर्वश्रेष्ठ शुद्ध विकल्प",
+    "viewMarketAnalysis": "बाजार विश्लेषण देखें",
+    "completeQualityFirst": "बाजार विश्लेषण अनलॉक करने के लिए गुणवत्ता मूल्यांकन पूरा करें।",
+    "decision": "अनुशंसित कार्रवाई",
+    "sellThrough": "इसके माध्यम से बेचें",
+    "estimatedNet": "अनुमानित शुद्ध प्राप्ति",
+    "viewFullDecision": "पूरा निर्णय देखें",
+    "sellingRequirements": "आपकी बिक्री आवश्यकताएँ",
+    "payment": "भुगतान",
+    "transport": "परिवहन",
+    "storage": "भंडारण",
+    "offers": "प्रस्ताव",
+    "noOffers": "अभी तक कोई प्रस्ताव नहीं। आपका लॉट मिलान के लिए उपलब्ध है।",
+    "transaction": "लेनदेन",
+    "noTransaction": "अभी तक कोई लेनदेन नहीं"
+  },
+  "quality": {
+    "headerTag": "गुणवत्ता मूल्यांकन",
+    "title": "गुणवत्ता का आकलन करें",
+    "current": "वर्तमान:",
+    "notAssessed": "मूल्यांकन नहीं",
+    "howToAssess": "आप गुणवत्ता का आकलन कैसे करना चाहेंगे?",
+    "howToAssessSub": "मैनुअल चयन चुनें या प्रोटोटाइप संदर्भ के लिए चित्र अपलोड करें।",
+    "uploadImages": "उत्पाद की छवियां अपलोड करें",
+    "uploadDesc": "संदर्भ-आधारित प्रोटोटाइप मूल्यांकन का उपयोग करें",
+    "selectManual": "मैन्युअल रूप से ग्रेड चुनें",
+    "understandGrades": "ग्रेड को समझें",
+    "uploadProduceImages": "उत्पाद की छवियां अपलोड करें",
+    "photoNum": "उत्पाद की तस्वीर",
+    "addPhoto": "+ तस्वीर जोड़ें",
+    "assessProduce": "उत्पाद का आकलन करें",
+    "assessmentComplete": "मूल्यांकन पूर्ण",
+    "whyThisGrade": "यह ग्रेड क्यों?",
+    "manualReason": "यह ग्रेड मैन्युअल रूप से चुना गया था।",
+    "assessAgain": "फिर से आकलन करें",
+    "continueToMarket": "बाजार विश्लेषण पर जारी रखें",
+    "unknownImage": "इन छवियों के लिए स्वचालित प्रोटोटाइप मूल्यांकन अनुपलब्ध है। कृपया मैन्युअल रूप से ग्रेड चुनें।"
+  },
+  "lots": {
+    "createNew": "नया लॉट बनाएं"
   }
 }

@@ -1,4 +1,4 @@
-import { AuthProvider } from './hooks/useAuth';
+import { AuthProvider } from './app/providers/AuthProvider';
 import { AppRouter } from './app/router';
 
 function App() {
