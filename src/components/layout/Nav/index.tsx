@@ -55,7 +55,7 @@ export const Nav: React.FC = () => {
           </>
         ) : (
           <>
-            <Button variant="ghost" onClick={() => navigate('/auth/farmer')}>{t('nav.login')}</Button>
+            <Button variant="secondary" className={styles.loginButton} onClick={() => navigate('/auth/farmer')}>{t('nav.login')}</Button>
             <Button variant="primary" onClick={handleGetStarted}>{t('nav.getStarted')}</Button>
           </>
         )}

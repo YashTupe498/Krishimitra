@@ -60,7 +60,7 @@ export const LoginForm: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.formContainer}>
-        <div className={styles.header}>
+        <div className={styles.loginHeader}>
           <h1 className={styles.title}>{t('auth.loginTitle')}</h1>
           <p className={styles.subtitle}>{t('auth.signIn')}</p>
         </div>

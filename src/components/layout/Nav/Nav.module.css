@@ -53,6 +53,19 @@
   align-items: center;
 }
 
+.loginButton {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.loginButton:hover:not(:disabled) {
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: var(--surface);
+  box-shadow: var(--shadow-resting);
+}
+
 .language {
   color: var(--text-secondary);
   font-size: 14px;

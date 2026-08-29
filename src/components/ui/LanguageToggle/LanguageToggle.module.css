@@ -1,47 +1,90 @@
 .container {
-  display: flex;
+  position: relative;
+}
+
+.trigger {
+  display: inline-flex;
   align-items: center;
   gap: var(--space-8);
-  background: var(--surface);
-  padding: 6px 12px;
-  border-radius: 20px;
+  height: 40px;
+  padding: 0 var(--space-12);
   border: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-resting);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 140ms ease-out, border-color 140ms ease-out, box-shadow 140ms ease-out;
+}
+
+.trigger:hover,
+.trigger[aria-expanded='true'] {
+  border-color: var(--accent-signal);
+  background: var(--accent-signal-soft);
+  color: var(--accent-signal);
+}
+
+.trigger:focus-visible,
+.option:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .icon {
-  color: var(--text-secondary);
+  color: currentColor;
 }
 
-.options {
+.menu {
+  position: absolute;
+  top: calc(100% + var(--space-8));
+  right: 0;
+  min-width: 152px;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-hover);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 140ms ease-out, transform 140ms ease-out;
+  z-index: 60;
+}
+
+.menuOpen {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.option {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 4px;
-}
-
-.btn {
-  background: none;
+  justify-content: space-between;
+  gap: var(--space-12);
+  padding: var(--space-8) var(--space-12);
   border: none;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: var(--radius-sm);
+  background: transparent;
   color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  transition: background-color 140ms ease-out, color 140ms ease-out;
 }
 
-.btn:hover {
-  color: var(--brand-primary);
-  background: rgba(196, 98, 45, 0.1);
+.option:hover {
+  background: var(--accent-signal-soft);
+  color: var(--accent-signal);
 }
 
-.btn.active {
-  color: var(--brand-primary);
-  background: rgba(196, 98, 45, 0.1);
-}
-
-.divider {
-  color: var(--border-strong);
-  font-size: 12px;
+.active {
+  color: var(--accent-signal);
+  font-weight: 600;
 }
