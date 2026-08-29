@@ -124,16 +124,16 @@ export const lotStore = new LotStore();
 // For backwards compatibility during transition, define a getter object
 // that returns the current state of the store if someone tries to access `mockLots[id]` directly.
 export const mockLots = new Proxy({}, {
-  get(target, prop) {
+  get(_target, prop) {
     if (typeof prop === 'string') {
       return lotStore.get(prop);
     }
     return undefined;
   },
-  ownKeys(target) {
+  ownKeys(_target) {
     return Object.keys(lotStore.getAll().reduce((acc, lot) => { acc[lot.id] = lot; return acc; }, {} as Record<string, Lot>));
   },
-  getOwnPropertyDescriptor(target, prop) {
+  getOwnPropertyDescriptor(_target, prop) {
     return {
       enumerable: true,
       configurable: true,

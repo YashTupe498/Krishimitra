@@ -11,7 +11,12 @@ import { LotDetailsPage } from '../../pages/farmer/LotDetailsPage';
 import { LotsIndexPage } from '../../pages/farmer/LotsIndexPage';
 import { CreateLotPage } from '../../pages/farmer/CreateLotPage';
 import { QualityAssessmentPage } from '../../pages/farmer/QualityAssessmentPage';
+import { FarmerOffersPage } from '../../pages/farmer/OffersPage';
+import { FarmerTransactionsPage } from '../../pages/farmer/TransactionsPage';
 import { BuyerDashboardPage } from '../../pages/buyer/DashboardPage';
+import { BuyerLayout } from '../../layouts/BuyerLayout';
+import { BuyerPlaceholderPage } from '../../pages/buyer/PlaceholderPage';
+import { BuyerLotRoute, BuyerMatchesPage, BuyerOffersPage, BuyerRequirementCreatePage, BuyerRequirementsPage, BuyerTransactionsPage } from '../../pages/buyer/WorkflowPages';
 import { ROUTES } from '../../constants/routes';
 
 export const AppRouter: React.FC = () => {
@@ -35,15 +40,27 @@ export const AppRouter: React.FC = () => {
           {/* Placeholders for other farmer routes */}
           <Route path="/farmer/market" element={<div className="p-8">Market Intelligence (Coming Soon)</div>} />
           <Route path="/farmer/decisions" element={<div className="p-8">Decisions (Coming Soon)</div>} />
-          <Route path="/farmer/offers" element={<div className="p-8">Offers (Coming Soon)</div>} />
-          <Route path="/farmer/transactions" element={<div className="p-8">Transactions (Coming Soon)</div>} />
+          <Route path="/farmer/offers" element={<FarmerOffersPage />} />
+          <Route path="/farmer/transactions" element={<FarmerTransactionsPage />} />
           <Route path="/farmer/issues" element={<div className="p-8">Issues (Coming Soon)</div>} />
           <Route path="/farmer/profile" element={<div className="p-8">Profile (Coming Soon)</div>} />
         </Route>
       </Route>
       
       <Route element={<ProtectedRoute allowedRoles={['BUYER']} />}>
-        <Route path={ROUTES.BUYER_DASHBOARD} element={<BuyerDashboardPage />} />
+        <Route element={<BuyerLayout />}>
+          <Route path={ROUTES.BUYER_DASHBOARD} element={<BuyerDashboardPage />} />
+          <Route path="/buyer/requirements" element={<BuyerRequirementsPage />} />
+          <Route path="/buyer/requirements/new" element={<BuyerRequirementCreatePage />} />
+          <Route path="/buyer/matching-lots" element={<BuyerMatchesPage />} />
+          <Route path="/buyer/matches" element={<BuyerMatchesPage />} />
+          <Route path="/buyer/lots/:lotId" element={<BuyerLotRoute />} />
+          <Route path="/buyer/market" element={<BuyerPlaceholderPage title="Supply Intelligence" />} />
+          <Route path="/buyer/supply-intelligence" element={<BuyerPlaceholderPage title="Supply Intelligence" />} />
+          <Route path="/buyer/offers" element={<BuyerOffersPage />} />
+          <Route path="/buyer/transactions" element={<BuyerTransactionsPage />} />
+          <Route path="/buyer/profile" element={<BuyerPlaceholderPage title="Profile" />} />
+        </Route>
       </Route>
     </Routes>
   );

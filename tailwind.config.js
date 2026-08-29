@@ -26,10 +26,13 @@ module.exports = {
         surface: {
           DEFAULT: "hsl(var(--surface))",
           foreground: "hsl(var(--surface-foreground))",
+          warm: "var(--surface-warm)",
+          cool: "var(--surface-cool)",
         },
         brand: {
           primary: "var(--brand-primary)",
           deep: "var(--brand-deep)",
+          "deep-contrast": "var(--deep-green)",
           DEFAULT: "var(--brand-primary)",
           foreground: "#ffffff",
         },
@@ -68,6 +71,9 @@ module.exports = {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          secondary: "var(--accent-secondary)",
+          "secondary-hover": "var(--accent-secondary-hover)",
+          "secondary-foreground": "var(--accent-secondary-foreground)",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -83,6 +89,12 @@ module.exports = {
         full: "9999px",
         lg: "var(--radius)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        mono: "var(--font-mono)",
+      },
+      backgroundImage: {
+        "radial-mesh": "var(--radial-mesh)",
       },
       boxShadow: {
         sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ShieldCheck, Receipt, Scale } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
@@ -6,15 +6,62 @@ import styles from './Trust.module.css';
 
 export const Trust: React.FC = () => {
   const { t } = useTranslation();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const title = t('trust.title');
+  const titleSuffix = 'Peace of Mind';
+  const hasOutlineTitle = title.endsWith(titleSuffix);
+  const titleLead = hasOutlineTitle ? title.slice(0, -titleSuffix.length).trim() : title;
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  // Replace these editorial trust cues with audited product metrics when available.
+  const trustStats = [
+    { value: '0', label: 'HIDDEN MANDI FEES' },
+    { value: 'KYC', label: 'VERIFIED BUYERS' },
+    { value: 'CLEAR', label: 'DIGITAL RECEIPTS' },
+    { value: 'UPFRONT', label: 'PRICE BREAKDOWN' },
+  ];
+
   return (
-    <section className={styles.section}>
+    <section id="trust" className={styles.section} ref={sectionRef}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <span className={styles.eyebrow}>{t('trust.eyebrow')}</span>
-          <h2 className={clsx("h1", styles.title)}>{t('trust.title')}</h2>
+          <span className={clsx(styles.eyebrow, 'text-mono-label')}>{t('trust.eyebrow')}</span>
+          <h2 className={clsx('h1', styles.title)}>
+            <span className={styles.titleSolid}>{titleLead}</span>
+            {hasOutlineTitle && <span className={styles.titleOutline}>{titleSuffix}</span>}
+          </h2>
           <p className={clsx("body-large", styles.subtitle)}>
             {t('trust.subtitle')}
           </p>
+
+          <div className={clsx(styles.statDeck, isVisible && styles.isVisible)}>
+            {trustStats.map((stat) => (
+              <div className={styles.statCard} key={stat.label}>
+                <strong>{stat.value}</strong>
+                <span className={clsx(styles.statLabel, 'text-mono-label')}>{stat.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
         
         <div className={styles.bentoGrid}>

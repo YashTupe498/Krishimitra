@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, Save, CheckCircle2, MapPin, Package, Settings, S
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { lotStore } from '../../data/mockLots';
-import type { Lot, FarmerConstraints } from '../../types/lot';
+import type { Lot } from '../../types/lot';
 
 type Step = 1 | 2 | 3;
 

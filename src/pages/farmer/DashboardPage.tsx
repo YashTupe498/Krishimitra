@@ -397,7 +397,7 @@ export const FarmerDashboardPage: React.FC = () => {
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">
-                      {lot.status === 'Decision Ready' ? '🟢' : '🟡'}
+                      {lot.status === 'DECISION_READY' ? '🟢' : '🟡'}
                     </span>
                     <span className="text-sm font-bold text-gray-700">{t(`data.status.${lot.status}`, lot.status)}</span>
                   </div>

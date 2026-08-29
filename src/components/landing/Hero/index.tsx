@@ -1,13 +1,44 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ArrowRight, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../ui/Button';
-import { Badge } from '../../ui/Badge';
+import { NetComparison } from '../NetComparison';
 import styles from './Hero.module.css';
 import { clsx } from 'clsx';
 
 export const Hero: React.FC = () => {
   const { t } = useTranslation();
+  const heroRef = useRef<HTMLElement>(null);
+  const comparisonRef = useRef<HTMLDivElement>(null);
+  const titleLine1Words = t('hero.titleLine1').trim().split(/\s+/);
+  const titleLine2Words = t('hero.titleLine2').trim().split(/\s+/);
+  const titleHighlightWords = t('hero.titleHighlight').trim().split(/\s+/);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const comparison = comparisonRef.current;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    if (!hero || !comparison || reduceMotion.matches) return;
+
+    let frame = 0;
+    const updateParallax = () => {
+      frame = 0;
+      const passedHero = Math.max(0, -hero.getBoundingClientRect().top);
+      const offset = Math.min(passedHero * 0.07, 10);
+      comparison.style.setProperty('--hero-parallax-y', `${offset}px`);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateParallax);
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const scrollToRoles = () => {
     document.getElementById('role-selection')?.scrollIntoView({ behavior: 'smooth' });
@@ -18,13 +49,32 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section className={styles.hero}>
+    <section className={styles.hero} ref={heroRef}>
       <div className={styles.container}>
         <div className={styles.content}>
-          <span className={styles.eyebrow}>{t('hero.eyebrow')}</span>
+          <span className={clsx(styles.eyebrow, 'text-mono-label')}>{t('hero.eyebrow')}</span>
           <h1 className={clsx("h1-display", styles.title)}>
-            {t('hero.titleLine1')}<br />
-            {t('hero.titleLine2')} <span className={styles.highlight}>{t('hero.titleHighlight')}</span>
+            <span className={styles.titleLine}>
+              {titleLine1Words.map((word, index) => (
+                <span className={styles.wordMask} key={`${word}-${index}`}>
+                  <span className={styles.word} style={{ '--word-index': index } as React.CSSProperties}>{word}</span>
+                </span>
+              ))}
+            </span>
+            <span className={styles.titleLine}>
+              {titleLine2Words.map((word, index) => (
+                <span className={styles.wordMask} key={`${word}-${index}`}>
+                  <span className={styles.word} style={{ '--word-index': index + titleLine1Words.length } as React.CSSProperties}>{word}</span>
+                </span>
+              ))}
+              <span className={styles.highlight}>
+                {titleHighlightWords.map((word, index) => (
+                  <span className={styles.wordMask} key={`${word}-${index}`}>
+                    <span className={styles.word} style={{ '--word-index': index + titleLine1Words.length + titleLine2Words.length } as React.CSSProperties}>{word}</span>
+                  </span>
+                ))}
+              </span>
+            </span>
           </h1>
           <p className={clsx("body-large", styles.subtitle)}>
             {t('hero.subtitle')}
@@ -36,7 +86,7 @@ export const Hero: React.FC = () => {
             </button>
           </div>
         </div>
-        <div className={styles.imageWrapper}>
+        <div className={styles.imageWrapper} ref={comparisonRef}>
           <div className={styles.visual}>
               <div className={styles.visualHeader}>
                 <div>
@@ -48,31 +98,7 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
               
-              <div className={styles.comparisonGrid}>
-                <div className={styles.comparisonRow}>
-                  <div className={styles.rowDetails}>
-                    <div className={styles.rowTitle}>{t('heroCard.marketA')}</div>
-                    <div className={styles.rowSub}>₹2,500/q {t('heroCard.headline')} • −₹180 {t('heroCard.transport')} • 10-day {t('heroCard.pay')}</div>
-                  </div>
-                  <div className={styles.rowNet}>
-                    <div className={styles.rowSub}>{t('heroCard.estNet')}</div>
-                    <div className={clsx("numeric", styles.netValue, styles.muted)}>₹2,320</div>
-                  </div>
-                </div>
-                
-                <div className={clsx(styles.comparisonRow, styles.recommended)}>
-                  <div className={styles.rowDetails}>
-                    <div className={styles.rowTitle}>
-                      {t('heroCard.buyerB')} <Badge variant="success" className={styles.pulsingBadge}>{t('heroCard.recommended')}</Badge>
-                    </div>
-                    <div className={styles.rowSub}>₹2,420/q {t('heroCard.headline')} • −₹40 {t('heroCard.transport')} • 3-day {t('heroCard.pay')}</div>
-                  </div>
-                  <div className={styles.rowNet}>
-                    <div className={styles.rowSub}>{t('heroCard.estNet')}</div>
-                    <div className={clsx("numeric", styles.netValue)}>₹2,380</div>
-                  </div>
-                </div>
-              </div>
+              <NetComparison variant="hero" copy={{ marketA: t('heroCard.marketA'), buyerB: t('heroCard.buyerB'), recommended: t('heroCard.recommended'), headline: t('why.headlinePrice'), transportA: t('why.transport80'), transportB: t('why.transport15'), payment: t('why.paymentTime'), paymentA: t('why.days10'), paymentB: t('why.days3'), estimated: t('heroCard.estNet') }} />
               
               <div style={{ marginTop: '24px', display: 'flex', gap: '8px', color: 'var(--text-secondary)', fontSize: '13px', alignItems: 'center' }}>
                 <Info size={14} /> {t('heroCard.footerText')}

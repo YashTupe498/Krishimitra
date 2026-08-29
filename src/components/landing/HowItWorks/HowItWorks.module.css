@@ -1,143 +1,361 @@
 .section {
-  padding: var(--space-96) var(--space-24);
-  background-color: var(--surface);
-  position: relative;
+  padding: var(--space-128) var(--space-24);
+  background: var(--surface);
   overflow: hidden;
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  position: relative;
-  z-index: 2;
 }
 
 .title {
-  text-align: center;
   margin-bottom: var(--space-80);
+  text-align: left;
+  font-size: clamp(36px, 5vw, 58px);
 }
 
 .flow {
-  display: flex;
-  justify-content: space-between;
   position: relative;
+  height: 460px;
+  isolation: isolate;
 }
 
-/* Glowing Laser Line */
-.flow::before {
-  content: '';
+.desktopVine,
+.mobileVine {
   position: absolute;
-  top: 24px;
-  left: 50px;
-  right: 50px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent-signal), transparent);
-  background-size: 200% 100%;
-  animation: laserFlow 3s linear infinite;
-  box-shadow: 0 0 12px rgba(42, 111, 119, 0.6);
+  inset: 0;
   z-index: 0;
+  overflow: visible;
 }
 
-@keyframes laserFlow {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
+.desktopVine {
+  width: 100%;
+  height: 460px;
+}
+
+.mobileVine {
+  display: none;
+}
+
+.vinePath {
+  fill: none;
+  stroke: var(--brand-deep);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.isVisible .vinePath {
+  stroke-dashoffset: 0;
+}
+
+.grassTuft {
+  fill: none;
+  stroke: var(--brand-deep);
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0;
+  transform: scale(0.55);
+  transform-origin: 0 0;
+  transition: opacity 180ms ease-out, transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.isVisible .grassTuft {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.vineLeaf {
+  fill: var(--accent-signal);
+  opacity: 0;
+  transform: scale(0.2) rotate(-12deg);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 160ms ease-out var(--leaf-delay),
+    transform 200ms cubic-bezier(0.16, 1.4, 0.3, 1) var(--leaf-delay);
+}
+
+.isVisible .vineLeaf {
+  opacity: 0.88;
+  transform: scale(1) rotate(0);
 }
 
 .step {
-  position: relative;
+  --step-x: 50%;
+  --step-y: 230px;
+  --step-delay: 0ms;
+  position: absolute;
   z-index: 1;
+  left: var(--step-x);
+  top: var(--step-y);
+  width: min(19vw, 205px);
+  translate: -50% -50%;
+  text-align: center;
+}
+
+.stepHeader {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  width: 150px;
-  background-color: transparent;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.step:hover {
-  transform: translateY(-8px);
+.stepLabel {
+  margin-bottom: var(--space-12);
+  color: var(--text-placeholder);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 180ms ease-out calc(var(--step-delay) + 90ms),
+    transform 180ms ease-out calc(var(--step-delay) + 90ms);
 }
 
 .circle {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background-color: var(--surface);
-  border: 2px solid var(--accent-signal);
-  color: var(--accent-signal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-24);
-  font-weight: 600;
-  font-size: 18px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   position: relative;
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border: 3px solid var(--brand-deep);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--brand-deep);
+  box-shadow: var(--shadow-resting);
+  font-size: 24px;
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 180ms ease-out var(--step-delay),
+    transform 260ms cubic-bezier(0.16, 1.45, 0.3, 1) var(--step-delay),
+    box-shadow 180ms ease-out;
 }
 
-/* Outer pulse ring on hover */
-.step:hover .circle {
-  background-color: var(--accent-signal);
-  color: #fff;
-  box-shadow: 0 0 20px rgba(42, 111, 119, 0.4);
+.circle > span {
+  position: relative;
+  z-index: 1;
+}
+
+.budLeaf {
+  position: absolute;
+  width: 27px;
+  height: 21px;
+  overflow: visible;
+  fill: var(--success);
+  opacity: 0;
+  transform: rotate(var(--leaf-rotation)) scale(0.35);
+  transform-origin: center;
+  transition:
+    opacity 120ms ease-out calc(var(--step-delay) + 110ms),
+    transform 180ms cubic-bezier(0.16, 1.4, 0.3, 1) calc(var(--step-delay) + 110ms);
+}
+
+.budLeafLeft {
+  --leaf-rotation: -28deg;
+  top: -13px;
+  left: -13px;
+}
+
+.budLeafRight {
+  --leaf-rotation: 28deg;
+  top: -13px;
+  right: -13px;
+}
+
+.stepContent {
+  margin-top: var(--space-20);
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 220ms ease-out calc(var(--step-delay) + 120ms),
+    transform 220ms ease-out calc(var(--step-delay) + 120ms);
+}
+
+.isVisible .stepLabel,
+.isVisible .circle,
+.isVisible .stepContent {
+  opacity: 1;
+  transform: none;
+}
+
+.isVisible .budLeaf {
+  opacity: 1;
+  transform: rotate(var(--leaf-rotation)) scale(1);
+  animation: leafRustle 5s ease-in-out 2200ms infinite;
+}
+
+@keyframes leafRustle {
+  0%,
+  100% {
+    transform: rotate(var(--leaf-rotation)) scale(1);
+  }
+
+  50% {
+    transform: rotate(calc(var(--leaf-rotation) + 3deg)) scale(1);
+  }
 }
 
 .stepTitle {
-  font-weight: 600;
-  margin-bottom: var(--space-8);
+  margin: 0 0 var(--space-8);
   color: var(--text-primary);
-  font-size: 16px;
-  transition: color 0.3s ease;
-}
-
-.step:hover .stepTitle {
-  color: var(--accent-signal);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .stepDesc {
-  font-size: 13px;
+  margin: 0;
   color: var(--text-secondary);
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.annotation {
+  position: absolute;
+  z-index: 2;
+  top: -42px;
+  left: calc(50% + 34px);
+  display: flex;
+  align-items: flex-end;
+  color: var(--accent-signal);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 180ms ease-out calc(var(--step-delay) + 170ms),
+    transform 180ms ease-out calc(var(--step-delay) + 170ms);
+  white-space: nowrap;
+}
+
+.annotation::before {
+  width: 32px;
+  height: 26px;
+  border-bottom: 1px dashed currentColor;
+  border-left: 1px dashed currentColor;
+  content: '';
+}
+
+.annotationLabel {
+  padding-left: var(--space-8);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.isVisible .annotation {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (hover: hover) {
+  .step:hover .circle {
+    box-shadow: 0 0 0 6px var(--accent-signal-soft), var(--shadow-hover);
+  }
 }
 
 @media (max-width: 768px) {
-  .flow {
-    flex-direction: column;
-    gap: var(--space-48);
-  }
-  
-  .flow::before {
-    top: 0;
-    bottom: 0;
-    left: 26px;
-    right: auto;
-    height: 100%;
-    width: 2px;
-    background: linear-gradient(180deg, transparent, var(--accent-signal), transparent);
-    background-size: 100% 200%;
-    animation: laserFlowVertical 3s linear infinite;
+  .section {
+    padding: var(--space-80) var(--space-24);
   }
 
-  @keyframes laserFlowVertical {
-    0% { background-position: 0 100%; }
-    100% { background-position: 0 -100%; }
+  .title {
+    margin-bottom: var(--space-48);
   }
-  
+
+  .flow {
+    display: flex;
+    min-height: 690px;
+    height: auto;
+    flex-direction: column;
+    gap: var(--space-40);
+    padding: var(--space-16) 0 var(--space-16) 76px;
+  }
+
+  .desktopVine {
+    display: none;
+  }
+
+  .mobileVine {
+    top: var(--space-16);
+    right: auto;
+    bottom: var(--space-16);
+    left: 27px;
+    display: block;
+    width: 2px;
+    height: calc(100% - var(--space-32));
+  }
+
+  .mobileVine .vinePath {
+    stroke-width: 6;
+  }
+
   .step {
-    flex-direction: row;
+    position: relative;
+    top: auto;
+    left: auto;
+    display: flex;
     width: 100%;
+    min-height: 96px;
+    align-items: flex-start;
+    gap: var(--space-20);
+    translate: none;
     text-align: left;
-    gap: var(--space-24);
   }
-  
-  .step:hover {
-    transform: translateX(8px);
+
+  .stepHeader {
+    flex: 0 0 58px;
+  }
+
+  .stepLabel {
+    font-size: 9px;
+    white-space: nowrap;
   }
 
   .circle {
-    margin-bottom: 0;
-    flex-shrink: 0;
+    width: 58px;
+    height: 58px;
+    font-size: 18px;
+  }
+
+  .stepContent {
+    max-width: 310px;
+    margin-top: var(--space-32);
+  }
+
+  .stepTitle {
+    font-size: 18px;
+  }
+
+  .stepDesc {
+    font-size: 14px;
+  }
+
+  .annotation {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinePath {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+
+  .grassTuft,
+  .vineLeaf,
+  .stepLabel,
+  .circle,
+  .budLeaf,
+  .stepContent,
+  .annotation {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
   }
 }

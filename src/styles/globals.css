@@ -88,6 +88,36 @@ button {
   font-weight: 600;
 }
 
+/* Design token utilities: opt-in only, for future section-specific work. */
+.text-mono-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.bg-surface-warm {
+  background-color: var(--surface-warm);
+}
+
+.bg-surface-cool {
+  background-color: var(--surface-cool);
+}
+
+.bg-radial-mesh {
+  background-color: var(--deep-green);
+  background-image: var(--radial-mesh);
+}
+
+.bg-deep-green-grain {
+  background-color: var(--deep-green);
+  background-image: var(--radial-mesh), var(--grain-texture);
+  background-size: auto, 180px 180px;
+  background-blend-mode: normal, soft-light;
+}
+
 @media (max-width: 768px) {
   .h1-display { font-size: 34px; }
   .h1 { font-size: 30px; }

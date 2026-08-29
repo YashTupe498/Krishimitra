@@ -1,0 +1,9 @@
+.card { padding: var(--space-20) var(--space-24); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-resting); transition: all 0.2s ease-out; }
+.card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); border-color: var(--accent-signal); }
+.header { display: flex; align-items: flex-start; gap: var(--space-16); }
+.avatar { width: 56px; height: 56px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface-alt); font-size: 28px; }
+.titleBlock { flex: 1; min-width: 0; }.titleBlock h2 { margin: 0; color: var(--text-primary); font-size: 18px; font-weight: 700; }.titleBlock p { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); margin: var(--space-4) 0 0; color: var(--text-secondary); font-size: 14px; }.titleBlock p span { display: inline-flex; align-items: center; gap: var(--space-4); }
+.status { align-self: flex-start; border-radius: var(--radius-sm); font-weight: 600; }
+.criteria { display: flex; flex-wrap: wrap; gap: var(--space-8); margin-top: var(--space-16); }.criteria span { display: inline-flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-8); border: 1px solid var(--success); border-radius: var(--radius-sm); background: var(--success-bg); color: var(--success); font-size: 12px; font-weight: 600; }.criteria .partial { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
+.actions { display: flex; justify-content: flex-end; gap: var(--space-12); margin-top: var(--space-20); }
+@media (max-width: 640px) { .header { flex-wrap: wrap; }.status { margin-left: calc(56px + var(--space-16)); }.actions { justify-content: stretch; }.actions button { flex: 1; padding: 0 var(--space-12); } }
