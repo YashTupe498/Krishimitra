@@ -1,6 +1,6 @@
 .section {
   padding: var(--space-128) var(--space-24);
-  background: var(--surface);
+  background: radial-gradient(ellipse 62% 42% at 50% 48%, color-mix(in srgb, var(--brand-primary) 7%, transparent), transparent 72%), var(--bg);
   overflow: hidden;
 }
 

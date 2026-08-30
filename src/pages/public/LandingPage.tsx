@@ -14,13 +14,13 @@ export const LandingPage: React.FC = () => {
     <>
       <Nav />
       <main>
-        <Hero />
-        <RoleSelection />
-        <WhyKrishiMitra />
-        <HowItWorks />
-        <Capabilities />
-        <Trust />
-        <FinalCTA />
+        <div className="landing-section-transition"><Hero /></div>
+        <div className="landing-section-transition"><RoleSelection /></div>
+        <div className="landing-section-transition"><WhyKrishiMitra /></div>
+        <div className="landing-section-transition"><HowItWorks /></div>
+        <div className="landing-section-transition"><Capabilities /></div>
+        <div className="landing-section-transition"><Trust /></div>
+        <div className="landing-section-transition landing-section-transition--dark"><FinalCTA /></div>
       </main>
       <Footer />
     </>
