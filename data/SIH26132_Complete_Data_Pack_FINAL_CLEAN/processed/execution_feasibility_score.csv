@@ -1,0 +1,2 @@
+opportunity_id,quantity_feasibility,transport_feasibility,payment_feasibility,quality_feasibility,time_feasibility,overall_score,status,data_class
+OPP001,90,80,95,85,75,85,RECOMMENDED,DERIVED

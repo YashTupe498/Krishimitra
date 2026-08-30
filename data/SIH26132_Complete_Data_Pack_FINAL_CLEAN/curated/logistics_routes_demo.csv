@@ -1,0 +1,4 @@
+route_id,origin_market_id,destination_city,distance_km,estimated_hours,route_status
+R001,M001,Nashik,55,2,ACTIVE_DEMO
+R002,M001,Mumbai,190,6,ACTIVE_DEMO
+R003,M002,Pune,210,7,ACTIVE_DEMO

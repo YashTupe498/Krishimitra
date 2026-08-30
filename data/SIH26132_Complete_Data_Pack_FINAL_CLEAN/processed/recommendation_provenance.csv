@@ -1,0 +1,5 @@
+recommendation_id,input_feature,source_asset,data_classification
+REC001,modal_price,raw/agmarknet/maharashtra_onion_nashik_markets_2026.csv,OBSERVED_AGMARKNET_ATTRIBUTED
+REC001,farmer_preferences,curated/farmer_preferences.csv,CURATED_DEMO
+REC001,transport_cost,reference/transport_rate_cards.csv,REFERENCE_OR_SCENARIO
+REC001,quality,curated/quality_assessment_demo.csv,CURATED_DEMO

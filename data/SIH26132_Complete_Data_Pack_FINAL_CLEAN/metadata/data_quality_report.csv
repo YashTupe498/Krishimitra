@@ -1,0 +1,7 @@
+dataset,total_records,total_missing_values,duplicate_records,generated_date,classification
+market_prices_cleaned.csv,84,168,0,2026-08-26,DERIVED
+market_prices_normalized.csv,84,40,0,2026-08-26,DERIVED
+market_price_trends.csv,84,208,0,2026-08-26,DERIVED
+market_comparison.csv,3,3,0,2026-08-26,DERIVED
+opportunity_results.csv,3,6,0,2026-08-26,DERIVED
+price_forecast.csv,7,0,0,2026-08-26,DERIVED

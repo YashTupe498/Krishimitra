@@ -1,0 +1,4 @@
+vehicle_type,kg_co2e_per_km,classification,note
+TWO_WHEELER,0.075,REFERENCE_ESTIMATE,Not official inventory factor; replace for production
+SMALL_TRUCK,0.27,REFERENCE_ESTIMATE,Not official inventory factor; replace for production
+MEDIUM_TRUCK,0.62,REFERENCE_ESTIMATE,Not official inventory factor; replace for production

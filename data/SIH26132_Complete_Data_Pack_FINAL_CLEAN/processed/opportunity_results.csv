@@ -1,0 +1,4 @@
+opportunity_id,lot_id,farmer_id,destination_market_id,destination_market,commodity,quantity_q,market_price_date,gross_revenue_inr,transport_cost_inr,handling_loading_unloading_inr,market_fee_commission_inr,total_known_cost_inr,expected_net_realization_inr,feasibility_status,constraint,recommendation_rank,generated_from
+OPP0001,L001,F001,M001,Lasalgaon APMC,Onion,100,2026-08-22,395100,0.0,2000,3951.0,5951.0,389149.0,FEASIBLE,,1.0,DERIVED_FROM_REAL_MARKET_PRICES + CURATED_DEMO_LOTS/COSTS
+OPP0002,L002,F002,M001,Lasalgaon APMC,Onion,70,2026-08-22,276570,,1400,2765.7,,,NEEDS_ROUTE_OR_COST_DATA,Missing verified transport route and/or market cost,,DERIVED_FROM_REAL_MARKET_PRICES + CURATED_DEMO_LOTS/COSTS
+OPP0003,L003,F003,M001,Lasalgaon APMC,Onion,40,2026-08-22,158040,0.0,800,1580.4,2380.4,155659.6,FEASIBLE,,1.0,DERIVED_FROM_REAL_MARKET_PRICES + CURATED_DEMO_LOTS/COSTS

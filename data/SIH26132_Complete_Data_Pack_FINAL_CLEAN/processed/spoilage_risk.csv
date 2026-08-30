@@ -1,0 +1,2 @@
+lot_id,commodity,produce_age_days,humidity,storage_quality,projected_wait_days,spoilage_risk,data_class
+L001,Onion,18,82,POOR,10,HIGH,CURATED_SCENARIO

@@ -1,0 +1,3 @@
+offer_id,buyer_id,commodity,quantity_q,price_per_q_inr,payment_days,delivery_deadline_days,status
+O001,B002,Onion,150,2100,3,5,OPEN
+O002,B001,Onion,100,1980,1,3,OPEN

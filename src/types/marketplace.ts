@@ -1,9 +1,9 @@
-export type QualityGrade = 'A' | 'B' | 'C';
+export type QualityGrade = 'A' | 'B' | 'C' | 'PENDING';
 export type RequirementStatus = 'DRAFT' | 'ACTIVE' | 'PAUSED' | 'FULFILLED' | 'CLOSED';
 export type OfferStatus = 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
 export type TransactionStatus = 'CREATED' | 'LOGISTICS_PLANNED' | 'IN_TRANSIT' | 'DELIVERED' | 'PAYMENT_PENDING' | 'PAYMENT_CONFIRMED' | 'COMPLETED';
 export type DeliveryPreference = 'BUYER_PICKUP' | 'SELLER_DELIVERY' | 'FLEXIBLE';
-export interface BuyerRequirement { id: string; buyerId: string; crop: string; quantityRequired: number; minimumAcceptableLotQuantity: number; acceptedQualityGrades: QualityGrade[]; district: string; state: string; maximumSourcingRadiusKm: number; paymentTimelineDays: number; deliveryPreference: DeliveryPreference; status: RequirementStatus; createdAt: string; }
+export interface BuyerRequirement { id: string; buyerId: string; crop: string; quantityRequired: number; quantityUnit: 'KG' | 'QUINTAL'; minimumAcceptableLotQuantity: number; acceptedQualityGrades: QualityGrade[]; district: string; state: string; maximumSourcingRadiusKm: number; paymentTimelineDays: number; deliveryPreference: DeliveryPreference; status: RequirementStatus; createdAt: string; }
 export interface ProduceLot { id: string; farmerId: string; crop: string; quantity: number; unit: 'KG' | 'QUINTAL'; qualityGrade: QualityGrade; district: string; state: string; availabilityStatus: 'READY' | 'UPCOMING' | 'UNAVAILABLE'; sourceType: 'FARMER' | 'FPO_AGGREGATE'; }
 export interface LotMatch { id: string; requirementId: string; lotId: string; cropCompatible: boolean; qualityCompatible: boolean; quantityCompatibility: 'FULL' | 'PARTIAL' | 'NONE'; locationCompatible: boolean; availabilityCompatible: boolean; distanceKm: number; overallStatus: 'MATCHED' | 'PARTIAL_MATCH' | 'NOT_ELIGIBLE'; reasons: string[]; }
 export interface Offer { id: string; lotId: string; requirementId: string; buyerId: string; farmerId: string; quantity: number; pricePerQuintal: number; estimatedTotalValue: number; paymentTimelineDays: number; deliveryPreference: DeliveryPreference; status: OfferStatus; createdAt: string; }

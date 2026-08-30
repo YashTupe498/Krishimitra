@@ -1,0 +1,3 @@
+buyer_id,payment_term_days,cash_urgency_compatibility,default_risk,payment_risk_score,data_class
+B001,30,LOW,MEDIUM,0.62,CURATED_DEMO
+B002,2,HIGH,LOW,0.96,CURATED_DEMO

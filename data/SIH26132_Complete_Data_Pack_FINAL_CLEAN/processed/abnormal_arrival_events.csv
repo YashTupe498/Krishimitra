@@ -1,0 +1,2 @@
+event_id,market,commodity,event_date,event_type,deviation_pct,evidence,data_classification
+AR001,Lasalgaon APMC,Onion,2026-08-25,UNKNOWN,,Arrival values are proxies; cannot validate anomaly as real,PROXY

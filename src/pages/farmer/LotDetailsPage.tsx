@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -6,9 +6,10 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { mockLots } from '../../data/mockLots';
 import { mockDashboardData } from '../../data/mockFarmerDashboard';
-import type { LotStatus } from '../../types/lot';
+import type { Lot, LotStatus } from '../../types/lot';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { farmerLotsApi } from '../../services/farmerLotsApi';
 
 const STATUS_ORDER: LotStatus[] = [
   'DRAFT',
@@ -24,8 +25,20 @@ export const LotDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { session } = useAuth();
+  const [lot, setLot] = useState<Lot | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const lot = id ? mockLots[id] : null;
+  useEffect(() => {
+    const token = session?.access_token;
+    if (!id || !token) return;
+    setIsLoading(true);
+    farmerLotsApi.get(token, id).then(setLot).catch(() => setLot(null)).finally(() => setIsLoading(false));
+  }, [id, session?.access_token]);
+
+  if (isLoading) {
+    return <div className="p-8 text-center text-gray-500">Loading lot…</div>;
+  }
 
   if (!lot) {
     return <div className="p-8 text-center text-gray-500">Lot not found</div>;
@@ -194,7 +207,7 @@ export const LotDetailsPage: React.FC = () => {
                   </>
                 )}
               </div>
-              <Button variant="secondary" className="w-full md:w-auto text-brand-primary font-semibold" onClick={() => navigate('/farmer/market')}>
+              <Button variant="secondary" className="w-full md:w-auto text-brand-primary font-semibold" onClick={() => navigate(`/farmer/market?lotId=${id}`)}>
                 {t('lotDetails.viewMarketAnalysis', 'View Market Analysis')} <ChevronRight size={18} className="ml-1" />
               </Button>
             </div>

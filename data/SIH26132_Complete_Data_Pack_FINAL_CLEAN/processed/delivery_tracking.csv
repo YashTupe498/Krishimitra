@@ -1,0 +1,3 @@
+delivery_id,transaction_id,pickup_at,delivered_at,status,delivery_proof_status,data_classification
+D001,TXN001,2026-08-27T08:00:00,,SCHEDULED,PENDING,CURATED_SCENARIO
+D002,TXN002,2026-08-21T07:00:00,2026-08-21T15:30:00,DELIVERED,VERIFIED_DEMO,CURATED_SCENARIO

@@ -10,6 +10,7 @@ import { profileService } from '../../../services/supabase/profile';
 import { ROUTES } from '../../../constants/routes';
 import styles from './AuthForm.module.css';
 import { useAuth } from '../../../app/providers/AuthProvider';
+import { getAuthErrorMessage } from '../../../utils/authErrors';
 
 export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export const LoginForm: React.FC = () => {
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.message || t('authPages.errorOccurred'));
+      setError(getAuthErrorMessage(err, t('authPages.errorOccurred')));
     } finally {
       setIsLoading(false);
     }

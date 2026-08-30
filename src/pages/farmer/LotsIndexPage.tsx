@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Plus, Package, MapPin, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { mockLots } from '../../data/mockLots';
 import type { Lot } from '../../types/lot';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { farmerLotsApi } from '../../services/farmerLotsApi';
 
 export const LotsIndexPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { session } = useAuth();
+  const [lots, setLots] = useState<Lot[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const lots = Object.values(mockLots);
+  useEffect(() => {
+    const token = session?.access_token;
+    if (!token) return;
+    farmerLotsApi.list(token).then(setLots).catch((cause) => setError(cause instanceof Error ? cause.message : 'Unable to load lots.'));
+  }, [session?.access_token]);
 
   return (
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 pb-28 md:pb-24 max-w-5xl mx-auto">
@@ -32,6 +40,7 @@ export const LotsIndexPage: React.FC = () => {
         </Button>
       </div>
 
+      {error && <Card className="p-4 border border-red-200 bg-red-50 text-red-800">{error}</Card>}
       {/* LOTS GRID */}
       {lots.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

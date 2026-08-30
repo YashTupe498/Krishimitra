@@ -1,0 +1,2 @@
+commodity,storage_condition,max_shelf_life_days,spoilage_rate_per_day,source_version,data_class
+Onion,Ambient,30,0.01,1.0,REFERENCE_ESTIMATE

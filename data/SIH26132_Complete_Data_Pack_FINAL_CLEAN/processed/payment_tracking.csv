@@ -1,0 +1,3 @@
+payment_id,transaction_id,amount_due,amount_received,due_date,received_date,status,payment_delay_days,data_classification
+PAY001,TXN001,20650,0,2026-08-29,,PENDING,,CURATED_SCENARIO
+PAY002,TXN002,108900,108900,2026-08-23,2026-08-23,COMPLETED,0,CURATED_SCENARIO

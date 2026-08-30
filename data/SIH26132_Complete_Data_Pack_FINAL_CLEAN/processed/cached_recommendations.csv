@@ -1,0 +1,2 @@
+recommendation_id,farmer_id,cached_at,expires_at,cache_status,data_classification
+REC001,F001,2026-08-26T10:30:00+05:30,2026-08-27T10:30:00+05:30,VALID,DEMO_CACHE

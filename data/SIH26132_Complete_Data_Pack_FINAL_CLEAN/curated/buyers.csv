@@ -1,0 +1,4 @@
+buyer_id,buyer_name,buyer_type,city,district,state,latitude,longitude,verified
+B001,Nashik Fresh Traders,Wholesaler,Nashik,Nashik,Maharashtra,19.9975,73.7898,True
+B002,Mumbai Fresh Foods,Processor,Mumbai,Mumbai Suburban,Maharashtra,19.076,72.8777,True
+B003,Pune Produce Hub,Wholesaler,Pune,Pune,Maharashtra,18.5204,73.8567,True

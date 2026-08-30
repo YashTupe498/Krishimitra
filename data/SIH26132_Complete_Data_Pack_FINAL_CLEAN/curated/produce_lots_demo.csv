@@ -1,0 +1,4 @@
+lot_id,farmer_id,commodity,variety,quantity_q,quality_grade,available_date,origin_market_id
+L001,F001,Onion,Other,100,Grade B,2026-08-01,M001
+L002,F002,Onion,Other,70,Grade A,2026-08-02,M002
+L003,F003,Onion,Other,40,Grade B,2026-08-03,M001

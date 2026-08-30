@@ -1,0 +1,2 @@
+sync_id,entity_id,operation,status,queued_at,data_classification
+SYNC001,REC001,RECALCULATE_RECOMMENDATION,QUEUED,2026-08-26T10:35:00+05:30,DEMO

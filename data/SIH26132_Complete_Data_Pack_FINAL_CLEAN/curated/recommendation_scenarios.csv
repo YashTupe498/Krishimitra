@@ -1,0 +1,4 @@
+scenario_id,farmer_id,lot_id,option,gross_revenue_inr,transport_cost_inr,storage_cost_inr,other_cost_inr,expected_net_inr,feasible,primary_constraint
+SC001,F001,L001,SELL_LOCAL_TODAY,198000,0,0,2000,196000,True,NONE
+SC002,F001,L001,SELL_MUMBAI_AFTER_AGGREGATION,210000,12000,0,3000,195000,False,QUANTITY_SHORTFALL
+SC003,F002,L002,STORE_7_DAYS,160000,0,2450,1000,156550,True,PRICE_UNCERTAINTY

@@ -1,0 +1,3 @@
+ticket_id,category,related_lot_id,status,priority,created_at,resolution_target_days
+G001,QUALITY_DISPUTE,L001,OPEN,HIGH,2026-08-01,3
+G002,PAYMENT_DELAY,L002,RESOLVED,MEDIUM,2026-08-02,5

@@ -1,0 +1,2 @@
+lot_id,commodity,produce_age_days,max_shelf_life_days,remaining_days,status,data_class
+L001,Onion,18,30,12,LIMITED,DERIVED

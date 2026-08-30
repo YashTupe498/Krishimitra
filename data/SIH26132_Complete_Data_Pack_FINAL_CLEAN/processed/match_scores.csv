@@ -1,0 +1,3 @@
+match_id,lot_id,buyer_id,commodity_match,quantity_match,quality_match,distance_score,payment_score,overall_match_score,status,data_classification
+M001,L001,B001,100,92,95,82,96,91,SHORTLISTED,DERIVED
+M002,L002,B002,100,78,90,88,85,86,FEASIBLE_AFTER_RESOLUTION,DERIVED

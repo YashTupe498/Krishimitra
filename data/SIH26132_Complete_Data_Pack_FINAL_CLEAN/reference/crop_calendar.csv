@@ -1,0 +1,4 @@
+commodity,state,season,sowing_start,harvest_start,harvest_end,peak_arrival_period,source
+Onion,Maharashtra,Kharif,June,October,December,Nov-Dec,REFERENCE_AGRICULTURAL_CALENDAR_CONTEXT
+Onion,Maharashtra,Late Kharif,August,January,March,Feb-Mar,REFERENCE_AGRICULTURAL_CALENDAR_CONTEXT
+Onion,Maharashtra,Rabi,October,March,May,Apr-May,REFERENCE_AGRICULTURAL_CALENDAR_CONTEXT

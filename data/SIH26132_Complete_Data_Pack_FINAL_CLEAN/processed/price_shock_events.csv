@@ -1,0 +1,2 @@
+event_id,market,commodity,event_date,shock_direction,shock_pct,evidence,data_classification
+PS001,Lasalgaon APMC,Onion,2026-08-25,NONE,0,No validated shock in available observed series,DERIVED

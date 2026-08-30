@@ -1,0 +1,4 @@
+farmer_id,district,village,commodity,cash_urgency_days,preferred_language,max_transport_km
+F001,Nashik,Lasalgaon,Onion,1,mr,150
+F002,Nashik,Pimpalgaon Baswant,Onion,7,mr,300
+F003,Nashik,Niphad,Onion,15,hi,500

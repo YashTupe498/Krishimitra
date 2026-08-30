@@ -1,0 +1,3 @@
+recommendation_id,lot_id,recommended_action,recommended_sale_date,earliest_sale_date,latest_safe_sale_date,expected_net_realization,reason,confidence,data_classification
+SWR001,L001,SELL_NOW,2026-08-26,2026-08-26,2026-08-28,20650,Fresh price advantage with low spoilage risk,0.87,CURATED_SCENARIO
+SWR002,L002,STORE_AND_SELL,2026-09-01,2026-08-27,2026-09-03,21800,Forecast upside exceeds storage cost within safe shelf life,0.74,CURATED_SCENARIO

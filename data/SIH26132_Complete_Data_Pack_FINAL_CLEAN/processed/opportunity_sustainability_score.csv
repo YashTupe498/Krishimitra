@@ -1,0 +1,3 @@
+opportunity_id,estimated_kg_co2e,expected_net_inr,sustainability_score,optimization_label,basis
+OPP0001,0,389149.0,100,BEST_BALANCED,Origin/local route
+OPP0003,0,155659.6,100,BEST_BALANCED,Origin/local route

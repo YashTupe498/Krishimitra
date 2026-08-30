@@ -1,0 +1,3 @@
+crisis_recommendation_id,emergency_opportunity_id,recommended_action,market,payment_priority,risk_level,explanation,data_classification
+CR001,EMO001,SELL_PARTIAL_TODAY,Lasalgaon APMC,IMMEDIATE,HIGH,Minimize spoilage while preserving remaining stock,CURATED_SCENARIO
+CR002,EMO002,SELL_NEAREST_MARKET,Lasalgaon APMC,IMMEDIATE,MEDIUM,Avoid weather and route disruption,CURATED_SCENARIO

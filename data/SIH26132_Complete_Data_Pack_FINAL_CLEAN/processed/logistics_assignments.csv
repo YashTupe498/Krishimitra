@@ -1,0 +1,2 @@
+assignment_id,request_id,vehicle_type,provider_id,assigned_at,estimated_cost,status,data_classification
+LA001,LR001,LIGHT_COMMERCIAL,TP001,2026-08-26T10:15:00,2400,ASSIGNED,CURATED_SCENARIO

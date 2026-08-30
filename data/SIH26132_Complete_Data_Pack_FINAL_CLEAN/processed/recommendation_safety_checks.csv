@@ -1,0 +1,2 @@
+recommendation_id,freshness_check,price_validation,anomaly_check,source_check,safe_to_issue,data_class
+REC001,PASS,PASS,PASS,PASS,YES,DERIVED

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ArrowRight, Save, CheckCircle2, MapPin, Package, Settings, ShieldCheck } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { lotStore } from '../../data/mockLots';
 import type { Lot } from '../../types/lot';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { farmerLotsApi } from '../../services/farmerLotsApi';
 
 type Step = 1 | 2 | 3;
 
@@ -37,34 +38,69 @@ const defaultDraft: DraftLot = {
   storageCapability: 'Can store produce'
 };
 
-export const CreateLotPage: React.FC = () => {
+interface CreateLotPageProps {
+  mode?: 'create' | 'edit';
+}
+
+export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' }) => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
+  const { session } = useAuth();
   
   const [step, setStep] = useState<Step>(1);
   const [draft, setDraft] = useState<DraftLot>(defaultDraft);
+  const [initialDraft, setInitialDraft] = useState<DraftLot>(defaultDraft);
 
   useEffect(() => {
-    const saved = localStorage.getItem('krishimitra_lot_draft');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setDraft({ ...defaultDraft, ...parsed.draft });
-        setStep(parsed.step || 1);
-      } catch (e) {
-        // ignore
+    if (mode === 'edit' && id) {
+      const token = session?.access_token;
+      if (!token) return;
+      farmerLotsApi.get(token, id).then((existingLot) => {
+        const loadedDraft: DraftLot = {
+          crop: existingLot.crop,
+          quantity: existingLot.quantity.replace(/,/g, ''),
+          unit: existingLot.unit,
+          availabilityDate: existingLot.createdAt.split('T')[0],
+          village: existingLot.village || '',
+          taluka: existingLot.taluka || '',
+          district: existingLot.district || '',
+          state: existingLot.state || '',
+          paymentRequirement: existingLot.constraints.paymentRequirement,
+          transportCapability: existingLot.constraints.transportCapability,
+          storageCapability: existingLot.constraints.storageCapability
+        };
+        setDraft(loadedDraft);
+        setInitialDraft(loadedDraft);
+      }).catch(() => navigate('/farmer/lots'));
+    } else {
+      const saved = localStorage.getItem('krishimitra_lot_draft');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setDraft({ ...defaultDraft, ...parsed.draft });
+          setStep(parsed.step || 1);
+        } catch (e) {
+          // ignore
+        }
       }
     }
-  }, []);
+  }, [mode, id, navigate, session?.access_token]);
 
   const saveDraft = (currentDraft: DraftLot, currentStep: Step) => {
-    localStorage.setItem('krishimitra_lot_draft', JSON.stringify({ draft: currentDraft, step: currentStep }));
+    if (mode === 'create') {
+      localStorage.setItem('krishimitra_lot_draft', JSON.stringify({ draft: currentDraft, step: currentStep }));
+    }
   };
 
   const updateDraft = (updates: Partial<DraftLot>) => {
     const newDraft = { ...draft, ...updates };
     setDraft(newDraft);
     saveDraft(newDraft, step);
+  };
+
+  const hasUnsavedChanges = () => {
+    return JSON.stringify(draft) !== JSON.stringify(initialDraft);
   };
 
   const handleNext = () => {
@@ -83,37 +119,163 @@ export const CreateLotPage: React.FC = () => {
       setStep(prevStep);
       saveDraft(draft, prevStep);
     } else {
+      if (mode === 'edit' && hasUnsavedChanges()) {
+        if (window.confirm('You have unsaved changes. Discard?')) {
+          navigate(`/farmer/lots/${id}`);
+        }
+      } else if (mode === 'create') {
+        handleSaveAndExit();
+      } else {
+        navigate(`/farmer/lots/${id}`);
+      }
+    }
+  };
+
+  const saveToBackend = async (lot: Lot, changes?: Partial<Lot>) => {
+    const token = session?.access_token;
+    if (!token) throw new Error('Your session has expired. Please sign in again.');
+    const payload = {
+      id: lot.id,
+      crop: changes?.crop ?? lot.crop,
+      quantity: changes?.quantity ?? lot.quantity,
+      unit: changes?.unit ?? lot.unit,
+      location: changes?.location ?? lot.location,
+      village: changes?.village ?? lot.village,
+      taluka: changes?.taluka ?? lot.taluka,
+      district: changes?.district ?? lot.district,
+      state: changes?.state ?? lot.state,
+      status: changes?.status ?? lot.status,
+      quality_grade: changes?.qualityGrade ?? lot.qualityGrade,
+      constraints: changes?.constraints ?? lot.constraints,
+    };
+    if (changes) return farmerLotsApi.update(token, lot.id, payload);
+    return farmerLotsApi.create(token, payload);
+  };
+
+  const handleSaveAndExit = async () => {
+    if (mode === 'edit') {
+      if (hasUnsavedChanges()) {
+        if (window.confirm('You have unsaved changes. Discard?')) {
+          navigate(`/farmer/lots/${id}`);
+        }
+      } else {
+        navigate(`/farmer/lots/${id}`);
+      }
+    } else {
+      // In create mode, if they started filling it out, save it as a DRAFT lot
+      if (draft.crop || draft.quantity) {
+        const newLot: Lot = {
+          id: `lot-${Date.now()}`,
+          farmerId: 'farmer-current',
+          crop: draft.crop || 'Unknown',
+          quantity: draft.quantity || '0',
+          unit: draft.unit,
+          location: `${draft.village}, ${draft.state}`,
+          village: draft.village,
+          taluka: draft.taluka,
+          district: draft.district,
+          state: draft.state,
+          status: 'DRAFT',
+          qualityGrade: null,
+          qualityAssessment: null,
+          constraints: {
+            paymentRequirement: draft.paymentRequirement,
+            transportCapability: draft.transportCapability,
+            storageCapability: draft.storageCapability
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        try {
+          await saveToBackend(newLot);
+        } catch (error) {
+          window.alert(error instanceof Error ? error.message : 'The draft could not be saved.');
+          return;
+        }
+        localStorage.removeItem('krishimitra_lot_draft');
+      }
       navigate('/farmer/lots');
     }
   };
 
-  const finishCreation = () => {
-    const newLot: Lot = {
-      id: `lot-${Date.now()}`,
-      farmerId: 'farmer-current',
-      crop: draft.crop,
-      quantity: draft.quantity,
-      unit: draft.unit,
-      location: `${draft.village}, ${draft.state}`,
-      village: draft.village,
-      taluka: draft.taluka,
-      district: draft.district,
-      state: draft.state,
-      status: 'QUALITY_PENDING',
-      qualityGrade: null,
-      qualityAssessment: null,
-      constraints: {
-        paymentRequirement: draft.paymentRequirement,
-        transportCapability: draft.transportCapability,
-        storageCapability: draft.storageCapability
-      },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+  const finishCreation = async () => {
+    if (mode === 'edit' && id) {
+      const token = session?.access_token;
+      if (!token) {
+        window.alert('Your session has expired. Please sign in again.');
+        return;
+      }
+      const updates: Partial<Lot> = {
+        crop: draft.crop,
+        quantity: draft.quantity,
+        unit: draft.unit,
+        location: `${draft.village}, ${draft.state}`,
+        village: draft.village,
+        taluka: draft.taluka,
+        district: draft.district,
+        state: draft.state,
+        status: 'QUALITY_PENDING',
+        constraints: {
+          paymentRequirement: draft.paymentRequirement,
+          transportCapability: draft.transportCapability,
+          storageCapability: draft.storageCapability
+        }
+      };
+      try {
+        await farmerLotsApi.update(token, id, {
+          crop: updates.crop,
+          quantity: updates.quantity,
+          unit: updates.unit,
+          location: updates.location,
+          village: updates.village,
+          taluka: updates.taluka,
+          district: updates.district,
+          state: updates.state,
+          status: updates.status,
+          constraints: updates.constraints,
+        });
+      } catch (error) {
+        window.alert(error instanceof Error ? error.message : 'The lot could not be saved.');
+        return;
+      }
+      // Small toast or notification could go here
+      navigate(`/farmer/lots/${id}`);
+    } else {
+      const newLot: Lot = {
+        id: `lot-${Date.now()}`,
+        farmerId: 'farmer-current',
+        crop: draft.crop,
+        quantity: draft.quantity,
+        unit: draft.unit,
+        location: `${draft.village}, ${draft.state}`,
+        village: draft.village,
+        taluka: draft.taluka,
+        district: draft.district,
+        state: draft.state,
+        status: 'QUALITY_PENDING',
+        qualityGrade: null,
+        qualityAssessment: null,
+        constraints: {
+          paymentRequirement: draft.paymentRequirement,
+          transportCapability: draft.transportCapability,
+          storageCapability: draft.storageCapability
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
 
-    lotStore.add(newLot);
-    localStorage.removeItem('krishimitra_lot_draft');
-    navigate(`/farmer/lots/${newLot.id}`);
+      try {
+        const savedLot = await saveToBackend(newLot);
+        localStorage.removeItem('krishimitra_lot_draft');
+        navigate(`/farmer/lots/${savedLot.id}`);
+        return;
+      } catch (error) {
+        window.alert(error instanceof Error ? error.message : 'The lot could not be saved.');
+        return;
+      }
+      localStorage.removeItem('krishimitra_lot_draft');
+      navigate(`/farmer/lots/${newLot.id}`);
+    }
   };
 
   const canProceedStep1 = draft.crop !== '' && draft.quantity !== '';
@@ -131,15 +293,17 @@ export const CreateLotPage: React.FC = () => {
           {t('common.back', 'Back')}
         </button>
         <button 
-          onClick={() => navigate('/farmer/lots')}
+          onClick={handleSaveAndExit}
           className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-gray-700 transition-colors"
         >
           <Save size={16} />
-          {t('createLot.saveExit', 'Save & Exit')}
+          {mode === 'edit' ? t('common.cancel', 'Cancel') : t('createLot.saveExit', 'Save & Exit')}
         </button>
       </div>
 
-      <h1 className="text-3xl font-display font-bold text-gray-900 mb-8">{t('createLot.title', 'Create New Lot')}</h1>
+      <h1 className="text-3xl font-display font-bold text-gray-900 mb-8">
+        {mode === 'edit' ? t('createLot.editTitle', 'Edit Lot Details') : t('createLot.title', 'Create New Lot')}
+      </h1>
 
       {/* STEPPER */}
       <div className="flex items-center justify-between mb-10 relative">
@@ -378,7 +542,7 @@ export const CreateLotPage: React.FC = () => {
                 <ArrowLeft size={18} /> {t('common.back', 'Back')}
               </Button>
               <Button variant="primary" className="px-8 font-bold flex items-center gap-2" onClick={handleNext}>
-                {t('createLot.finish', 'Save Lot')} <CheckCircle2 size={18} />
+                {mode === 'edit' ? t('common.saveChanges', 'Save Changes') : t('createLot.finish', 'Save Lot')} <CheckCircle2 size={18} />
               </Button>
             </div>
           </div>

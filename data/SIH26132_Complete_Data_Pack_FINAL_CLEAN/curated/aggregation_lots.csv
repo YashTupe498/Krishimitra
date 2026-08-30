@@ -1,0 +1,4 @@
+aggregation_lot_id,fpo_id,commodity,quantity_q,quality_grade,latitude,longitude,available,available_until
+A001,F001,Onion,30,Grade B,20.01,73.8,True,2026-12-31
+A002,F001,Onion,25,Grade B,20.03,73.77,True,2026-12-31
+A003,F002,Onion,60,Grade A,20.16,74.095,True,2026-12-31

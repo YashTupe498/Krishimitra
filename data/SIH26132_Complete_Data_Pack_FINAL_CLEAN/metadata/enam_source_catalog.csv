@@ -1,0 +1,5 @@
+dataset,official_page,fields_visible,classification,acquisition_status
+historical_trade,https://www.enam.gov.in/web/dashboard/Historical,"state,apmc,commodity,min/modal/max price,arrivals,traded,unit,date",SOURCE,SCHEMA_VERIFIED_MANUAL_ACQUISITION
+trade_data,https://www.enam.gov.in/web/dashboard/trade-data,"state,apmc,commodity,min/modal/max price,arrivals,traded,unit,date",SOURCE,SCHEMA_VERIFIED_MANUAL_ACQUISITION
+agmarknet_dashboard,https://www.enam.gov.in/web/dashboard/agmarknet,"state,district,apmc,eNAM flag,commodity,arrivals,variety,prices,traded,unit,date",SOURCE,SCHEMA_VERIFIED_MANUAL_ACQUISITION
+advance_supply,https://enam.gov.in/web/advance-supply,"state,district,seller,expected supply date,commodity,quantity,uom,eNAM/POP",SOURCE,SCHEMA_VERIFIED_MANUAL_ACQUISITION

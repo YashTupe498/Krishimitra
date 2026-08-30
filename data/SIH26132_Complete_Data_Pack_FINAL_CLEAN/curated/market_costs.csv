@@ -1,0 +1,4 @@
+cost_id,market_id,commodity,loading_per_q,unloading_per_q,handling_per_q,market_fee_pct,commission_pct
+C001,M001,Onion,8,7,5,1.0,0.0
+C002,M002,Onion,8,7,5,1.0,0.0
+C003,M003,Onion,10,8,6,1.0,0.0

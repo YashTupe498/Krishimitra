@@ -1,0 +1,3 @@
+transaction_id,lot_id,buyer_id,agreed_quantity,agreed_price,transaction_value,status,created_at,completed_at,data_classification
+TXN001,L001,B001,10,2065,20650,PAYMENT_PENDING,2026-08-26T10:30:00,,CURATED_SCENARIO
+TXN002,L002,B002,55,1980,108900,COMPLETED,2026-08-20T09:00:00,2026-08-23T17:30:00,CURATED_SCENARIO

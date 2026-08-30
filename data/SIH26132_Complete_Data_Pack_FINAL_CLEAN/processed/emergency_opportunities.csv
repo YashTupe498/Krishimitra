@@ -1,0 +1,3 @@
+emergency_opportunity_id,farmer_id,lot_id,event_code,action,sell_quantity_q,retain_quantity_q,fallback,data_classification
+EMO001,F001,L001,STORAGE_FAILURE,SELL_PARTIAL_TODAY,35,65,SEARCH_SAFE_STORAGE,CURATED_SCENARIO
+EMO002,F003,L003,HEAVY_RAIN,SELL_NEAREST_MARKET,40,0,AVOID_LONG_ROUTE,CURATED_SCENARIO

@@ -1,0 +1,5 @@
+source_id,source_name,classification,url,expected_use,notes
+SRC001,Government of India OGD / AGMARKNET mandi prices,SOURCE,https://www.data.gov.in/resource/current-daily-price-various-commodities-various-markets-mandi,Daily wholesale min/max/modal prices,Download/export raw data into raw/agmarknet
+SRC002,Government of India OGD variety-wise market prices,SOURCE,https://www.data.gov.in/resource/variety-wise-daily-market-prices-data-commodity,Variety-aware market pricing,Use when available for selected commodity/markets
+SRC003,e-NAM,SOURCE,https://www.enam.gov.in/web/dashboard/Historical,Historical trade/market information,Export or collect permitted data; store raw
+SRC004,Curated SIH ecosystem data,CURATED,LOCAL,Buyer/logistics/storage/FPO demo ecosystem,Explicitly label as curated demo data

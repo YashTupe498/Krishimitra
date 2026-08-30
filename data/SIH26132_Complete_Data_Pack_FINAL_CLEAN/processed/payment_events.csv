@@ -1,0 +1,3 @@
+event_id,payment_id,transaction_id,event_type,event_timestamp,actor,amount,details,data_classification
+PE001,PAY001,TXN001,PAYMENT_DUE,2026-08-29T09:00:00,SYSTEM,20650,Payment due,CURATED_SCENARIO
+PE002,PAY002,TXN002,PAYMENT_RECEIVED,2026-08-23T17:00:00,BUYER,108900,Payment confirmed,CURATED_SCENARIO

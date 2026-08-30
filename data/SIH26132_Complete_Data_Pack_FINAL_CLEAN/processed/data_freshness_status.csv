@@ -1,0 +1,5 @@
+dataset,latest_date,data_type,freshness_status
+market_prices_normalized.csv,2026-08-25,HISTORICAL_OBSERVED,STALE_FOR_LIVE_DECISIONS
+market_arrivals_real.csv,2026-08-25,DERIVED_PROXY,NOT_OFFICIAL
+historical_weather.csv,2026-08-25,CURATED_SCENARIO,NOT_LIVE_IMD
+maharashtra_onion_multi_market.csv,2026-08-25,MIXED,VERIFY_SCENARIO_ROWS

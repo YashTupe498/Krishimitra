@@ -1,0 +1,2 @@
+dispute_id,transaction_id,dispute_type,raised_by,raised_at,status,data_classification
+DIS001,TXN002,QUALITY_MISMATCH,BUYER,2026-08-21T16:00:00,RESOLVED,CURATED_SCENARIO

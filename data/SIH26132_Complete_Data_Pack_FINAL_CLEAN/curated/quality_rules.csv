@@ -1,0 +1,4 @@
+rule_id,commodity,grade,parameter,operator,value,unit
+Q001,Onion,Grade A,defect_percent,<=,5,%
+Q002,Onion,Grade B,defect_percent,<=,10,%
+Q003,Onion,Grade A,size_uniformity,>=,90,%

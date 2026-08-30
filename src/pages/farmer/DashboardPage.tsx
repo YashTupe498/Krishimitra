@@ -17,8 +17,9 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { mockDashboardData } from '../../data/mockFarmerDashboard';
-import { lotStore } from '../../data/mockLots';
 import { useNavigate } from 'react-router-dom';
+import { farmerLotsApi } from '../../services/farmerLotsApi';
+import type { Lot } from '../../types/lot';
 
 import { useTranslation } from 'react-i18next';
 
@@ -31,15 +32,22 @@ const formatCurrency = (value: number) => {
 };
 
 export const FarmerDashboardPage: React.FC = () => {
-  const { profile } = useAuth();
+  const { profile, session } = useAuth();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const [showLangMenu, setShowLangMenu] = React.useState(false);
+  const [lots, setLots] = React.useState<Lot[]>([]);
   const { activeDecision, marketSnapshot, marketPressure, saleWindow, actionItems } = mockDashboardData;
   const firstName = profile?.full_name?.split(' ')[0] || 'Farmer';
   const location = profile?.district ? `${profile.district}, ${profile.state || 'India'}` : 'Nashik, Maharashtra';
 
-  const activeLots = lotStore.getAll().map(lot => ({
+  React.useEffect(() => {
+    const token = session?.access_token;
+    if (!token) return;
+    farmerLotsApi.list(token).then(setLots).catch(() => setLots([]));
+  }, [session?.access_token]);
+
+  const activeLots = lots.map(lot => ({
     id: lot.id,
     crop: lot.crop,
     quantity: `${lot.quantity} ${lot.unit}`,

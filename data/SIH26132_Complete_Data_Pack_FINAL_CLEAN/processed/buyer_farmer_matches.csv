@@ -1,0 +1,3 @@
+match_id,lot_id,buyer_id,match_type,overall_match_score,status,data_classification
+M001,L001,B001,DIRECT,91,SHORTLISTED,CURATED_SCENARIO
+M002,L002,B002,FPO_AGGREGATED,86,FEASIBLE_AFTER_RESOLUTION,CURATED_SCENARIO

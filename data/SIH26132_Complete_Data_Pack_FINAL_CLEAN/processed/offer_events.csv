@@ -1,0 +1,4 @@
+event_id,offer_id,event_type,actor,event_timestamp,details,data_classification
+OE001,O001,OFFER_SENT,BUYER,2026-08-26T09:30:00,Initial offer sent,CURATED_SCENARIO
+OE002,O001,COUNTER_OFFER,FARMER,2026-08-26T09:45:00,Counter price requested,CURATED_SCENARIO
+OE003,O001,OFFER_ACCEPTED,FARMER,2026-08-26T10:00:00,Offer accepted,CURATED_SCENARIO

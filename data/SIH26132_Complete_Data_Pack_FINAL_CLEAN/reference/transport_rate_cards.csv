@@ -1,0 +1,5 @@
+rate_id,origin_district,destination_district,vehicle_type,cost_per_km,currency_unit,source
+TR001,Nashik,Pune,TRUCK_3T,18.0,INR/km,CURATED_RATE_CARD_FOR_DEMO
+TR002,Nashik,Solapur,TRUCK_3T,18.0,INR/km,CURATED_RATE_CARD_FOR_DEMO
+TR003,Nashik,Ahmednagar,TRUCK_3T,18.0,INR/km,CURATED_RATE_CARD_FOR_DEMO
+TR004,Nashik,Thane,TRUCK_3T,18.0,INR/km,CURATED_RATE_CARD_FOR_DEMO

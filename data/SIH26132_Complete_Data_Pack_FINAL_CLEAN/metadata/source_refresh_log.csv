@@ -1,0 +1,4 @@
+source,dataset,last_refresh,status,records_fetched,notes
+AGMARKNET,market_prices_raw/cleaned,2026-08-26,SUCCESS,84,Imported/normalized from populated pack
+DERIVED_PIPELINE,processed datasets,2026-08-26,SUCCESS,265,Generated from current pack
+FORECAST_BASELINE,price_forecast,2026-08-26,SUCCESS,7,14-day rolling mean baseline; not trained ML

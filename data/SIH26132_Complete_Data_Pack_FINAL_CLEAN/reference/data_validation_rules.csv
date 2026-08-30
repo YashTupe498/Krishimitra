@@ -1,0 +1,2 @@
+rule_id,dataset,field,validation_type,min_value,max_value,action
+VAL001,market_prices,modal_price,RANGE,100,10000,QUARANTINE

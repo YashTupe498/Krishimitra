@@ -1,0 +1,3 @@
+market,commodity,date,arrivals,estimated_demand,traded_quantity,liquidity_score,data_class
+Pune,Onion,2026-08-26,1000,700,450,0.55,CURATED_SCENARIO
+Lasalgaon,Onion,2026-08-26,1200,1300,1100,0.92,CURATED_SCENARIO

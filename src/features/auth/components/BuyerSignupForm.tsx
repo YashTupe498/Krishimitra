@@ -9,6 +9,7 @@ import { FormMessage } from '../../../components/ui/FormMessage';
 import { supabase } from '../../../services/supabase/client';
 import { ROUTES } from '../../../constants/routes';
 import styles from './AuthForm.module.css';
+import { getAuthErrorMessage } from '../../../utils/authErrors';
 
 export const BuyerSignupForm: React.FC = () => {
   const navigate = useNavigate();
@@ -65,13 +66,13 @@ export const BuyerSignupForm: React.FC = () => {
           role: 'BUYER' as const,
           account_type: 'BUYER' as const,
           full_name: formData.fullName,
-          phone: formData.phone || null,
-          district: formData.district || null,
-          state: formData.state || null,
+          phone: formData.phone || '',
+          district: formData.district || '',
+          state: formData.state || '',
           preferred_language: 'en',
-          organization_name: formData.companyName || null,
-          registration_reference: formData.gstin || null,
-          buyer_type: formData.buyerType || null,
+          organization_name: formData.companyName || '',
+          registration_reference: formData.gstin || '',
+          buyer_type: formData.buyerType || '',
         };
 
         console.log('[Signup] Inserting profile:', profilePayload);
@@ -98,7 +99,7 @@ export const BuyerSignupForm: React.FC = () => {
       }
     } catch (err: any) {
       console.error('[Signup] Error:', err);
-      setError(err.message || t('authPages.errorOccurred'));
+      setError(getAuthErrorMessage(err, t('authPages.errorOccurred')));
     } finally {
       setIsLoading(false);
     }

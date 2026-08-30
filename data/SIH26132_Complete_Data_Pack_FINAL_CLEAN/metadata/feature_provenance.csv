@@ -1,0 +1,6 @@
+feature,source_asset,source_classification,feature_category
+modal_price,raw/agmarknet,AGMARKNET-attributed observed,PRICE
+weather_risk,raw/weather,SCENARIO_OR_PROXY,RISK
+transport_cost,reference/transport_rate_cards.csv,CURATED/REFERENCE,COST
+quality_grade,curated/quality_assessment_demo.csv,CURATED_DEMO,QUALITY
+farmer_constraints,curated/farmer_preferences.csv,CURATED_DEMO,PERSONALIZATION

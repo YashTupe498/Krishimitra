@@ -1,0 +1,4 @@
+decision_id,farmer_id,opportunity_id,action,market,decision_status,decision_date,data_classification
+DEC001,F001,OPP0001,SELL_TODAY,Lasalgaon APMC,ACCEPTED,2026-08-22,CURATED_DEMO
+DEC002,F002,OPP0002,WAIT_FOR_ROUTE,Lasalgaon APMC,REJECTED,2026-08-22,CURATED_DEMO
+DEC003,F003,OPP0003,SELL_TODAY,Lasalgaon APMC,ACCEPTED,2026-08-22,CURATED_DEMO

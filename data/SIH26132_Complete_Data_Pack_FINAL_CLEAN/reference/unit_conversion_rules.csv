@@ -1,0 +1,5 @@
+unit,base_unit,conversion_factor,status
+%,%,1,ACTIVE
+INR/km,INR/km,1,ACTIVE
+QUINTAL,KG,100,ACTIVE
+Quintal,KG,100,ACTIVE

@@ -1,0 +1,4 @@
+feedback_id,farmer_id,decision_id,outcome,satisfaction_score,predicted_net_inr,actual_net_inr,feedback_note,data_classification
+FB001,F001,DEC001,SUCCESS,5.0,389149.0,388500.0,Slight market fee variation,CURATED_DEMO
+FB002,F002,DEC002,PENDING,,,,Awaiting verified route,CURATED_DEMO
+FB003,F003,DEC003,SUCCESS,4.0,155659.6,154900.0,Handling variation,CURATED_DEMO

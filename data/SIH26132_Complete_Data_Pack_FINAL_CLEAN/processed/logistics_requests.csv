@@ -1,0 +1,2 @@
+request_id,transaction_id,origin,destination,quantity,requested_pickup_date,status,data_classification
+LR001,TXN001,Nashik,Pune,10,2026-08-27,ASSIGNED,CURATED_SCENARIO

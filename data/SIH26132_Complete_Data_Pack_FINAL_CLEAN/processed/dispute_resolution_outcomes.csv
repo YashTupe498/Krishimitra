@@ -1,0 +1,2 @@
+dispute_id,resolution,resolved_at,financial_adjustment,outcome_status,data_classification
+DIS001,PARTIAL_PRICE_ADJUSTMENT,2026-08-22T11:00:00,-2500,RESOLVED,CURATED_SCENARIO

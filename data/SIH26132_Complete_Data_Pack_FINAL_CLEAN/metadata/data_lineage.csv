@@ -1,0 +1,3 @@
+source_asset,derived_asset,transformation,classification,description
+raw/agmarknet/maharashtra_onion_nashik_markets_2026.csv,processed/market_prices_cleaned.csv,clean_market_data.py,OBSERVED_AGMARKNET_ATTRIBUTED,Raw observed prices cleaned
+processed/market_prices_cleaned.csv,processed/opportunity_results.csv,opportunity_engine,DERIVED_PLUS_CURATED,Prices combined with demo lots/costs

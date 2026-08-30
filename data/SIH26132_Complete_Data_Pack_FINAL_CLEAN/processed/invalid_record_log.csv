@@ -1,0 +1,2 @@
+record_id,dataset,field,observed_value,rule_id,status,data_class
+BAD001,market_prices,modal_price,50000,VAL001,REJECTED,CURATED_TEST

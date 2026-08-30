@@ -1,0 +1,6 @@
+event_code,category,severity,default_resolution,classification
+HEAVY_RAIN,WEATHER,HIGH,Reroute or accelerate sale,REFERENCE_RULE
+STORAGE_FAILURE,STORAGE,CRITICAL,Immediate partial/full sale,REFERENCE_RULE
+TRANSPORT_CANCELLATION,LOGISTICS,HIGH,Find alternate carrier/market,REFERENCE_RULE
+BUYER_CANCELLATION,DEMAND,HIGH,Search alternate buyer/market,REFERENCE_RULE
+CASH_EMERGENCY,FINANCIAL,HIGH,Prioritize immediate payment,REFERENCE_RULE

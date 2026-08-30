@@ -1,0 +1,3 @@
+audit_id,recommendation_id,event_type,timestamp,details,data_classification
+AUD001,REC001,GENERATED,2026-08-22T09:00:00+05:30,REC001 generated from price+cost+preference inputs,DERIVED
+AUD002,REC001,FARMER_ACCEPTED,2026-08-22T09:15:00+05:30,Demo acceptance recorded,CURATED_DEMO

@@ -1,0 +1,5 @@
+commodity_id,canonical_commodity_name,alias,status
+C001,Onion,ONION,ACTIVE
+C001,Onion,Onion,ACTIVE
+C001,Onion,Onion (Red),ACTIVE
+C001,Onion,Red Onion,ACTIVE

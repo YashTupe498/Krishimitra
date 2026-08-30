@@ -1,0 +1,4 @@
+aggregation_lot_id,declared_quantity_q,member_quantity_q,difference_q,status
+A001,30.0,30.0,0.0,VALID
+A002,25.0,25.0,0.0,VALID
+A003,60.0,60.0,0.0,VALID

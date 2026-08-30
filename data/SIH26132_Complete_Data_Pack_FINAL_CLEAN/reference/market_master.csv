@@ -1,0 +1,9 @@
+market_id,market_name,city,district,state,latitude,longitude,is_enam,status,data_note
+M001,Lasalgaon APMC,Lasalgaon,Nashik,Maharashtra,20.151,74.237,Unknown,ACTIVE,REFERENCE/DEMO + observed price match
+M002,Pimpalgaon Baswant APMC,Pimpalgaon Baswant,Nashik,Maharashtra,20.166,74.095,Unknown,ACTIVE,REFERENCE_DEMO
+M003,Nashik APMC,Nashik,Nashik,Maharashtra,19.9975,73.7898,Unknown,ACTIVE,REFERENCE_DEMO
+M004,Lasalgaon (Vinchur) APMC,Vinchur,Nashik,Maharashtra,,,Unknown,ACTIVE,Observed price market; coordinates not verified
+M005,Pune APMC,Pune,Pune,Maharashtra,,,Unknown,ACTIVE,REFERENCE_DEMO
+M006,Solapur APMC,Solapur,Solapur,Maharashtra,,,Unknown,ACTIVE,REFERENCE_DEMO
+M007,Ahmednagar APMC,Ahmednagar,Ahmednagar,Maharashtra,,,Unknown,ACTIVE,REFERENCE_DEMO
+M008,Vashi APMC,Vashi,Mumbai Suburban,Maharashtra,,,Unknown,ACTIVE,REFERENCE_DEMO

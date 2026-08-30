@@ -1,0 +1,3 @@
+storage_id,name,city,state,commodity,capacity_q,available_capacity_q,cost_per_q_day_inr,status
+S001,Demo Nashik Produce Storage,Nashik,Maharashtra,Onion,5000,1200,5.0,AVAILABLE
+S002,Demo Pimpalgaon Storage Hub,Pimpalgaon Baswant,Maharashtra,Onion,3000,800,4.5,AVAILABLE

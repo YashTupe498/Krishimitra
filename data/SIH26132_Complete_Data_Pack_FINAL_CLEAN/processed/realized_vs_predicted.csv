@@ -1,0 +1,3 @@
+recommendation_id,predicted_net_inr,actual_net_inr,error_inr,error_pct,outcome,data_classification
+REC001,389149.0,388500,-649.0,0.17,SUCCESS,CURATED_DEMO
+REC003,155659.6,154900,-759.6,0.49,SUCCESS,CURATED_DEMO

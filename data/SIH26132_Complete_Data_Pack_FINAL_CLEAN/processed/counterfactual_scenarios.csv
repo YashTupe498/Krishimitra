@@ -1,0 +1,4 @@
+scenario_id,opportunity_id,recommended_action,alternative_action,net_difference_inr,explanation,data_classification
+CF001,OPP0001,SELL_LOCAL,TRANSPORT_TO_PUNE,7351,Higher gross price may not offset verified logistics,CURATED_SCENARIO
+CF002,OPP0001,SELL_LOCAL,STORE_7_DAYS,2851,Upside offset by storage and forecast uncertainty,DERIVED_BASELINE
+CF003,OPP0001,SELL_LOCAL,FPO_AGGREGATE,1351,Aggregation expands buyer access but adds cost,CURATED_SCENARIO

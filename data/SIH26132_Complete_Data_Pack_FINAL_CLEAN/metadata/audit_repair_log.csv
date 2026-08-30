@@ -1,0 +1,15 @@
+file_name,old_value,new_value,repaired_at
+processed/match_scores.csv,LOT001,L001,
+processed/match_scores.csv,LOT002,L002,
+processed/sale_window_recommendations.csv,LOT001,L001,
+processed/sale_window_recommendations.csv,LOT002,L002,
+processed/shelf_life_remaining.csv,LOT001,L001,
+processed/buyer_farmer_matches.csv,LOT001,L001,
+processed/buyer_farmer_matches.csv,LOT002,L002,
+processed/transaction_ledger.csv,LOT001,L001,
+processed/transaction_ledger.csv,LOT002,L002,
+processed/spoilage_risk.csv,LOT001,L001,
+,,,
+aggregation_lots.csv,RENAMED lot_id to aggregation_lot_id,Added aggregation_lot_members.csv,2026-08-26
+raw/enam/agmarknet_dashboard/maharashtra_onion_nashik_markets_2026.csv,exact duplicate of canonical AGMARKNET dataset,removed duplicate; canonical copy retained,2026-08-26
+curated/aggregation_lot_members.csv,zero quantity contributions,reconciled member contributions to aggregation_lots.quantity_q without over-allocating source lots,2026-08-26

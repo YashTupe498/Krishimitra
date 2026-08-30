@@ -1,0 +1,3 @@
+opportunity_id,chosen_action,best_hindsight_action,potential_regret_inr,confidence,reason,data_classification
+OPP0001,SELL_LOCAL,TRANSPORT_TO_PUNE,7351,LOW_CONFIDENCE,Alternative depends on unverified route economics,CURATED_SCENARIO
+OPP0003,SELL_LOCAL,STORE_7_DAYS,900,MEDIUM,Potential upside exists but risk-adjusted value is lower,DERIVED_BASELINE

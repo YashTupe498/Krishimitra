@@ -1,0 +1,2 @@
+rule_id,program_id,criterion,operator,value,effective_from,effective_to,verification_required
+RULE001,SUP001,farmer_type,EQUALS,SMALL_FARMER,2026-01-01,,YES

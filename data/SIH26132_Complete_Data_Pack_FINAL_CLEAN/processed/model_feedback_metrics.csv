@@ -1,0 +1,3 @@
+model_or_engine,metric,value,sample_size,interpretation,data_classification
+NET_REALIZATION_ENGINE,MAE,704.3,2,Very small demo sample; not statistically reliable,DEMO_METRIC
+NET_REALIZATION_ENGINE,ACCEPTANCE_RATE,0.667,3,Derived from demo decisions,DEMO_METRIC

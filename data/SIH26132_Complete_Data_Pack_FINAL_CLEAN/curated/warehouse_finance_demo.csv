@@ -1,0 +1,3 @@
+facility_id,storage_id,eligible_commodity,pledge_finance_available,max_ltv_pct,interest_rate_annual_pct,max_tenure_days,source_type
+WF001,S001,Onion,True,65,12,90,DEMO_CURATED
+WF002,S002,Onion,False,0,0,0,DEMO_CURATED

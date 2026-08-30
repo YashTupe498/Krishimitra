@@ -1,0 +1,4 @@
+farmer_id,preferred_market,max_wait_days,risk_tolerance,cash_urgency,max_transport_km,preferred_payment_mode,data_classification
+F001,Lasalgaon APMC,2,LOW,IMMEDIATE,50,IMMEDIATE,CURATED_DEMO
+F002,Pune APMC,7,MEDIUM,MODERATE,250,FAST,CURATED_DEMO
+F003,Lasalgaon APMC,10,HIGH,LOW,500,FLEXIBLE,CURATED_DEMO

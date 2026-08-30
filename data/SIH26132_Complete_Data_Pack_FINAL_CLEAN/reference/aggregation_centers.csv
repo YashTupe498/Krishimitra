@@ -1,0 +1,3 @@
+center_id,fpo_id,center_name,district,state,commodities,collection_capacity,source
+AC001,F001,Demo Nashik Onion Farmers Collective,Nashik,Maharashtra,Onion,1000,CURATED_DEMO
+AC002,F002,Demo Pimpalgaon Producer Collective,Nashik,Maharashtra,"Onion,Tomato",800,CURATED_DEMO

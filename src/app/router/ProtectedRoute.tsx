@@ -22,7 +22,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) 
 
   // Wait for profile to load if authenticated
   if (!profile) {
-    return null; 
+    return <Navigate to={ROUTES.HOME} replace />;
   }
 
   // If roles are specified, check if user has required role

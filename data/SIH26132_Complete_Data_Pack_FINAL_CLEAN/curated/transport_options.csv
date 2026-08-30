@@ -1,0 +1,4 @@
+transport_id,provider_name,vehicle_type,max_capacity_q,base_cost_inr,cost_per_km_inr,available
+T001,Demo Logistics Nashik,Mini Truck,100,800,18,True
+T002,Demo Agro Transport,Truck,300,1500,22,True
+T003,Demo Shared Logistics,Shared Transport,500,500,14,True

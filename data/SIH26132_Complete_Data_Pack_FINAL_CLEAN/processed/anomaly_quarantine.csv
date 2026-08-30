@@ -1,0 +1,2 @@
+record_id,dataset,reason,quarantined_at,review_status,data_class
+BAD001,market_prices,PRICE_OUT_OF_EXPECTED_RANGE,2026-08-26T12:05:00,PENDING_REVIEW,CURATED_TEST

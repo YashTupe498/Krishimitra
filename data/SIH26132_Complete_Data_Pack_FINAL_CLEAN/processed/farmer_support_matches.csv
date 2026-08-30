@@ -1,0 +1,2 @@
+farmer_id,program_id,match_status,match_reason,verification_status,data_class
+F001,SUP001,POTENTIAL,Profile matches preliminary rule,OFFICIAL_VERIFICATION_REQUIRED,CURATED_SCENARIO

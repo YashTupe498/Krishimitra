@@ -1,0 +1,4 @@
+aggregation_lot_id,lot_id,farmer_id,quantity_contributed,unit
+A001,L001,F001,30,QUINTAL
+A002,L003,F003,25,QUINTAL
+A003,L002,F002,60,QUINTAL

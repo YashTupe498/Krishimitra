@@ -1,0 +1,4 @@
+event_id,dispute_id,event_type,event_timestamp,actor,details,data_classification
+GE001,DIS001,RAISED,2026-08-21T16:00:00,BUYER,Quality concern raised,CURATED_SCENARIO
+GE002,DIS001,EVIDENCE_SUBMITTED,2026-08-21T17:00:00,FARMER,Quality certificate attached,CURATED_SCENARIO
+GE003,DIS001,RESOLVED,2026-08-22T11:00:00,MEDIATOR,Partial price adjustment agreed,CURATED_SCENARIO

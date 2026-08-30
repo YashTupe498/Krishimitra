@@ -1,0 +1,8 @@
+constraint_code,description,resolution_supported
+QUANTITY_SHORTFALL,Available quantity is below buyer minimum,True
+QUALITY_MISMATCH,Lot quality does not satisfy buyer requirement,True
+TRANSPORT_UNAVAILABLE,No viable transport option available,True
+DELIVERY_DEADLINE_CONFLICT,Estimated delivery cannot meet deadline,True
+PAYMENT_URGENCY_CONFLICT,Payment timing conflicts with farmer cash requirement,True
+STORAGE_UNAVAILABLE,Storage cannot support planned waiting period,True
+LOCATION_INFEASIBLE,Destination is not economically/logistically viable,True

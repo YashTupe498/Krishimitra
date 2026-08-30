@@ -1,0 +1,5 @@
+market_id,market_name,district,state,latitude,longitude,data_note
+M001,Lasalgaon APMC,Nashik,Maharashtra,20.151,74.237,REFERENCE/DEMO + observed price match
+M002,Pimpalgaon Baswant APMC,Nashik,Maharashtra,20.166,74.095,REFERENCE_DEMO
+M003,Nashik APMC,Nashik,Maharashtra,19.9975,73.7898,REFERENCE_DEMO
+M004,Lasalgaon (Vinchur) APMC,Nashik,Maharashtra,,,Observed price market; coordinates not verified

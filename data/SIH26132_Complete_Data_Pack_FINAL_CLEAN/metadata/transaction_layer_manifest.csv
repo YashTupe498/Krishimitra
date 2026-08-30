@@ -1,0 +1,19 @@
+file_path,purpose,classification_note
+processed/sale_window_recommendations.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/buyer_farmer_matches.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/match_scores.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+reference/buyer_verification_profiles.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/transaction_ledger.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/transaction_events.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/payment_tracking.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/payment_events.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/logistics_requests.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/logistics_assignments.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/delivery_tracking.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/dispute_cases.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/grievance_events.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/dispute_resolution_outcomes.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/offer_events.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/offer_negotiations.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+processed/transaction_documents.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise
+reference/buyer_procurement_profiles.csv,SIH 26132 transaction enablement support,Demo/scenario/derived unless sourced otherwise

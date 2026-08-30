@@ -1,0 +1,3 @@
+fpo_id,fpo_name,district,state,latitude,longitude,commodities,status,collection_capacity,source
+F001,Demo Nashik Onion Farmers Collective,Nashik,Maharashtra,20.005,73.78,Onion,ACTIVE,,CURATED_EXISTING_DEMO_FPO_DIRECTORY
+F002,Demo Pimpalgaon Producer Collective,Nashik,Maharashtra,20.16,74.095,"Onion,Tomato",ACTIVE,,CURATED_EXISTING_DEMO_FPO_DIRECTORY

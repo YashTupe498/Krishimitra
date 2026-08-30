@@ -1,0 +1,3 @@
+buyer_id,on_time_payment_rate,average_payment_delay_days,completed_transactions,disputes,reliability_score,data_class
+B001,0.62,30,40,5,0.62,CURATED_DEMO
+B002,0.96,2,65,0,0.96,CURATED_DEMO

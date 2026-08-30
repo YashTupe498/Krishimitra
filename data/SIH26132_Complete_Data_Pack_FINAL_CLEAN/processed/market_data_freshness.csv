@@ -1,0 +1,3 @@
+market,commodity,last_update,age_minutes,source,reliability_score,status,data_class
+Lasalgaon,Onion,2026-08-26T10:30:00,45,AGMARKNET,0.95,FRESH,CURATED_DEMO
+Pune,Onion,2026-08-25T15:00:00,1200,AGMARKNET,0.95,STALE,CURATED_DEMO

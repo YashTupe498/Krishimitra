@@ -1,0 +1,2 @@
+recommendation_id,original_action,override_action,override_by,reason,timestamp,data_class
+REC001,STORE_7_DAYS,SELL_NOW,AGRICULTURE_OFFICER,Heavy rainfall may affect storage quality,2026-08-26T12:00:00,CURATED_SCENARIO

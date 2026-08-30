@@ -8,8 +8,10 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { ImageViewer } from '../../components/ui/ImageViewer';
-import { mockLots, lotStore } from '../../data/mockLots';
-import type { QualityAssessmentResponse } from '../../types/lot';
+import type { Lot, QualityAssessmentResponse } from '../../types/lot';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { qualityService } from '../../services/supabase/quality';
+import { farmerLotsApi } from '../../services/farmerLotsApi';
 
 type Mode = 'UPLOAD' | 'ASSESSING' | 'RESULT' | 'UNKNOWN';
 
@@ -17,19 +19,28 @@ export const QualityAssessmentPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  
-  const lot = id ? mockLots[id] : null;
+  const { user, session } = useAuth();
+  const [lot, setLot] = useState<Lot | null>(null);
+  const [lotLoading, setLotLoading] = useState(true);
 
   const [mode, setMode] = useState<Mode>('UPLOAD');
   const [images, setImages] = useState<(File | null)[]>([null, null]);
   const [previews, setPreviews] = useState<(string | null)[]>([null, null]);
   const [result, setResult] = useState<QualityAssessmentResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   // ImageViewer state
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerGrade, setViewerGrade] = useState<'A' | 'B' | 'C'>('A');
 
   const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+
+  useEffect(() => {
+    const token = session?.access_token;
+    if (!id || !token) return;
+    farmerLotsApi.get(token, id).then(setLot).catch(() => setLot(null)).finally(() => setLotLoading(false));
+  }, [id, session?.access_token]);
 
   // Clean up object URLs to avoid memory leaks
   useEffect(() => {
@@ -39,6 +50,10 @@ export const QualityAssessmentPage: React.FC = () => {
       });
     };
   }, []); // Intentionally empty to just clean on unmount, but let's be careful. Actually, it's safer to just handle it in removeImage.
+
+  if (lotLoading) {
+    return <div className="p-8 text-center text-gray-500">Loading lot…</div>;
+  }
 
   if (!lot) {
     return <div className="p-8 text-center text-gray-500">Lot not found</div>;
@@ -74,52 +89,39 @@ export const QualityAssessmentPage: React.FC = () => {
     }
   };
 
-  const assessImages = () => {
+  const assessImages = async () => {
     const uploadedFiles = images.filter(img => img !== null) as File[];
     if (uploadedFiles.length === 0) return;
     
     setMode('ASSESSING');
+    setError(null);
 
-    // Simulate assessment processing delay
-    setTimeout(() => {
-      let isGradeA = false;
-      let hasUnknown = false;
-      
-      uploadedFiles.forEach(file => {
-        const name = file.name.toLowerCase();
-        if (file.size > 20000 || name.includes('grade') || name.includes('onion') || name.includes('media')) {
-          isGradeA = true;
-        } else {
-          hasUnknown = true;
-        }
+    try {
+      const assessmentResult = await qualityService.assessProduce(
+        user?.id || 'unknown-farmer',
+        lot.id,
+        lot.crop,
+        uploadedFiles
+      );
+
+      setResult(assessmentResult);
+      const token = session?.access_token;
+      if (!token) throw new Error('Your session has expired. Please sign in again.');
+      const updatedLot = await farmerLotsApi.update(token, lot.id, {
+        quality_grade: assessmentResult.grade,
+        status: 'MARKET_ANALYSIS_READY',
       });
-
-      if (hasUnknown && !isGradeA) {
-        setMode('UNKNOWN');
-      } else {
-        const assessmentResult: QualityAssessmentResponse = {
-          crop: lot.crop,
-          grade: 'A',
-          confidence: null,
-          observations: [
-            t('quality.obs1', 'Relatively uniform appearance'),
-            t('quality.obs2', 'Good overall external appearance'),
-            t('quality.obs3', 'Minimal visible defects')
-          ],
-          assessment_mode: 'prototype_demo'
-        };
-        setResult(assessmentResult);
-        lotStore.update(lot.id, {
-          qualityGrade: 'A',
-          status: 'MARKET_ANALYSIS_READY',
-          qualityAssessment: assessmentResult
-        });
-        setMode('RESULT');
-      }
-    }, 1500);
+      setLot(updatedLot);
+      setMode('RESULT');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+      setMode('UPLOAD');
+    }
   };
 
-  const openReference = (index: number) => {
+  const openReference = (grade: 'A' | 'B' | 'C', index: number) => {
+    setViewerGrade(grade);
     setViewerIndex(index);
     setViewerOpen(true);
   };
@@ -133,10 +135,53 @@ export const QualityAssessmentPage: React.FC = () => {
     setResult(null);
   };
 
-  const gradeAViewerImages = [
-    { src: '/assets/quality/onion/grade-a/onion-grade-a-01.jpg', alt: 'Grade A Onion Reference 1', title: 'Grade A Reference — Image 1' },
-    { src: '/assets/quality/onion/grade-a/onion-grade-a-02.jpg', alt: 'Grade A Onion Reference 2', title: 'Grade A Reference — Image 2' }
-  ];
+  const currentCrop = lot?.crop.toLowerCase() || 'onion';
+
+  const qualityReferences: Record<string, Record<'A'|'B'|'C', { src: string, alt: string, title: string }[]>> = {
+    onion: {
+      A: [
+        { src: '/assets/quality/onion/grade-a/onion-grade-a-01.jpg', alt: 'Grade A Onion Reference 1', title: 'Grade A Reference — Image 1' },
+        { src: '/assets/quality/onion/grade-a/onion-grade-a-02.jpg', alt: 'Grade A Onion Reference 2', title: 'Grade A Reference — Image 2' }
+      ],
+      B: [
+        { src: '/assets/quality/onion/grade-b/onion-grade-b-01.jpg', alt: 'Grade B Onion Reference 1', title: 'Grade B Reference — Image 1' },
+        { src: '/assets/quality/onion/grade-b/onion-grade-b-02.jpg', alt: 'Grade B Onion Reference 2', title: 'Grade B Reference — Image 2' }
+      ],
+      C: [
+        { src: '/assets/quality/onion/grade-c/onion-grade-c-01.jpg', alt: 'Grade C Onion Reference 1', title: 'Grade C Reference — Image 1' },
+        { src: '/assets/quality/onion/grade-c/onion-grade-c-02.jpg', alt: 'Grade C Onion Reference 2', title: 'Grade C Reference — Image 2' }
+      ]
+    },
+    potato: {
+      A: [
+        { src: '/assets/quality/potato/grade-a/potato-grade-a-01.jpg', alt: 'Grade A Potato Reference 1', title: 'Grade A Potato Reference — Image 1' },
+        { src: '/assets/quality/potato/grade-a/potato-grade-a-02.jpg', alt: 'Grade A Potato Reference 2', title: 'Grade A Potato Reference — Image 2' }
+      ],
+      B: [
+        { src: '/assets/quality/potato/grade-b/potato-grade-b-01.jpg', alt: 'Grade B Potato Reference 1', title: 'Grade B Potato Reference — Image 1' },
+        { src: '/assets/quality/potato/grade-b/potato-grade-b-02.jpg', alt: 'Grade B Potato Reference 2', title: 'Grade B Potato Reference — Image 2' }
+      ],
+      C: [
+        { src: '/assets/quality/potato/grade-c/potato-grade-c-01.jpg', alt: 'Grade C Potato Reference 1', title: 'Grade C Potato Reference — Image 1' },
+        { src: '/assets/quality/potato/grade-c/potato-grade-c-02.jpg', alt: 'Grade C Potato Reference 2', title: 'Grade C Potato Reference — Image 2' }
+      ]
+    }
+  };
+
+  const cropDescriptions: Record<string, Record<'A'|'B'|'C', string>> = {
+    onion: {
+      A: "Better overall appearance, relatively uniform size, minimal visible defects.",
+      B: "Standard acceptable quality, with some size variation or minor visible defects.",
+      C: "Higher visible defects or quality issues that may limit some selling opportunities."
+    },
+    potato: {
+      A: "Better overall appearance, relatively uniform size and shape, with minimal visible defects.",
+      B: "Generally acceptable quality, with moderate variation in size/shape and some minor visible defects.",
+      C: "More prominent visible defects, greater variation, and quality issues that may reduce suitable selling opportunities."
+    }
+  };
+
+  const activeViewerImages = qualityReferences[currentCrop]?.[viewerGrade as 'A'|'B'|'C'] || [];
 
   const hasAnyImage = images.some(img => img !== null);
 
@@ -144,7 +189,7 @@ export const QualityAssessmentPage: React.FC = () => {
     <div className="max-w-4xl mx-auto pb-24 animate-in fade-in duration-500">
       
       <ImageViewer 
-        images={gradeAViewerImages}
+        images={activeViewerImages}
         isOpen={viewerOpen}
         onClose={() => setViewerOpen(false)}
         initialIndex={viewerIndex}
@@ -173,11 +218,18 @@ export const QualityAssessmentPage: React.FC = () => {
       </div>
 
       {lot.status !== 'DRAFT' && mode === 'UPLOAD' && (
-        <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-3 mb-8">
-          <Info size={18} className="text-green-700 shrink-0" />
-          <span className="text-sm font-medium text-green-800">
-            {t('quality.currentGrade', 'Current Grade')}: <span className="font-bold">Grade {lot.qualityGrade || 'B'}</span>
-          </span>
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 flex items-start gap-3 mb-8">
+          <Info size={20} className="text-blue-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-bold text-blue-900 mb-1">
+              {lot.qualityGrade ? `${t('quality.currentGrade', 'Current Grade')}: Grade ${lot.qualityGrade}` : 'ℹ Quality not assessed'}
+            </p>
+            {!lot.qualityGrade && (
+              <p className="text-xs text-blue-800/80 leading-relaxed max-w-2xl">
+                Upload produce photos to begin assessment.
+              </p>
+            )}
+          </div>
         </div>
       )}
 
@@ -192,6 +244,12 @@ export const QualityAssessmentPage: React.FC = () => {
             <p className="text-sm text-gray-500 font-medium mb-6">
               {t('quality.uploadPhotosDesc', 'Add 1–2 clear photos of your produce for assessment.')}
             </p>
+
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm font-medium">
+                {error}
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               {[0, 1].map(index => (
@@ -298,9 +356,103 @@ export const QualityAssessmentPage: React.FC = () => {
                 <div className="flex-1 h-px bg-gray-200"></div>
               </div>
               
-              <p className="text-base text-gray-800 font-medium leading-relaxed mb-6">
-                Your image matches one of the Grade A reference examples currently configured for this prototype.
-              </p>
+              {currentCrop === 'potato' && result.grade === 'A' ? (
+                <div className="mb-6 text-left bg-gray-50 p-5 rounded-xl border border-gray-100">
+                  <p className="text-sm text-gray-800 font-medium mb-3">
+                    Your potatoes appear suitable for Grade A because they have:
+                  </p>
+                  <ul className="text-sm text-gray-600 space-y-2 font-medium">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Relatively uniform size and shape
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Good overall appearance
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Clean-looking surface
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Limited visible damage or defects
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      No major visible rot or severe blemishes in the reference view
+                    </li>
+                  </ul>
+                </div>
+              ) : currentCrop === 'potato' && result.grade === 'B' ? (
+                <div className="mb-6 text-left bg-gray-50 p-5 rounded-xl border border-gray-100">
+                  <p className="text-sm text-gray-800 font-medium mb-3">
+                    These potatoes are suitable for Grade B because they generally have an acceptable appearance, but show some visible variation in size, shape and surface condition.
+                  </p>
+                  <ul className="text-sm text-gray-600 space-y-2 font-medium mt-3">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Moderate variation in size and shape
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Some soil marks or surface blemishes
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Minor scuffs or marks
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Generally intact potatoes
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      No widespread severe damage visible in the reference images
+                    </li>
+                  </ul>
+                </div>
+              ) : currentCrop === 'potato' && result.grade === 'C' ? (
+                <div className="mb-6 text-left bg-gray-50 p-5 rounded-xl border border-gray-100">
+                  <p className="text-sm text-gray-800 font-medium mb-3">
+                    These potatoes fall closer to Grade C because the images show more visible surface defects and greater variation in appearance. Some potatoes may have damage or quality issues that can reduce suitable selling opportunities.
+                  </p>
+                  <ul className="text-sm text-gray-600 space-y-2 font-medium mt-3">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Significant variation in size and shape
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      More visible surface blemishes
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Dark spots, scarring or rough patches
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Cracks or damaged areas on some potatoes
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Some greenish/discolored areas may be visible
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Greater overall variation compared with Grade A and Grade B
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-1.5 shrink-0"></div>
+                      Some produce may require sorting before sale
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <p className="text-base text-gray-800 font-medium leading-relaxed mb-6">
+                  Your image matches one of the Grade {result.grade} reference examples currently configured for this prototype.
+                </p>
+              )}
 
               {previews.some(p => p !== null) && (
                 <div className="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-200">
@@ -322,11 +474,15 @@ export const QualityAssessmentPage: React.FC = () => {
                         <CheckCircle2 size={14}/> Reference Match
                       </p>
                       <button 
-                        onClick={() => openReference(0)}
+                        onClick={() => openReference(result.grade as 'A'|'B'|'C', 0)}
                         className="w-full aspect-square rounded-xl overflow-hidden border-2 border-brand-primary/50 hover:border-brand-primary shadow-sm relative group transition-colors block cursor-pointer"
                         title="Click to view reference image"
                       >
-                        <img src="/assets/quality/onion/grade-a/onion-grade-a-01.jpg" alt="Grade A Reference" className="w-full h-full object-cover" />
+                        <img 
+                          src={qualityReferences[currentCrop]?.[result.grade as 'A'|'B'|'C']?.[0]?.src || ''} 
+                          alt={`Grade ${result.grade} Reference`} 
+                          className="w-full h-full object-cover" 
+                        />
                         <div className="absolute inset-0 bg-brand-primary/0 group-hover:bg-brand-primary/10 transition-colors flex items-center justify-center">
                           <span className="bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm shadow-sm">
                             Tap to view
@@ -342,7 +498,7 @@ export const QualityAssessmentPage: React.FC = () => {
             <section className="bg-blue-50/50 border border-blue-100 rounded-xl p-5 flex items-start gap-3">
               <Info size={20} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-bold text-blue-900 mb-1">Assessment Mode: Prototype Demonstration</p>
+                <p className="text-sm font-bold text-blue-900 mb-1">Assessment Mode: Prototype Reference Assessment</p>
                 <p className="text-xs text-blue-800/80 leading-relaxed max-w-2xl">
                   This prototype currently uses configured reference examples for demonstration. A future production version can connect this interface to a trained quality-assessment model.
                 </p>
@@ -375,68 +531,131 @@ export const QualityAssessmentPage: React.FC = () => {
               <h3 className="font-bold text-gray-900 text-lg">GRADE A</h3>
             </div>
             <p className="text-sm text-gray-600 font-medium leading-relaxed mb-6">
-              Better overall appearance, relatively uniform size, minimal visible defects.
+              {cropDescriptions[currentCrop]?.A || cropDescriptions.onion.A}
             </p>
             
             <div className="bg-gray-50 -mx-6 -mb-6 p-6 border-t border-gray-100">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Reference Examples</p>
-              <div className="flex gap-3 mb-3">
-                <button 
-                  onClick={() => openReference(0)}
-                  className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
-                >
-                  <img src="/assets/quality/onion/grade-a/onion-grade-a-01.jpg" alt="Grade A Ref 1" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
-                </button>
-                <button 
-                  onClick={() => openReference(1)}
-                  className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
-                >
-                  <img src="/assets/quality/onion/grade-a/onion-grade-a-02.jpg" alt="Grade A Ref 2" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
-                </button>
-              </div>
-              <p className="text-xs text-center font-medium text-brand-primary">Tap an image to view in detail</p>
+              {qualityReferences[currentCrop]?.A?.length > 0 ? (
+                <>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Compare your produce</p>
+                  <div className="flex gap-3 mb-3">
+                    <button 
+                      onClick={() => openReference('A', 0)}
+                      className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
+                    >
+                      <img src={qualityReferences[currentCrop].A[0].src} alt={qualityReferences[currentCrop].A[0].alt} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                    </button>
+                    <button 
+                      onClick={() => openReference('A', 1)}
+                      className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
+                    >
+                      <img src={qualityReferences[currentCrop].A[1].src} alt={qualityReferences[currentCrop].A[1].alt} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 font-medium text-center">Tap images to zoom & compare</p>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center min-h-[140px] text-center">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 mb-3">
+                    <Upload size={18} />
+                  </div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    Reference images<br/>coming soon
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
 
           {/* Grade B */}
-          <Card className="p-6 bg-white border border-gray-200 shadow-sm opacity-90">
+          <Card className={`p-6 bg-white border border-gray-200 shadow-sm transition-colors ${qualityReferences[currentCrop]?.B?.length > 0 ? 'hover:border-brand-primary/30' : 'opacity-90'}`}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-full bg-amber-400 text-white font-bold flex items-center justify-center shrink-0">B</div>
               <h3 className="font-bold text-gray-900 text-lg">GRADE B</h3>
             </div>
             <p className="text-sm text-gray-600 font-medium leading-relaxed mb-6">
-              Standard acceptable quality with some variation or minor visible defects.
+              {cropDescriptions[currentCrop]?.B || cropDescriptions.onion.B}
             </p>
             
-            <div className="bg-gray-50 -mx-6 -mb-6 p-6 border-t border-gray-100 flex flex-col items-center justify-center min-h-[140px] text-center">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 mb-3">
-                <Upload size={18} />
-              </div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                Reference images<br/>will be added
-              </p>
+            <div className="bg-gray-50 -mx-6 -mb-6 p-6 border-t border-gray-100">
+              {qualityReferences[currentCrop]?.B?.length > 0 ? (
+                <>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Compare your produce</p>
+                  <div className="flex gap-3 mb-3">
+                    <button 
+                      onClick={() => openReference('B', 0)}
+                      className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
+                    >
+                      <img src={qualityReferences[currentCrop].B[0].src} alt={qualityReferences[currentCrop].B[0].alt} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                    </button>
+                    <button 
+                      onClick={() => openReference('B', 1)}
+                      className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
+                    >
+                      <img src={qualityReferences[currentCrop].B[1].src} alt={qualityReferences[currentCrop].B[1].alt} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 font-medium text-center">Tap images to zoom & compare</p>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center min-h-[140px] text-center">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 mb-3">
+                    <Upload size={18} />
+                  </div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    Reference images<br/>coming soon
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
 
           {/* Grade C */}
-          <Card className="p-6 bg-white border border-gray-200 shadow-sm opacity-90">
+          <Card className={`p-6 bg-white border border-gray-200 shadow-sm transition-colors ${qualityReferences[currentCrop]?.C?.length > 0 ? 'hover:border-brand-primary/30 opacity-100' : 'opacity-90'}`}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 rounded-full bg-orange-400 text-white font-bold flex items-center justify-center shrink-0">C</div>
               <h3 className="font-bold text-gray-900 text-lg">GRADE C</h3>
             </div>
             <p className="text-sm text-gray-600 font-medium leading-relaxed mb-6">
-              Higher visible defects, quality issues that may limit selling opportunities.
+              {cropDescriptions[currentCrop]?.C || cropDescriptions.onion.C}
             </p>
             
-            <div className="bg-gray-50 -mx-6 -mb-6 p-6 border-t border-gray-100 flex flex-col items-center justify-center min-h-[140px] text-center">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 mb-3">
-                <Upload size={18} />
-              </div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                Reference images<br/>will be added
-              </p>
+            <div className="bg-gray-50 -mx-6 -mb-6 p-6 border-t border-gray-100">
+              {qualityReferences[currentCrop]?.C?.length > 0 ? (
+                <>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Compare your produce</p>
+                  <div className="flex gap-3 mb-3">
+                    <button 
+                      onClick={() => openReference('C', 0)}
+                      className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
+                    >
+                      <img src={qualityReferences[currentCrop].C[0].src} alt={qualityReferences[currentCrop].C[0].alt} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                    </button>
+                    <button 
+                      onClick={() => openReference('C', 1)}
+                      className="w-1/2 aspect-square rounded-lg overflow-hidden border border-gray-200 hover:border-brand-primary relative group"
+                    >
+                      <img src={qualityReferences[currentCrop].C[1].src} alt={qualityReferences[currentCrop].C[1].alt} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 font-medium text-center">Tap images to zoom & compare</p>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center min-h-[140px] text-center">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 mb-3">
+                    <Upload size={18} />
+                  </div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                    Reference images<br/>coming soon
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
 

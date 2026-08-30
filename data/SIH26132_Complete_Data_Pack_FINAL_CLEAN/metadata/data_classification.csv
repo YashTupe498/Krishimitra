@@ -1,0 +1,6 @@
+classification,meaning
+SOURCE,Downloaded/exported from an official or authoritative source
+DERIVED,Calculated from source data
+CURATED,Manually prepared realistic prototype data
+SIMULATED,Generated transaction/workflow scenario data
+REFERENCE_DEMO,Reference data used for prototype geography or mappings; validate before production

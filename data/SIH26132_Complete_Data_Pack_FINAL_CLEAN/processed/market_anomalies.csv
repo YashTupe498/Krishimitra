@@ -1,0 +1,3 @@
+anomaly_id,date,market,commodity,anomaly_type,z_score,severity,explanation,data_classification
+AN001,2026-08-25,Lasalgaon APMC,Onion,PRICE_SPIKE,,NO_ANOMALY_CONFIRMED,INSUFFICIENT_CONTEXT,DERIVED
+AN002,2026-08-25,Pune APMC,Onion,DATA_COVERAGE_GAP,,LOW_CONFIDENCE,MISSING_VERIFIED_SERIES,DERIVED

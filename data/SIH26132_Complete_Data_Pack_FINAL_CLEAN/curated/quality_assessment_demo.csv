@@ -1,0 +1,4 @@
+assessment_id,lot_id,assayed,grade,defect_percent,size_uniformity_percent,certificate_status,source_type
+QA001,L001,True,Grade B,7.0,85.0,DEMO,WORKFLOW_SIMULATION
+QA002,L002,True,Grade A,3.0,94.0,DEMO,WORKFLOW_SIMULATION
+QA003,L003,False,UNKNOWN,,,NOT_ASSAYED,WORKFLOW_SIMULATION
