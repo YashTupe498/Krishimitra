@@ -40,21 +40,21 @@ export const GrievanceAssistant: React.FC<GrievanceAssistantProps> = ({ onReport
              <span className="text-[14px] sm:text-[15px] tracking-wide">Report an Issue</span>
           </Button>
 
-          <Button onClick={onTrack} variant="secondary" className="bg-[#0f3420] hover:bg-[#14472c] text-white border border-[#1f5939] font-bold px-4 py-4 rounded-xl shadow-lg h-auto flex flex-col sm:flex-row items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 w-full">
+          <Button onClick={onTrack} variant="secondary" className="bg-[#0f3420] hover:!bg-[#14472c] text-white border border-[#1f5939] font-bold px-4 py-4 rounded-xl shadow-lg h-auto flex flex-col sm:flex-row items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 w-full">
              <div className="bg-[#1f5939] p-2 rounded-lg">
                <Search size={20} className="text-[#86efac]" />
              </div>
              <span className="text-[14px] sm:text-[15px] tracking-wide text-[#f0fdf4]">Track Grievance</span>
           </Button>
 
-          <Button variant="secondary" className="bg-[#0f3420] hover:bg-[#14472c] text-white border border-[#1f5939] font-bold px-4 py-4 rounded-xl shadow-lg h-auto flex flex-col sm:flex-row items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 w-full" onClick={() => alert('Ask for Help module coming soon in demo')}>
+          <Button variant="secondary" className="bg-[#0f3420] hover:!bg-[#14472c] text-white border border-[#1f5939] font-bold px-4 py-4 rounded-xl shadow-lg h-auto flex flex-col sm:flex-row items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 w-full" onClick={() => alert('Ask for Help module coming soon in demo')}>
              <div className="bg-[#1f5939] p-2 rounded-lg">
                <MessageCircle size={20} className="text-[#86efac]" />
              </div>
              <span className="text-[14px] sm:text-[15px] tracking-wide text-[#f0fdf4]">Ask for Help</span>
           </Button>
 
-          <Button variant="secondary" className="bg-[#0f3420] hover:bg-[#14472c] text-white border border-[#1f5939] font-bold px-4 py-4 rounded-xl shadow-lg h-auto flex flex-col sm:flex-row items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 w-full" onClick={() => alert('Voice assistance is currently unavailable in demo')}>
+          <Button variant="secondary" className="bg-[#0f3420] hover:!bg-[#14472c] text-white border border-[#1f5939] font-bold px-4 py-4 rounded-xl shadow-lg h-auto flex flex-col sm:flex-row items-center justify-center gap-3 transition-all duration-300 hover:-translate-y-1 w-full" onClick={() => alert('Voice assistance is currently unavailable in demo')}>
              <div className="bg-[#1f5939] p-2 rounded-lg">
                <Mic size={20} className="text-[#86efac]" />
              </div>
