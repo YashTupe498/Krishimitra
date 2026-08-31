@@ -13,6 +13,7 @@ import { CreateLotPage } from '../../pages/farmer/CreateLotPage';
 import { QualityAssessmentPage } from '../../pages/farmer/QualityAssessmentPage';
 import { FarmerOffersPage } from '../../pages/farmer/OffersPage';
 import { FarmerTransactionsPage } from '../../pages/farmer/TransactionsPage';
+import { TransactionDetailPage } from '../../pages/farmer/TransactionDetailPage';
 import { FarmerProfilePage } from '../../pages/farmer/FarmerProfilePage';
 import { BuyerDashboardPage } from '../../pages/buyer/DashboardPage';
 import { BuyerLayout } from '../../layouts/BuyerLayout';
@@ -54,6 +55,7 @@ export const AppRouter: React.FC = () => {
           <Route path="/farmer/decisions" element={<div className="p-8">Decisions (Coming Soon)</div>} />
           <Route path="/farmer/offers" element={<FarmerOffersPage />} />
           <Route path="/farmer/transactions" element={<FarmerTransactionsPage />} />
+          <Route path="/farmer/transactions/:id" element={<TransactionDetailPage />} />
           <Route path="/farmer/issues" element={<IssuesGrievancesPage />} />
           <Route path="/farmer/profile" element={<FarmerProfilePage />} />
         </Route>
