@@ -210,7 +210,7 @@ export const QualityAssessmentPage: React.FC = () => {
           <ShieldCheck size={24} />
         </div>
         <div>
-          <h1 className="text-2xl font-display font-bold text-gray-900">{t('quality.headerTag', 'Quality Assessment')}</h1>
+          <h1 className="text-2xl font-serif font-bold text-gray-900">{t('quality.headerTag', 'Quality Assessment')}</h1>
           <p className="text-gray-500 font-medium mt-1">
             {t(`data.crops.${lot.crop}`, lot.crop)} • {lot.quantity} {lot.unit} • {lot.location}
           </p>
@@ -309,7 +309,7 @@ export const QualityAssessmentPage: React.FC = () => {
         {mode === 'ASSESSING' && (
           <div className="py-20 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
             <Loader2 size={48} className="text-brand-primary animate-spin mb-6" />
-            <h2 className="text-xl font-display font-bold text-gray-900 mb-2">
+            <h2 className="text-xl font-serif font-bold text-gray-900 mb-2">
               {t('quality.assessing', 'Assessing your produce...')}
             </h2>
             <p className="text-gray-500 font-medium">
@@ -343,7 +343,7 @@ export const QualityAssessmentPage: React.FC = () => {
               </div>
               
               <div className="p-8 text-center flex flex-col items-center justify-center">
-                <h2 className="text-5xl font-display font-black text-gray-900 mb-3">GRADE {result.grade}</h2>
+                <h2 className="text-5xl font-sans font-black text-gray-900 mb-3">GRADE {result.grade}</h2>
                 <div className="bg-brand-primary/10 text-brand-primary px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase">
                   Prototype Reference Category
                 </div>
@@ -520,7 +520,7 @@ export const QualityAssessmentPage: React.FC = () => {
 
       {/* REFERENCE GRADES SECTION */}
       <section>
-        <h2 className="text-lg font-bold text-gray-900 mb-6 font-display">{t('quality.understandGrades', 'Understand the Grades')}</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-6 font-serif">{t('quality.understandGrades', 'Understand the Grades')}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           

@@ -30,7 +30,7 @@ export const LotsIndexPage: React.FC = () => {
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
             {t('farmerNav.dashboard', 'Dashboard')} / {t('farmerNav.myLots', 'My Lots')}
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 font-display">
+          <h1 className="text-2xl font-bold text-gray-900 font-serif">
             {t('farmerNav.myLots', 'MY LOTS')}
           </h1>
         </div>

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:backend": "powershell -ExecutionPolicy Bypass -File backend/start-server.ps1",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

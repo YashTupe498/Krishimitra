@@ -1,5 +1,6 @@
 import { supabase } from './client';
 import type { QualityAssessmentResponse } from '../../types/lot';
+import { apiRequest } from '../apiClient';
 
 export const qualityService = {
   /**
@@ -58,17 +59,11 @@ export const qualityService = {
     });
   },
 
-  /**
-   * Main assessment orchestration:
-   * 1. Validates images
-   * 2. Uploads to storage
-   * 3. Performs prototype classification
-   * 4. Saves to backend
-   */
+  /** Uploads files, then lets the authenticated API persist and orchestrate assessment/matching. */
   assessProduce: async (
     farmerId: string, 
     lotId: string, 
-    crop: string, 
+    _crop: string,
     files: File[]
   ): Promise<QualityAssessmentResponse> => {
     
@@ -83,98 +78,9 @@ export const qualityService = {
       throw new Error(err.message || 'Storage upload failed.');
     }
 
-    // 3. Prototype Classification Logic
-    // Randomize grade based on crop to simulate assessment (prototype behavior)
-    let grade: 'A' | 'B' | 'C' = 'B';
-    const rand = Math.random();
-    if (rand > 0.6) grade = 'A';
-    else if (rand < 0.3) grade = 'C';
-
-    const getReasoning = (c: string, g: 'A'|'B'|'C') => {
-      if (g === 'A') return `Your ${c.toLowerCase()}s look relatively uniform in size and have fewer visible defects.`;
-      if (g === 'B') return `Your ${c.toLowerCase()}s show some variation in size and a few visible surface defects, but most appear suitable for normal selling.`;
-      return `Several ${c.toLowerCase()}s show visible damage, discoloration, decay, or irregular quality. This may reduce the number of suitable buyers.`;
-    };
-
-    const assessmentResult: QualityAssessmentResponse = {
-      crop,
-      grade,
-      confidence: null,
-      observations: [getReasoning(crop, grade)],
-      quality_adjustment_type: 'NONE',
-      quality_adjustment_value: 0,
-      assessment_mode: 'prototype_demo'
-    };
-
-    // 4. Save to backend (quality_assessments + quality_images)
-    try {
-      // Upsert assessment (since we only keep one active per lot)
-      // Note: Supabase upsert requires specifying the ON CONFLICT column if different from PK
-      // Our migration specifies UNIQUE(lot_id), so we can conflict on lot_id.
-      // But standard insert -> select is easier if we delete the old one first.
-      
-      await supabase.from('quality_assessments').delete().eq('lot_id', lotId);
-
-      const { data: assessmentData, error: assessmentError } = await supabase
-        .from('quality_assessments')
-        .insert([{
-          lot_id: lotId,
-          farmer_id: farmerId,
-          grade,
-          assessment_mode: 'REFERENCE_PROTOTYPE',
-          reasoning: assessmentResult.observations
-        }])
-        .select()
-        .single();
-
-      if (assessmentError) throw assessmentError;
-
-      // Insert images metadata
-      const imagePayloads = storagePaths.map((path, idx) => ({
-        assessment_id: assessmentData.id,
-        lot_id: lotId,
-        farmer_id: farmerId,
-        storage_path: path,
-        image_order: idx + 1
-      }));
-
-      const { error: imagesError } = await supabase
-        .from('quality_images')
-        .insert(imagePayloads);
-
-      if (imagesError) throw imagesError;
-
-      // Update lot status
-      const { error: lotError } = await supabase
-        .from('lots')
-        .update({ status: 'MARKET_ANALYSIS_READY', quality_grade: grade })
-        .eq('id', lotId)
-        .eq('farmer_id', farmerId);
-
-      if (lotError) throw lotError;
-
-      // Keep the matching engine in sync with the persisted assessment. The
-      // existing Supabase update stores the assessment; this API call
-      // recalculates (or removes) all related buyer opportunities.
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) throw new Error('Your session has expired. Please sign in again.');
-      const matchResponse = await fetch(`/api/v1/farmer/lots/${lotId}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: 'MARKET_ANALYSIS_READY', quality_grade: grade }),
-      });
-      if (!matchResponse.ok) throw new Error((await matchResponse.text()) || 'Could not refresh buyer matches.');
-      
-    } catch (err: any) {
-      console.error('Failed to save assessment to backend:', err);
-      // We will proceed for the prototype even if backend fails (since backend tables aren't deployed yet)
-      // In production, we would throw here:
-      // throw new Error('Could not save assessment result. Please try again.');
-    }
-
-    return assessmentResult;
+    return apiRequest<QualityAssessmentResponse>(`/quality/lots/${lotId}/assessment`, {
+      method: 'POST',
+      body: JSON.stringify({ image_paths: storagePaths }),
+    });
   }
 };

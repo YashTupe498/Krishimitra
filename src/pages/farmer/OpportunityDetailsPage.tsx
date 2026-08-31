@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Opportunity } from '../../types/opportunity';
+import { opportunitiesApi } from '../../services/opportunitiesApi';
 
 export const OpportunityDetailsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -14,13 +15,13 @@ export const OpportunityDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
     const fetchOpportunity = async () => {
       try {
-        const response = await fetch(`/api/v1/farmer/opportunities/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setOpportunity(data);
-        }
+        setOpportunity(await opportunitiesApi.get(id));
       } catch (error) {
         console.error('Error fetching opportunity:', error);
       } finally {
@@ -28,9 +29,7 @@ export const OpportunityDetailsPage: React.FC = () => {
       }
     };
     
-    if (id) {
-      fetchOpportunity();
-    }
+    fetchOpportunity();
   }, [id]);
 
   if (loading) return <div className="p-4 max-w-2xl mx-auto"><p>{t('opportunityDetails.loading')}</p></div>;

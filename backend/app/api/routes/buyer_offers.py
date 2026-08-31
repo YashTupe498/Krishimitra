@@ -9,6 +9,7 @@ from app.db.session import get_db
 from app.modules.lots.models import Lot
 from app.modules.opportunities.models import BuyerDemand, Opportunity
 from app.modules.opportunities.offer_models import BuyerOffer
+from app.modules.opportunities.transaction_models import MarketplaceTransaction
 
 router = APIRouter()
 
@@ -113,6 +114,25 @@ def respond_to_offer(
     if offer.status != "SENT":
         raise HTTPException(status_code=409, detail="This offer has already been responded to")
     offer.status = status_value
+    if status_value == "ACCEPTED":
+        transaction = MarketplaceTransaction(
+            offer_id=offer.id,
+            lot_id=offer.lot_id,
+            demand_id=offer.demand_id,
+            farmer_id=offer.farmer_id,
+            buyer_id=offer.buyer_id,
+            quantity=offer.quantity,
+            agreed_price_per_quintal=offer.price_per_quintal,
+            total_value=offer.estimated_total_value,
+            payment_timeline_days=offer.payment_timeline_days,
+        )
+        db.add(transaction)
+        lot = db.query(Lot).filter(Lot.id == offer.lot_id).first()
+        demand = db.query(BuyerDemand).filter(BuyerDemand.id == offer.demand_id).first()
+        if lot:
+            lot.status = "TRANSACTION_ACTIVE"
+        if demand:
+            demand.status = "FULFILLED"
     db.commit()
     db.refresh(offer)
     return _out(offer)

@@ -1,4 +1,23 @@
-# React + TypeScript + Vite
+# KrishiMitra
+
+## Local startup
+
+Apply Supabase migrations in numeric order, including `supabase/migrations/010_backend_feature_state.sql`, then start the API from the repository root:
+
+```powershell
+npm run dev:backend
+```
+
+Start the frontend in a second terminal:
+
+```powershell
+npm install
+npm run dev
+```
+
+The frontend uses `VITE_API_BASE_URL` (defaults to `/api/v1`) and Vite proxies it to the FastAPI service. All protected feature requests obtain the current Supabase access token and send it as a Bearer token. Copy `.env.example` and `backend/.env.example` before configuring local values.
+
+## Legacy template notes
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 

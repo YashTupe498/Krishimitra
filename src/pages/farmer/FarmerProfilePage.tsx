@@ -7,6 +7,7 @@ import {
   BadgeCheck, Info
 } from 'lucide-react';
 import farmerDefaultAvatar from '../../assets/farmer-default-avatar.png';
+import { profileApi } from '../../services/profileApi';
 
 // Premium styling constants from previous pages for visual consistency
 const premiumCard = "bg-gradient-to-br from-[#FFFEFA] to-[#F9F8F3] border border-[#EBE7DD] shadow-[inset_0_1px_1px_rgba(255,255,255,1),_0_4px_24px_rgba(40,35,20,0.04)] rounded-[20px] p-6 md:p-8 transition-all duration-500 hover:border-brand-primary/30 hover:shadow-[inset_0_1px_1px_rgba(255,255,255,1),_0_12px_40px_rgba(23,77,56,0.08)] relative";
@@ -38,17 +39,12 @@ export const FarmerProfilePage: React.FC = () => {
     phone: ''
   });
 
-  // Load overrides from local storage on mount
+  // Persisted profile values are owned by the API, not browser storage.
   useEffect(() => {
     if (user?.id) {
-      const stored = localStorage.getItem(`farmer_profile_overrides_${user.id}`);
-      if (stored) {
-        try {
-          setLocalOverrides(JSON.parse(stored));
-        } catch (e) {
-          console.error("Failed to parse local overrides", e);
-        }
-      }
+      profileApi.getMine()
+        .then((saved) => setLocalOverrides({ full_name: saved.full_name, phone: saved.phone ?? undefined, avatar_url: saved.avatar_url ?? undefined, avatar_type: saved.avatar_url ? 'uploaded' : 'default' }))
+        .catch(() => setLocalOverrides({}));
     }
   }, [user?.id]);
 
@@ -74,30 +70,25 @@ export const FarmerProfilePage: React.FC = () => {
     avatar_type: localOverrides.avatar_type ?? 'default'
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editForm.full_name.trim()) {
       alert(t('profile.notProvided'));
       return;
     }
     
     setIsSaving(true);
-    
-    // Simulate network delay for realistic UX
-    setTimeout(() => {
-      const newOverrides = { 
-        ...localOverrides, 
-        full_name: editForm.full_name,
-        phone: editForm.phone
-      };
-      
-      localStorage.setItem(`farmer_profile_overrides_${user?.id}`, JSON.stringify(newOverrides));
+    try {
+      const saved = await profileApi.updateMine({ full_name: editForm.full_name, phone: editForm.phone });
+      const newOverrides = { ...localOverrides, full_name: saved.full_name, phone: saved.phone ?? undefined };
       setLocalOverrides(newOverrides);
       setIsEditing(false);
-      setIsSaving(false);
-      
       setToastMessage(t('profile.saveChanges'));
       setTimeout(() => setToastMessage(null), 3000);
-    }, 600);
+    } catch (error) {
+      setToastMessage(error instanceof Error ? error.message : t('profile.notProvided'));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,32 +109,29 @@ export const FarmerProfilePage: React.FC = () => {
     }
 
     const reader = new FileReader();
-    reader.onloadend = () => {
+    reader.onloadend = async () => {
       const result = reader.result as string;
-      const newOverrides = { 
-        ...localOverrides, 
-        avatar_url: result,
-        avatar_type: 'uploaded' as const
-      };
-      localStorage.setItem(`farmer_profile_overrides_${user?.id}`, JSON.stringify(newOverrides));
-      setLocalOverrides(newOverrides);
-      
-      setToastMessage(t("profilePage.photoUpdated"));
-      setTimeout(() => setToastMessage(null), 3000);
+      try {
+        const saved = await profileApi.updateMine({ avatar_url: result });
+        setLocalOverrides({ ...localOverrides, avatar_url: saved.avatar_url ?? undefined, avatar_type: 'uploaded' });
+        setToastMessage(t("profilePage.photoUpdated"));
+        setTimeout(() => setToastMessage(null), 3000);
+      } catch (error) {
+        setToastMessage(error instanceof Error ? error.message : t("profilePage.invalidImage"));
+      }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleUseDefaultAvatar = () => {
-    const newOverrides = { 
-      ...localOverrides, 
-      avatar_type: 'default' as const
-    };
-    localStorage.setItem(`farmer_profile_overrides_${user?.id}`, JSON.stringify(newOverrides));
-    setLocalOverrides(newOverrides);
-    
-    setToastMessage(t("profilePage.restoredDefault"));
-    setTimeout(() => setToastMessage(null), 3000);
+  const handleUseDefaultAvatar = async () => {
+    try {
+      await profileApi.updateMine({ avatar_url: null });
+      setLocalOverrides({ ...localOverrides, avatar_url: undefined, avatar_type: 'default' });
+      setToastMessage(t("profilePage.restoredDefault"));
+      setTimeout(() => setToastMessage(null), 3000);
+    } catch (error) {
+      setToastMessage(error instanceof Error ? error.message : t("profilePage.invalidImage"));
+    }
   };
 
   return (

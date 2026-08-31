@@ -16,7 +16,7 @@
 }
 
 .logo {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: 24px;
   font-weight: 600;
   color: var(--brand-deep);
@@ -76,5 +76,12 @@
     flex-direction: column;
     gap: var(--space-16);
     text-align: center;
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-8) 0;
   }
 }

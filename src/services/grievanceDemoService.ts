@@ -1,56 +1,45 @@
 import type { Grievance } from '../types/grievance';
-import { DEMO_GRIEVANCES } from '../data/grievanceDemoData';
+import { apiRequest } from './apiClient';
 
-export const getStorageKey = (userId: string) => `farmer_grievances_${userId}`;
+type GrievanceResponse = Omit<Grievance, 'farmerId' | 'createdAt' | 'updatedAt' | 'timeline' | 'resolutionGuidance'> & {
+  farmer_id: string;
+  created_at: string;
+  updated_at: string;
+  resolution_guidance: Grievance['resolutionGuidance'];
+};
+
+const toGrievance = (item: GrievanceResponse): Grievance => ({
+  ...item,
+  farmerId: item.farmer_id,
+  createdAt: item.created_at,
+  updatedAt: item.updated_at,
+  resolutionGuidance: item.resolution_guidance,
+  timeline: [{
+    status: item.status,
+    title: item.status.replace(/_/g, ' '),
+    description: 'Your grievance is stored securely in KrishiMitra.',
+    timestamp: item.updated_at,
+    state: 'CURRENT',
+  }],
+});
 
 export const grievanceDemoService = {
-  getGrievances: async (userId: string): Promise<Grievance[]> => {
-    try {
-      // Small artificial delay for realism
-      await new Promise(resolve => setTimeout(resolve, 300));
+  getGrievances: async (_userId: string): Promise<Grievance[]> =>
+    (await apiRequest<GrievanceResponse[]>('/grievances/')).map(toGrievance),
 
-      const localData = localStorage.getItem(getStorageKey(userId));
-      const localGrievances: Grievance[] = localData ? JSON.parse(localData) : [];
-      
-      // Merge demo data and local data
-      const merged = [...localGrievances, ...DEMO_GRIEVANCES];
-      
-      // Sort by creation date, newest first
-      return merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    } catch (error) {
-      console.error("Failed to fetch demo grievances:", error);
-      return DEMO_GRIEVANCES;
-    }
+  getGrievanceById: async (id: string, _userId: string): Promise<Grievance | undefined> => {
+    try { return toGrievance(await apiRequest<GrievanceResponse>(`/grievances/${id}`)); } catch { return undefined; }
   },
 
-  getGrievanceById: async (id: string, userId: string): Promise<Grievance | undefined> => {
-    const all = await grievanceDemoService.getGrievances(userId);
-    return all.find(g => g.id === id);
-  },
-
-  createGrievance: async (grievance: Omit<Grievance, 'id'>, userId: string): Promise<Grievance> => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network
-
-      // Generate a demo ID
-      const newId = `KM-${new Date().getFullYear()}-${Math.floor(Math.random() * 900000) + 100000}`;
-      
-      const newGrievance: Grievance = {
-        ...grievance,
-        id: newId,
-        farmerId: userId,
-      };
-
-      const localData = localStorage.getItem(getStorageKey(userId));
-      const localGrievances: Grievance[] = localData ? JSON.parse(localData) : [];
-      
-      localGrievances.push(newGrievance);
-      
-      localStorage.setItem(getStorageKey(userId), JSON.stringify(localGrievances));
-      return newGrievance;
-    } catch (error) {
-      console.error("Failed to create demo grievance:", error);
-      throw error;
-    }
-  }
+  createGrievance: async (grievance: Omit<Grievance, 'id'>, _userId: string): Promise<Grievance> =>
+    toGrievance(await apiRequest<GrievanceResponse>('/grievances/', {
+      method: 'POST',
+      body: JSON.stringify({
+        category: grievance.category, title: grievance.title, description: grievance.description,
+        priority: grievance.priority, location: grievance.location, evidence: grievance.evidence,
+        classification_summary: grievance.classificationSummary,
+        classification_reasons: grievance.classificationReasons, details: grievance.details ?? {},
+        resolution_guidance: grievance.resolutionGuidance,
+      }),
+    })),
 };

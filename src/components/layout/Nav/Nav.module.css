@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-12);
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: 24px;
   font-weight: 600;
   color: var(--brand-deep);
@@ -84,10 +84,30 @@
 }
 
 @media (max-width: 768px) {
+  .nav {
+    height: 64px;
+    padding: 0 var(--space-16);
+  }
+
   .links {
     display: none;
   }
-  .language {
+
+  .actions {
+    gap: var(--space-8);
+  }
+
+  .logo {
+    min-height: 44px;
+  }
+
+  .navLangToggle {
+    display: none;
+  }
+}
+
+@media (max-width: 375px) {
+  .loginButton {
     display: none;
   }
 }

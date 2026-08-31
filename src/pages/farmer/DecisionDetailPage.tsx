@@ -19,14 +19,16 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { mockDashboardData } from '../../data/mockFarmerDashboard';
+import type { ActiveDecision } from '../../data/mockFarmerDashboard';
+
+const getUnavailableDecision = (): ActiveDecision | null => null;
 
 export const DecisionDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   
-  // In a real app, fetch based on id. For now, use the active decision.
-  const decision = mockDashboardData.activeDecision;
+  // Decision records are not yet persisted by the backend. Do not render a mock decision as real advice.
+  const decision = getUnavailableDecision();
 
   if (!decision) {
     return <div className="p-8">Decision not found</div>;
@@ -58,7 +60,7 @@ export const DecisionDetailPage: React.FC = () => {
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
             {t('decisions.headerTag', 'Active Decision')}
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 font-display">
+          <h1 className="text-2xl font-bold text-gray-900 font-serif">
             {t('decisions.title', 'Where should you sell?')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -102,7 +104,7 @@ export const DecisionDetailPage: React.FC = () => {
               {t('decisions.recommendedAction', 'Recommended Action')}
             </span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mt-2 mb-2">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mt-2 mb-2">
             {t('decisions.sellAt', 'Sell at')} <span className="text-brand-primary">{t(`data.locations.${decision.recommendedDestination}`, decision.recommendedDestination)}</span>
           </h2>
           <p className="text-gray-600 font-medium text-lg mt-1 mb-6">
@@ -216,7 +218,7 @@ export const DecisionDetailPage: React.FC = () => {
                 <p className="text-sm font-medium text-green-800/80">{t('decisions.netRealizationContext', 'Estimated amount after applicable costs')}</p>
               </div>
             </div>
-            <div className="text-4xl md:text-5xl font-display font-bold text-green-800 relative z-10 whitespace-nowrap numeric">
+            <div className="text-4xl md:text-5xl font-sans font-bold text-green-800 relative z-10 whitespace-nowrap numeric">
               {formatCurrency(netRealization)}
             </div>
           </div>

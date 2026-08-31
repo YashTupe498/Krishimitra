@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import type { Opportunity } from '../../types/opportunity';
+import { opportunitiesApi } from '../../services/opportunitiesApi';
 
 export const OpportunitiesPage: React.FC = () => {
   const { t } = useTranslation();
@@ -14,11 +15,7 @@ export const OpportunitiesPage: React.FC = () => {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await fetch('/api/v1/farmer/opportunities');
-        if (response.ok) {
-          const data = await response.json();
-          setOpportunities(data);
-        }
+        setOpportunities(await opportunitiesApi.list());
       } catch (error) {
         console.error('Error fetching opportunities:', error);
       } finally {

@@ -91,6 +91,8 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
+        sans: "var(--font-sans)",
+        serif: "var(--font-serif)",
         mono: "var(--font-mono)",
       },
       backgroundImage: {

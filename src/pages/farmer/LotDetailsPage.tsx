@@ -6,10 +6,10 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { mockDashboardData } from '../../data/mockFarmerDashboard';
 import type { Lot, LotStatus } from '../../types/lot';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { farmerLotsApi } from '../../services/farmerLotsApi';
+import type { ActiveDecision } from '../../data/mockFarmerDashboard';
 
 const STATUS_ORDER: LotStatus[] = [
   'DRAFT',
@@ -20,6 +20,8 @@ const STATUS_ORDER: LotStatus[] = [
   'TRANSACTION_ACTIVE',
   'COMPLETED'
 ];
+
+const getUnavailableDecision = (): ActiveDecision | null => null;
 
 export const LotDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -45,7 +47,8 @@ export const LotDetailsPage: React.FC = () => {
   }
 
   const formatCurrency = (val: number) => '₹ ' + val.toLocaleString('en-IN');
-  const decision = lot.activeDecisionId === mockDashboardData.activeDecision?.id ? mockDashboardData.activeDecision : null;
+  // Decisions are only shown when a persisted decision endpoint is available.
+  const decision = getUnavailableDecision();
   const currentStatusIndex = STATUS_ORDER.indexOf(lot.status);
 
   return (
@@ -64,7 +67,7 @@ export const LotDetailsPage: React.FC = () => {
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
             {t('lotDetails.backLink', 'Back to My Lots')}
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 font-display">
+          <h1 className="text-2xl font-bold text-gray-900 font-serif">
             {t('lotDetails.title', 'LOT DETAILS')}
           </h1>
         </div>

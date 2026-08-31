@@ -1,4 +1,5 @@
 import type { Lot } from '../types/lot';
+import { apiRequest } from './apiClient';
 
 type LotPayload = {
   id: string;
@@ -33,19 +34,6 @@ type ApiLot = {
   updated_at?: string | null;
 };
 
-const request = async <T>(path: string, token: string, init?: RequestInit): Promise<T> => {
-  const response = await fetch(path, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init?.headers,
-    },
-  });
-  if (!response.ok) throw new Error((await response.text()) || 'The lot could not be saved.');
-  return response.json() as Promise<T>;
-};
-
 const toLot = (lot: ApiLot): Lot => ({
   id: lot.id,
   farmerId: lot.farmer_id,
@@ -70,8 +58,8 @@ const toLot = (lot: ApiLot): Lot => ({
 });
 
 export const farmerLotsApi = {
-  create: async (token: string, lot: LotPayload) => toLot(await request<ApiLot>('/api/v1/farmer/lots/', token, { method: 'POST', body: JSON.stringify(lot) })),
-  update: async (token: string, id: string, changes: Partial<LotPayload>) => toLot(await request<ApiLot>(`/api/v1/farmer/lots/${id}`, token, { method: 'PATCH', body: JSON.stringify(changes) })),
-  list: async (token: string) => (await request<ApiLot[]>('/api/v1/farmer/lots/', token)).map(toLot),
-  get: async (token: string, id: string) => toLot(await request<ApiLot>(`/api/v1/farmer/lots/${id}`, token)),
+  create: async (_token: string, lot: LotPayload) => toLot(await apiRequest<ApiLot>('/farmer/lots/', { method: 'POST', body: JSON.stringify(lot) })),
+  update: async (_token: string, id: string, changes: Partial<LotPayload>) => toLot(await apiRequest<ApiLot>(`/farmer/lots/${id}`, { method: 'PATCH', body: JSON.stringify(changes) })),
+  list: async (_token: string) => (await apiRequest<ApiLot[]>('/farmer/lots/')).map(toLot),
+  get: async (_token: string, id: string) => toLot(await apiRequest<ApiLot>(`/farmer/lots/${id}`)),
 };

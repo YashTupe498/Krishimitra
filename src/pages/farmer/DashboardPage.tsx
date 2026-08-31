@@ -16,7 +16,7 @@ import { useAuth } from '../../app/providers/AuthProvider';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { mockDashboardData } from '../../data/mockFarmerDashboard';
+import type { FarmerDashboardData } from '../../data/mockFarmerDashboard';
 import { useNavigate } from 'react-router-dom';
 import { farmerLotsApi } from '../../services/farmerLotsApi';
 import type { Lot } from '../../types/lot';
@@ -37,14 +37,31 @@ export const FarmerDashboardPage: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [showLangMenu, setShowLangMenu] = React.useState(false);
   const [lots, setLots] = React.useState<Lot[]>([]);
-  const { activeDecision, marketSnapshot, marketPressure, saleWindow, actionItems } = mockDashboardData;
+  const [dashboardData, setDashboardData] = React.useState<FarmerDashboardData>({
+    activeDecision: null,
+    marketSnapshot: [],
+    marketPressure: { level: 'MODERATE', arrivalsText: 'No current arrival data', priceTrendText: 'No current price data' },
+    saleWindow: { status: 'WAIT', message: 'Create and assess a lot to receive a market decision.', recommendation: 'No decision is available yet.' },
+    actionItems: [],
+    activeLots: [],
+  });
+  const { activeDecision, marketSnapshot, marketPressure, saleWindow, actionItems } = dashboardData;
   const firstName = profile?.full_name?.split(' ')[0] || 'Farmer';
   const location = profile?.district ? `${profile.district}, ${profile.state || 'India'}` : 'Nashik, Maharashtra';
 
   React.useEffect(() => {
     const token = session?.access_token;
     if (!token) return;
-    farmerLotsApi.list(token).then(setLots).catch(() => setLots([]));
+    farmerLotsApi.list(token).then((items) => {
+      setLots(items);
+      setDashboardData((current) => ({
+        ...current,
+        actionItems: items.filter((item) => item.status === 'QUALITY_PENDING').map((item) => ({
+          id: `assess-${item.id}`, type: 'warning', title: `Assess ${item.crop} quality`,
+          description: 'Complete the reference assessment to enable matching.', actionLabel: 'Assess now', link: `/farmer/lots/${item.id}/quality`,
+        })),
+      }));
+    }).catch(() => setLots([]));
   }, [session?.access_token]);
 
   const activeLots = lots.map(lot => ({
@@ -69,7 +86,7 @@ export const FarmerDashboardPage: React.FC = () => {
       {/* 1. HEADER */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-display">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-serif">
             {t('dashboard.goodMorning', 'Good morning')}, {firstName} 👋
           </h1>
           <p className="text-sm text-gray-600 mt-1">{t('dashboard.greetingSub', "Here's what matters for your produce today.")}</p>
@@ -170,7 +187,7 @@ export const FarmerDashboardPage: React.FC = () => {
                   <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">
                     {t('dashboard.estimatedNetRealization', 'Estimated Net Realization')}
                   </p>
-                  <p className="text-4xl font-display font-bold text-brand-primary numeric">
+                  <p className="text-4xl font-sans font-bold text-brand-primary numeric">
                     {formatCurrency(activeDecision.netRealization)}
                   </p>
                 </div>
@@ -271,7 +288,7 @@ export const FarmerDashboardPage: React.FC = () => {
                           <p className="text-xs font-bold text-gray-600 uppercase tracking-wider">{t(`data.marketSnapshot.${item.id}.label`, item.label)}</p>
                           {isSuccess && <span className="text-brand-deep text-xs">⭐</span>}
                         </div>
-                        <p className={`font-display text-2xl font-bold mt-1 numeric ${
+                        <p className={`font-sans text-2xl font-bold mt-1 numeric ${
                           isSuccess ? 'text-green-800' : 
                           isWarning ? 'text-amber-800' : 
                           'text-blue-800'

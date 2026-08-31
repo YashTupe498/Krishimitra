@@ -18,7 +18,7 @@
   right: clamp(4%, 12vw, 18%);
   bottom: -0.48em;
   color: rgba(255,255,255,0.07);
-  font-family: Georgia, serif;
+  font-family: var(--font-serif);
   font-size: clamp(160px, 24vw, 360px);
   line-height: 1;
   pointer-events: none;
