@@ -29,6 +29,7 @@ export type PaymentStatus =
 export interface TxLogisticsInfo {
   pickupLocation: string;
   destination: string;
+  distanceKm?: number;
   transportProvider?: string;
   vehicle?: string;
   expectedPickup?: string;
@@ -36,6 +37,18 @@ export interface TxLogisticsInfo {
   estimatedCostRs?: number;
   actualCostRs?: number;
   status: 'NOT_PLANNED' | 'PLANNED' | 'IN_TRANSIT' | 'DELIVERED';
+}
+
+export interface TxQualityInfo {
+  grade: 'A' | 'B' | 'C' | 'PENDING';
+  verified: boolean;
+  verifiedAt?: string;
+  moisture?: string;
+  size?: string;
+  damagePct?: string;
+  foreignMatter?: string;
+  packaging?: string;
+  notes?: string;
 }
 
 export interface TxPaymentInfo {
@@ -77,9 +90,12 @@ export interface DemoTransaction {
   lotId: string;
   farmerId: string;
   
-  // Produce
+  // Produce & Quantity Reconciliation
   crop: string;
-  quantityKg: number;
+  quantityKg: number; // Agreed Quantity
+  dispatchedQuantityKg?: number;
+  deliveredQuantityKg?: number;
+  acceptedQuantityKg?: number;
   grade: 'A' | 'B' | 'C' | 'PENDING';
   
   // Buyer (demo — verified label only if set to true)
@@ -87,15 +103,22 @@ export interface DemoTransaction {
   buyerId: string;
   buyerLocation: string;
   buyerVerified: boolean;
+  buyerVerificationDetails?: {
+    identity: boolean;
+    contact: boolean;
+    profile: boolean;
+  };
   
   // Market reference
   marketName: string;
   marketPricePerQ?: number; // reference price from Market Intelligence
   
-  // Finance
+  // Finance & Costs
   agreedPricePerQ: number;
   totalValue: number;
   transportCostRs?: number;
+  handlingCostRs?: number;
+  otherCostRs?: number;
   netRealizationRs?: number;
   
   // Status
@@ -109,6 +132,15 @@ export interface DemoTransaction {
   
   // Dispute
   grievanceId?: string;
+  grievanceDetails?: {
+    issueType: string;
+    description: string;
+    priority: 'HIGH' | 'MEDIUM' | 'LOW';
+    status: string;
+    evidence: string[];
+    aiClassification: string;
+    recommendedNextStep: string;
+  };
   
   // Dates
   offerAcceptedAt: string;

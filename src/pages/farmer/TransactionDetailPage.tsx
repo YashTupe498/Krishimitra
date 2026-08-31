@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Package, MapPin, Truck, CheckCircle2,
   Clock, AlertTriangle, FileText, IndianRupee, ShieldCheck,
-  ChevronRight, ArrowUpRight, Scale
+  ChevronRight, ArrowUpRight, Scale, ArrowRight
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { transactionDemoService, statusLabel, statusColor, paymentStatusColor } from '../../services/transactionDemoService';
@@ -115,9 +115,19 @@ export const TransactionDetailPage: React.FC = () => {
             <div className="flex items-center gap-2 text-sm text-gray-600 font-medium mb-4">
               <span>Grade {tx.grade}</span>
               <span className="text-gray-300">•</span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 group relative cursor-pointer">
                 {tx.buyerVerified && <ShieldCheck size={14} className="text-green-600" />}
                 {tx.buyerName}
+                {tx.buyerVerificationDetails && (
+                  <div className="absolute top-full left-0 mt-2 bg-gray-900 text-white text-xs p-3 rounded-lg w-48 opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none shadow-lg">
+                    <div className="font-bold mb-2">Verified Buyer</div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2"><CheckCircle2 size={12} className="text-green-400" /> Identity verified</div>
+                      <div className="flex items-center gap-2"><CheckCircle2 size={12} className="text-green-400" /> Contact verified</div>
+                      <div className="flex items-center gap-2"><CheckCircle2 size={12} className="text-green-400" /> Profile verified</div>
+                    </div>
+                  </div>
+                )}
               </span>
             </div>
 
@@ -205,26 +215,108 @@ export const TransactionDetailPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Price Realization Context */}
-              {tx.marketPricePerQ && (
-                <div className="bg-white rounded-xl border border-gray-200 p-5">
-                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Price Realization</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Market Intelligence ({tx.marketName})</span>
-                      <span className="font-mono text-gray-900">{fmtCurrency(tx.marketPricePerQ)}/q</span>
+              {/* Price Realization & Transaction Costs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {tx.marketPricePerQ && (
+                  <div className="bg-white rounded-xl border border-gray-200 p-5">
+                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Price Realization</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">Market Intelligence ({tx.marketName})</span>
+                        <span className="font-mono text-gray-900">{fmtCurrency(tx.marketPricePerQ)}/q</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">Agreed Buyer Offer</span>
+                        <span className="font-mono font-bold text-gray-900">{fmtCurrency(tx.agreedPricePerQ)}/q</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-600">Difference</span>
+                        <span className={`font-mono font-bold ${tx.agreedPricePerQ >= tx.marketPricePerQ ? 'text-green-600' : 'text-red-600'}`}>
+                          {tx.agreedPricePerQ >= tx.marketPricePerQ ? '+' : ''}{fmtCurrency(tx.agreedPricePerQ - tx.marketPricePerQ)}/q
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Agreed Buyer Offer</span>
-                      <span className="font-mono font-bold text-gray-900">{fmtCurrency(tx.agreedPricePerQ)}/q</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600">Difference</span>
-                      <span className={`font-mono font-bold ${tx.agreedPricePerQ >= tx.marketPricePerQ ? 'text-green-600' : 'text-red-600'}`}>
-                        {tx.agreedPricePerQ >= tx.marketPricePerQ ? '+' : ''}{fmtCurrency(tx.agreedPricePerQ - tx.marketPricePerQ)}/q
-                      </span>
+                    <div className="mt-4 text-[10px] text-gray-500 bg-gray-50 p-2 rounded">
+                      The agreed buyer price is {fmtCurrency(Math.abs(tx.agreedPricePerQ - tx.marketPricePerQ))}/q {tx.agreedPricePerQ >= tx.marketPricePerQ ? 'above' : 'below'} the referenced market price.
                     </div>
                   </div>
+                )}
+
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Transaction Cost & Net Realization</h3>
+                  <div className="space-y-2 mb-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Sale Value</span>
+                      <span className="font-mono text-gray-900">{fmtCurrency(tx.totalValue)}</span>
+                    </div>
+                    {tx.transportCostRs !== undefined ? (
+                      <>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-600">Transport</span>
+                          <span className="font-mono text-red-600">− {fmtCurrency(tx.transportCostRs)}</span>
+                        </div>
+                        {tx.handlingCostRs !== undefined && (
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">Handling</span>
+                            <span className="font-mono text-red-600">− {fmtCurrency(tx.handlingCostRs)}</span>
+                          </div>
+                        )}
+                        {tx.otherCostRs !== undefined && (
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">Other Charges</span>
+                            <span className="font-mono text-red-600">− {fmtCurrency(tx.otherCostRs)}</span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-xs text-gray-400 italic">Transaction cost details unavailable</div>
+                    )}
+                  </div>
+                  {tx.netRealizationRs !== undefined && (
+                    <div className="border-t border-gray-100 pt-3 flex justify-between items-center text-sm">
+                      <span className="font-bold text-[#194D2E]">Net Realization</span>
+                      <span className="font-mono font-bold text-[#194D2E]">{fmtCurrency(tx.netRealizationRs)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Quantity Reconciliation */}
+              {tx.dispatchedQuantityKg !== undefined && (
+                <div className="bg-white rounded-xl border border-gray-200 p-5">
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Quantity Reconciliation</h3>
+                  <div className="flex flex-wrap gap-6 items-center">
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Agreed Quantity</div>
+                      <div className="text-sm font-bold">{tx.quantityKg.toLocaleString()} kg</div>
+                    </div>
+                    <ArrowRight size={14} className="text-gray-300" />
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Dispatched</div>
+                      <div className="text-sm font-bold">{tx.dispatchedQuantityKg.toLocaleString()} kg</div>
+                    </div>
+                    <ArrowRight size={14} className="text-gray-300" />
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Delivered</div>
+                      <div className="text-sm font-bold">{tx.deliveredQuantityKg?.toLocaleString() || '—'} kg</div>
+                    </div>
+                    <ArrowRight size={14} className="text-gray-300" />
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Accepted</div>
+                      <div className="text-sm font-bold">{tx.acceptedQuantityKg?.toLocaleString() || '—'} kg</div>
+                    </div>
+                  </div>
+                  
+                  {tx.acceptedQuantityKg !== undefined && tx.acceptedQuantityKg !== tx.quantityKg && (
+                    <div className="mt-4 p-3 bg-amber-50 text-amber-800 text-sm border border-amber-200 rounded-lg flex items-center gap-2">
+                      <AlertTriangle size={16} /> Discrepancy of {Math.abs(tx.quantityKg - tx.acceptedQuantityKg)} kg detected between agreed and accepted quantity.
+                    </div>
+                  )}
+                  {tx.acceptedQuantityKg !== undefined && tx.acceptedQuantityKg === tx.quantityKg && (
+                    <div className="mt-4 text-xs font-bold text-green-700 flex items-center gap-1">
+                      <CheckCircle2 size={14} /> Quantity fully reconciled
+                    </div>
+                  )}
                 </div>
               )}
             </>
@@ -282,6 +374,12 @@ export const TransactionDetailPage: React.FC = () => {
                   <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
                     <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Moisture</div>
                     <div className="text-base font-bold text-gray-900">{tx.quality.moisture}</div>
+                  </div>
+                )}
+                {tx.quality.foreignMatter && (
+                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Foreign Matter</div>
+                    <div className="text-base font-bold text-gray-900">{tx.quality.foreignMatter}</div>
                   </div>
                 )}
                 {tx.quality.size && (
@@ -414,7 +512,44 @@ export const TransactionDetailPage: React.FC = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <h3 className="text-sm font-black text-gray-900 mb-4">Having a problem?</h3>
               
-              {tx.status === 'DISPUTE' || tx.grievanceId ? (
+              {tx.status === 'DISPUTE' && tx.grievanceDetails ? (
+                <div className="bg-red-50 border border-red-200 p-5 rounded-xl">
+                  <div className="flex items-start gap-3 mb-4">
+                    <AlertTriangle className="text-red-600 mt-0.5" size={20} />
+                    <div>
+                      <h4 className="font-bold text-red-900">Active Dispute</h4>
+                      <p className="text-sm text-red-700 mt-1">A grievance has been registered for this transaction.</p>
+                    </div>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg border border-red-100 mb-4 space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Grievance ID:</span>
+                      <span className="font-mono font-bold text-gray-900">{tx.grievanceId}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Issue Type:</span>
+                      <span className="font-bold text-gray-900">{tx.grievanceDetails.issueType}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600">Priority:</span>
+                      <span className="font-bold text-red-600">{tx.grievanceDetails.priority}</span>
+                    </div>
+                    <div className="text-sm text-gray-600 pt-2 border-t border-red-50">
+                      <span className="font-bold text-gray-900">Description:</span> {tx.grievanceDetails.description}
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg border border-amber-200 mb-4 space-y-2">
+                    <div className="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1"><ShieldCheck size={14} /> AI Assessment</div>
+                    <div className="text-sm text-gray-800"><span className="font-semibold">Classification:</span> {tx.grievanceDetails.aiClassification}</div>
+                    <div className="text-sm text-gray-800"><span className="font-semibold">Recommended Next Step:</span> {tx.grievanceDetails.recommendedNextStep}</div>
+                  </div>
+
+                  <Button variant="outline" className="w-full bg-white text-red-700 border-red-200 hover:bg-red-50" onClick={() => navigate('/farmer/issues')}>
+                    Track Grievance / Resolution
+                  </Button>
+                </div>
+              ) : tx.status === 'DISPUTE' || tx.grievanceId ? (
                 <div className="bg-red-50 border border-red-200 p-5 rounded-xl">
                   <div className="flex items-start gap-3 mb-4">
                     <AlertTriangle className="text-red-600 mt-0.5" size={20} />
