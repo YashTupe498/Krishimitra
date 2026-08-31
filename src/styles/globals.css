@@ -217,3 +217,27 @@ button {
     @apply border-border;
   }
 }
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+@keyframes patternDrift {
+  0% { background-position: 0 0; }
+  100% { background-position: 32px 32px; }
+}
+
+.animate-orb-float {
+  animation: orbFloat 20s ease-in-out infinite;
+}
+
+.animate-orb-float-delayed {
+  animation: orbFloat 25s ease-in-out infinite;
+  animation-delay: -10s;
+}
+
+.animate-pattern-drift {
+  animation: patternDrift 10s linear infinite;
+}

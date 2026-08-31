@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -6,6 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { Opportunity } from '../../types/opportunity';
 
 export const OpportunityDetailsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
@@ -31,20 +33,20 @@ export const OpportunityDetailsPage: React.FC = () => {
     }
   }, [id]);
 
-  if (loading) return <div className="p-4 max-w-2xl mx-auto"><p>Loading...</p></div>;
-  if (!opportunity) return <div className="p-4 max-w-2xl mx-auto"><p>Opportunity not found.</p></div>;
+  if (loading) return <div className="p-4 max-w-2xl mx-auto"><p>{t('opportunityDetails.loading')}</p></div>;
+  if (!opportunity) return <div className="p-4 max-w-2xl mx-auto"><p>{t('opportunityDetails.notFound')}</p></div>;
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <Button variant="ghost" onClick={() => navigate('/farmer/opportunities')} className="mb-4">
-        &larr; Back to Opportunities
+        {t('opportunityDetails.backToOpportunities')}
       </Button>
       
       <Card className="p-6 mb-6">
         <div className="flex justify-between items-start mb-4">
           <div>
             <h1 className="text-2xl font-bold">{opportunity.cropName}</h1>
-            <p className="text-gray-600">Requirement from Verified Buyer</p>
+            <p className="text-gray-600">{t('opportunityDetails.requirementFromBuyer')}</p>
           </div>
           <Badge variant={opportunity.matchLevel === 'Strong Match' ? 'success' : 'info'}>
             {opportunity.matchLevel}
@@ -53,19 +55,19 @@ export const OpportunityDetailsPage: React.FC = () => {
 
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
-            <p className="text-sm text-gray-500">Grade Required</p>
+            <p className="text-sm text-gray-500">{t('opportunityDetails.gradeRequired')}</p>
             <p className="font-semibold">{opportunity.grade}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Quantity</p>
+            <p className="text-sm text-gray-500">{t('opportunityDetails.quantity')}</p>
             <p className="font-semibold">{opportunity.quantity.toLocaleString()} kg</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Location</p>
+            <p className="text-sm text-gray-500">{t('opportunityDetails.location')}</p>
             <p className="font-semibold">{opportunity.location}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Payment Terms</p>
+            <p className="text-sm text-gray-500">{t('opportunityDetails.paymentTerms')}</p>
             <p className="font-semibold">{opportunity.paymentTerms}</p>
           </div>
         </div>
@@ -73,7 +75,7 @@ export const OpportunityDetailsPage: React.FC = () => {
         {opportunity.constraintWarnings && opportunity.constraintWarnings.length > 0 && (
           <div className="bg-red-50 border border-red-200 rounded p-4 mb-6">
             <h3 className="text-red-700 font-semibold flex items-center gap-2 mb-2">
-              <span>⚠</span> Constraint Warnings
+              <span>⚠</span> {t('opportunityDetails.constraintWarnings')}
             </h3>
             <ul className="list-disc pl-5 text-red-600 text-sm">
               {opportunity.constraintWarnings.map((warning, idx) => (
@@ -84,7 +86,7 @@ export const OpportunityDetailsPage: React.FC = () => {
         )}
 
         <div>
-          <h2 className="text-xl font-bold mb-3">Why This Matches</h2>
+          <h2 className="text-xl font-bold mb-3">{t('opportunityDetails.whyThisMatches')}</h2>
           <Card className="p-4 bg-gray-50">
             {opportunity.matchReasons && opportunity.matchReasons.length > 0 ? (
               <ul className="space-y-2">
@@ -97,11 +99,11 @@ export const OpportunityDetailsPage: React.FC = () => {
               </ul>
             ) : (
               <div className="space-y-2">
-                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> Crop matches your profile</p>
-                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> Grade requirements are met</p>
-                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> Quantity matches your stock</p>
-                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> Location is within range</p>
-                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> Payment terms are acceptable</p>
+                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> {t('opportunityDetails.cropMatches')}</p>
+                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> {t('opportunityDetails.gradeRequirementsMet')}</p>
+                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> {t('opportunityDetails.quantityMatches')}</p>
+                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> {t('opportunityDetails.locationInRange')}</p>
+                <p className="flex items-start gap-2"><span className="text-green-600">✓</span> {t('opportunityDetails.paymentTermsAcceptable')}</p>
               </div>
             )}
           </Card>

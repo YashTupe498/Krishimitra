@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { 
-  ArrowLeft, MapPin, CheckCircle2, ChevronRight, ArrowRight
+import {
+  ArrowLeft, MapPin, CheckCircle2, ChevronRight, ArrowRight, Edit2
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -50,10 +50,10 @@ export const LotDetailsPage: React.FC = () => {
 
   return (
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 pb-28 md:pb-24 max-w-4xl mx-auto">
-      
+
       {/* HEADER */}
       <div className="flex items-center gap-4 border-b border-gray-200 pb-4 pt-4 md:pt-0">
-        <button 
+        <button
           onClick={() => navigate('/farmer/dashboard')}
           className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors"
           aria-label={t('common.back', 'Back to My Lots')}
@@ -91,7 +91,7 @@ export const LotDetailsPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex flex-col gap-3">
               <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2">
                 <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Status</p>
@@ -102,7 +102,7 @@ export const LotDetailsPage: React.FC = () => {
                   <span className="text-sm font-bold text-gray-900">{t(`data.status.${lot.status}`, lot.status.replace(/_/g, ' '))}</span>
                 </div>
               </div>
-              
+
               {decision && (
                 <div className="bg-green-50 border border-green-200 rounded-lg px-4 py-2">
                   <p className="text-xs text-green-700 font-bold uppercase tracking-wider mb-1">Net Realization</p>
@@ -126,25 +126,32 @@ export const LotDetailsPage: React.FC = () => {
             {STATUS_ORDER.map((status, index) => {
               const isCompleted = index < currentStatusIndex;
               const isCurrent = index === currentStatusIndex;
-              
+
               if (index > currentStatusIndex + 1) return null; // Only show up to next step
-              
+
               return (
-                <div key={status} className="flex items-center gap-4 relative z-10">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 border-2 ${
-                    isCompleted ? 'bg-green-500 border-green-500 text-white' : 
-                    isCurrent ? 'bg-white border-brand-primary text-brand-primary' : 
-                    'bg-white border-gray-300'
-                  }`}>
+                <div 
+                  key={status} 
+                  className={`flex items-center gap-4 relative z-10 ${status === 'DRAFT' ? 'cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors group' : ''}`}
+                  onClick={status === 'DRAFT' ? () => navigate(`/farmer/lots/${id}/edit`) : undefined}
+                >
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 border-2 ${isCompleted ? 'bg-green-500 border-green-500 text-white' :
+                      isCurrent ? 'bg-white border-brand-primary text-brand-primary' :
+                        'bg-white border-gray-300'
+                    }`}>
                     {isCompleted ? <CheckCircle2 size={14} /> : isCurrent ? <div className="w-2 h-2 rounded-full bg-brand-primary" /> : null}
                   </div>
-                  <span className={`text-sm font-medium ${
-                    isCompleted ? 'text-gray-600' : 
-                    isCurrent ? 'text-gray-900 font-bold' : 
-                    'text-gray-400'
-                  }`}>
+                  <span className={`text-sm font-medium ${isCompleted ? 'text-gray-600' :
+                      isCurrent ? 'text-gray-900 font-bold' :
+                        'text-gray-400'
+                    } ${status === 'DRAFT' ? 'group-hover:text-brand-primary transition-colors' : ''}`}>
                     {t(`data.status.${status}`, status.replace(/_/g, ' '))}
                   </span>
+                  {status === 'DRAFT' && (
+                    <div className="ml-auto text-gray-400 group-hover:text-brand-primary opacity-0 group-hover:opacity-100 transition-all">
+                      <Edit2 size={16} />
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -231,7 +238,7 @@ export const LotDetailsPage: React.FC = () => {
               <div>
                 <p className="text-sm font-bold text-brand-primary uppercase tracking-wider mb-1">{t('lotDetails.sellThrough', 'Sell through')}</p>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">{t(`data.locations.${decision.recommendedDestination}`, decision.recommendedDestination)}</h3>
-                
+
                 <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Why?</p>
                 <ul className="text-sm text-gray-700 font-medium space-y-1">
                   <li className="flex items-center gap-1.5"><CheckCircle2 size={16} className="text-green-600" /> Lower transport</li>
@@ -284,7 +291,7 @@ export const LotDetailsPage: React.FC = () => {
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
           <Card className="border border-gray-200 shadow-sm bg-white p-6 h-[calc(100%-2.5rem)] flex items-center justify-center">
-             <div className="text-center text-gray-500">
+            <div className="text-center text-gray-500">
               {t('lotDetails.noOffers', 'No offers yet. Your lot is available for matching opportunities.')}
             </div>
           </Card>
@@ -295,7 +302,7 @@ export const LotDetailsPage: React.FC = () => {
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
           <Card className="border border-gray-200 shadow-sm bg-white p-6 h-[calc(100%-2.5rem)] flex items-center justify-center">
-             <div className="text-center text-gray-500">
+            <div className="text-center text-gray-500">
               {t('lotDetails.noTransaction', 'No transaction yet')}
             </div>
           </Card>

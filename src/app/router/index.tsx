@@ -13,6 +13,7 @@ import { CreateLotPage } from '../../pages/farmer/CreateLotPage';
 import { QualityAssessmentPage } from '../../pages/farmer/QualityAssessmentPage';
 import { FarmerOffersPage } from '../../pages/farmer/OffersPage';
 import { FarmerTransactionsPage } from '../../pages/farmer/TransactionsPage';
+import { FarmerProfilePage } from '../../pages/farmer/FarmerProfilePage';
 import { BuyerDashboardPage } from '../../pages/buyer/DashboardPage';
 import { BuyerLayout } from '../../layouts/BuyerLayout';
 import { BuyerPlaceholderPage } from '../../pages/buyer/PlaceholderPage';
@@ -20,6 +21,7 @@ import { BuyerLotRoute, BuyerMatchesPage, BuyerOffersPage, BuyerRequirementCreat
 import { MarketIntelligencePage } from '../../pages/farmer/MarketIntelligencePage';
 import { OpportunitiesPage } from '../../pages/farmer/OpportunitiesPage';
 import { OpportunityDetailsPage } from '../../pages/farmer/OpportunityDetailsPage';
+import { IssuesGrievancesPage } from '../../pages/farmer/IssuesGrievancesPage';
 import { ROUTES } from '../../constants/routes';
 
 export const AppRouter: React.FC = () => {
@@ -52,8 +54,8 @@ export const AppRouter: React.FC = () => {
           <Route path="/farmer/decisions" element={<div className="p-8">Decisions (Coming Soon)</div>} />
           <Route path="/farmer/offers" element={<FarmerOffersPage />} />
           <Route path="/farmer/transactions" element={<FarmerTransactionsPage />} />
-          <Route path="/farmer/issues" element={<div className="p-8">Issues (Coming Soon)</div>} />
-          <Route path="/farmer/profile" element={<div className="p-8">Profile (Coming Soon)</div>} />
+          <Route path="/farmer/issues" element={<IssuesGrievancesPage />} />
+          <Route path="/farmer/profile" element={<FarmerProfilePage />} />
         </Route>
       </Route>
       

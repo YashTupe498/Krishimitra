@@ -47,7 +47,7 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const { session } = useAuth();
-  
+
   const [step, setStep] = useState<Step>(1);
   const [draft, setDraft] = useState<DraftLot>(defaultDraft);
   const [initialDraft, setInitialDraft] = useState<DraftLot>(defaultDraft);
@@ -282,17 +282,17 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
 
   return (
     <div className="max-w-3xl mx-auto pb-24 animate-in fade-in duration-300">
-      
+
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-8">
-        <button 
+      <div className="flex items-center justify-between mb-6">
+        <button
           onClick={handleBack}
           className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-brand-primary transition-colors"
         >
           <ArrowLeft size={16} />
           {t('common.back', 'Back')}
         </button>
-        <button 
+        <button
           onClick={handleSaveAndExit}
           className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-gray-700 transition-colors"
         >
@@ -301,29 +301,35 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
         </button>
       </div>
 
-      <h1 className="text-3xl font-display font-bold text-gray-900 mb-8">
-        {mode === 'edit' ? t('createLot.editTitle', 'Edit Lot Details') : t('createLot.title', 'Create New Lot')}
-      </h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-display font-bold text-gray-900 mb-2">
+          {mode === 'edit' ? t('createLot.editTitle', 'Edit Produce Lot') : t('createLot.title', 'Create a New Produce Lot')}
+        </h1>
+        <p className="text-gray-500 text-lg">Tell us about the produce you want to sell.</p>
+      </div>
 
       {/* STEPPER */}
+      <div className="mb-4">
+        <span className="text-sm font-bold text-gray-400 uppercase tracking-wider">Step {step} of 4</span>
+      </div>
       <div className="flex items-center justify-between mb-10 relative">
         <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-gray-200 -z-10 -translate-y-1/2"></div>
         <div className="absolute left-0 top-1/2 h-0.5 bg-brand-primary -z-10 -translate-y-1/2 transition-all duration-300" style={{ width: `${(step - 1) * 33.33}%` }}></div>
-        
+
         <div className="flex flex-col items-center gap-2 bg-gray-50/80 px-2">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${step >= 1 ? 'bg-brand-primary text-white shadow-md' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>
             <Package size={18} />
           </div>
           <span className={`text-xs font-bold uppercase tracking-wider ${step >= 1 ? 'text-gray-900' : 'text-gray-400'}`}>Produce</span>
         </div>
-        
+
         <div className="flex flex-col items-center gap-2 bg-gray-50/80 px-2">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${step >= 2 ? 'bg-brand-primary text-white shadow-md' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>
             <MapPin size={18} />
           </div>
           <span className={`text-xs font-bold uppercase tracking-wider ${step >= 2 ? 'text-gray-900' : 'text-gray-400'}`}>Location</span>
         </div>
-        
+
         <div className="flex flex-col items-center gap-2 bg-gray-50/80 px-2">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${step >= 3 ? 'bg-brand-primary text-white shadow-md' : 'bg-white border-2 border-gray-200 text-gray-400'}`}>
             <Settings size={18} />
@@ -340,16 +346,19 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
       </div>
 
       <Card className="p-6 md:p-8 bg-white border border-gray-200 shadow-sm relative overflow-hidden">
-        
+
         {/* STEP 1: PRODUCE */}
         {step === 1 && (
           <div className="animate-in slide-in-from-right-8 duration-300">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('createLot.step1Title', 'What are you selling?')}</h2>
-            
-            <div className="space-y-6">
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('createLot.step1Title', 'What are you selling?')}</h2>
+              <p className="text-gray-500">Select the crop you want to create a lot for.</p>
+            </div>
+
+            <div className="space-y-8">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Crop</label>
-                <select 
+                <select
                   className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium bg-white"
                   value={draft.crop}
                   onChange={(e) => updateDraft({ crop: e.target.value })}
@@ -361,36 +370,38 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
                 </select>
               </div>
 
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Quantity</label>
-                  <input 
-                    type="number" 
-                    min="1"
-                    placeholder="e.g. 5000"
-                    className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium"
-                    value={draft.quantity}
-                    onChange={(e) => updateDraft({ quantity: e.target.value })}
-                  />
-                </div>
-                <div className="w-1/3">
-                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Unit</label>
-                  <select 
-                    className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium bg-white"
-                    value={draft.unit}
-                    onChange={(e) => updateDraft({ unit: e.target.value })}
-                  >
-                    <option value="kg">KG</option>
-                    <option value="quintal">Quintal</option>
-                    <option value="ton">Ton</option>
-                  </select>
+              <div>
+                <h3 className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">How much produce do you have available?</h3>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1">
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder="e.g. 5000"
+                      className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium"
+                      value={draft.quantity}
+                      onChange={(e) => updateDraft({ quantity: e.target.value })}
+                    />
+                  </div>
+                  <div className="sm:w-1/3">
+                    <select
+                      className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium bg-white"
+                      value={draft.unit}
+                      onChange={(e) => updateDraft({ unit: e.target.value })}
+                    >
+                      <option value="kg">KG</option>
+                      <option value="quintal">Quintal</option>
+                      <option value="ton">Ton</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Expected Availability Date</label>
-                <input 
-                  type="date" 
+                <h3 className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">When will this produce be available?</h3>
+                <p className="text-sm text-gray-500 mb-3">This helps us find buyers and opportunities that match your timing.</p>
+                <input
+                  type="date"
                   className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium"
                   value={draft.availabilityDate}
                   onChange={(e) => updateDraft({ availabilityDate: e.target.value })}
@@ -399,8 +410,8 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
             </div>
 
             <div className="mt-10 flex justify-end">
-              <Button variant="primary" className="px-8 font-bold flex items-center gap-2" onClick={handleNext} disabled={!canProceedStep1}>
-                {t('common.continue', 'Continue')} <ArrowRight size={18} />
+              <Button variant="primary" className="w-full sm:w-auto px-8 font-bold flex items-center justify-center gap-2" onClick={handleNext} disabled={!canProceedStep1}>
+                {t('common.continueLocation', 'Continue to Location')} <ArrowRight size={18} />
               </Button>
             </div>
           </div>
@@ -411,13 +422,13 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
           <div className="animate-in slide-in-from-right-8 duration-300">
             <h2 className="text-xl font-bold text-gray-900 mb-2">{t('createLot.step2Title', 'Where is your produce?')}</h2>
             <p className="text-sm text-gray-500 font-medium mb-6">Pre-filled from your farmer profile.</p>
-            
+
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Village / City</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium bg-gray-50"
                     value={draft.village}
                     onChange={(e) => updateDraft({ village: e.target.value })}
@@ -425,8 +436,8 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Taluka</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium bg-gray-50"
                     value={draft.taluka}
                     onChange={(e) => updateDraft({ taluka: e.target.value })}
@@ -434,8 +445,8 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">District</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium bg-gray-50"
                     value={draft.district}
                     onChange={(e) => updateDraft({ district: e.target.value })}
@@ -443,15 +454,15 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">State</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     className="w-full p-4 rounded-xl border border-gray-300 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-medium bg-gray-50"
                     value={draft.state}
                     onChange={(e) => updateDraft({ state: e.target.value })}
                   />
                 </div>
               </div>
-              
+
               <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex items-start gap-3 mt-4">
                 <MapPin size={20} className="text-blue-600 shrink-0 mt-0.5" />
                 <p className="text-sm text-blue-900 font-medium leading-relaxed">
@@ -475,15 +486,15 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
         {step === 3 && (
           <div className="animate-in slide-in-from-right-8 duration-300">
             <h2 className="text-xl font-bold text-gray-900 mb-6">{t('createLot.step3Title', 'Your Selling Requirements')}</h2>
-            
+
             <div className="space-y-8">
-              
+
               {/* Payment */}
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Payment Requirement</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {['Immediately', 'Within 3 days', 'Within 7 days', 'I can wait'].map(opt => (
-                    <button 
+                    <button
                       key={opt}
                       className={`p-4 rounded-xl border text-left flex items-center gap-3 transition-colors ${draft.paymentRequirement === opt ? 'border-brand-primary bg-brand-primary/5 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'}`}
                       onClick={() => updateDraft({ paymentRequirement: opt })}
@@ -502,7 +513,7 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
                 <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Transport Capability</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {['Can arrange transport', 'Need transport assistance', 'Cannot arrange transport'].map(opt => (
-                    <button 
+                    <button
                       key={opt}
                       className={`p-4 rounded-xl border text-left flex items-start gap-3 transition-colors ${draft.transportCapability === opt ? 'border-brand-primary bg-brand-primary/5 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'}`}
                       onClick={() => updateDraft({ transportCapability: opt })}
@@ -521,7 +532,7 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
                 <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">Storage Capability</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {['Can store produce', 'Cannot store produce'].map(opt => (
-                    <button 
+                    <button
                       key={opt}
                       className={`p-4 rounded-xl border text-left flex items-center gap-3 transition-colors ${draft.storageCapability === opt ? 'border-brand-primary bg-brand-primary/5 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'}`}
                       onClick={() => updateDraft({ storageCapability: opt })}
@@ -534,7 +545,7 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
                   ))}
                 </div>
               </div>
-              
+
             </div>
 
             <div className="mt-10 pt-6 border-t border-gray-100 flex justify-between">
