@@ -47,7 +47,7 @@ export const FinalCTA: React.FC = () => {
   }, []);
 
   return (
-    <section className={clsx(styles.section, 'bg-deep-green-grain')}>
+    <section className={styles.section}>
       <div className={styles.container}>
         <h2 className={clsx("h2", styles.title)}>{t('cta.title')}</h2>
         
