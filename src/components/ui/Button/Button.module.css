@@ -33,6 +33,19 @@
   transform: scale(1.02);
 }
 
+@media (max-width: 480px) {
+  .button {
+    min-height: 44px;
+    padding-left: var(--space-16);
+    padding-right: var(--space-16);
+  }
+
+  .size-large {
+    min-height: 52px;
+    height: 52px;
+  }
+}
+
 .primary {
   background-color: var(--brand-primary);
   color: #FFFFFF;

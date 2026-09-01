@@ -1,4 +1,4 @@
-import type { IntentResult, ConfidenceLevel, Intent } from '../../types/voice';
+import type { IntentResult, ConfidenceLevel } from '../../types/voice';
 import { farmerIntents } from '../../data/farmerVoiceCommands';
 import type { IntentDefinition } from '../../data/farmerVoiceCommands';
 

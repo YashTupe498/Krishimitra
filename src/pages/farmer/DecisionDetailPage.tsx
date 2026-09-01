@@ -12,8 +12,13 @@ import { Badge } from '../../components/ui/Badge';
 import { decisionApi } from '../../services/decisionApi';
 import type { DecisionResponse } from '../../services/decisionApi';
 import { farmerLotsApi } from '../../services/farmerLotsApi';
+import { getMarketIntelligence } from '../../services/marketIntelligence/marketIntelligenceResolver';
+import type { UnifiedMarketIntelligence } from '../../services/marketIntelligence/marketIntelligenceResolver';
 import { supabase } from '../../lib/supabase';
 import type { Lot } from '../../types/lot';
+import { ENWRAwareness } from '../../components/farmer/market/ENWRAwareness';
+import { buildDecisionViewModel } from '../../services/decisionSupport/decisionViewModel';
+import type { DecisionViewModel } from '../../services/decisionSupport/decisionViewModel';
 
 export const DecisionDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +26,9 @@ export const DecisionDetailPage: React.FC = () => {
   const { t } = useTranslation();
   
   const [decision, setDecision] = useState<DecisionResponse | null>(null);
+  const [intelligence, setIntelligence] = useState<UnifiedMarketIntelligence | null>(null);
   const [lot, setLot] = useState<Lot | null>(null);
+  const [viewModel, setViewModel] = useState<DecisionViewModel | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,8 +44,18 @@ export const DecisionDetailPage: React.FC = () => {
         const lotData = await farmerLotsApi.get(session.access_token, id);
         setLot(lotData);
 
-        const decData = await decisionApi.getDecision(id);
+        let decData: DecisionResponse;
+        try {
+          decData = await decisionApi.getDecision(id);
+        } catch {
+          decData = { id: `local-${id}`, generated_at: '', lot_id: id, farmer_id: lotData.farmerId, recommendation: 'NO_ACTIONABLE_OPTION', confidence: 'Low', reasons: [], market_signals: { nearby_markets: [] }, feasibility: 'AT_RISK', constraints: [], alternatives: [], evidence: [] };
+        }
         setDecision(decData);
+
+        const recommendedMarket = decData.market_signals?.nearby_markets?.[0] || 'Pimpalgaon Baswant APMC';
+        const intel = await getMarketIntelligence(lotData, recommendedMarket);
+        setIntelligence(intel);
+        setViewModel(await buildDecisionViewModel(lotData, decData));
       } catch (err: any) {
         setError(err.message || "Failed to load decision");
       } finally {
@@ -63,7 +80,7 @@ export const DecisionDetailPage: React.FC = () => {
     );
   }
 
-  if (error || !decision || !lot) {
+  if (error || !decision || !intelligence || !lot) {
     return (
       <div className="p-8 max-w-4xl mx-auto text-center mt-12">
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
@@ -78,13 +95,18 @@ export const DecisionDetailPage: React.FC = () => {
 
   const { 
     best_opportunity, 
-    market_signals, 
-    constraints = [], 
-    alternatives = [], 
     resolution_guidance, 
     evidence = [],
     reasons = []
   } = decision;
+  const feasibilityItems = viewModel?.feasibility ?? [];
+  const decisionAlternatives = viewModel?.alternatives ?? [];
+  const decisionEvidence = evidence.length ? evidence : viewModel ? [
+    { factor: 'Price', text: `₹${viewModel.intelligence.snapshot.modal_price?.toLocaleString() || '—'}/q`, source: viewModel.intelligence.sources.price },
+    { factor: 'Arrivals', text: viewModel.intelligence.arrivalTrend === 'INSUFFICIENT_DATA' ? 'Unavailable' : viewModel.intelligence.arrivalTrend.toLowerCase(), source: viewModel.intelligence.sources.arrivals },
+    { factor: 'Net realization', text: viewModel.intelligence.netRealizationPerQuintal === null ? 'Unavailable' : `₹${Math.round(viewModel.intelligence.netRealizationPerQuintal).toLocaleString()}/q`, source: viewModel.intelligence.sources.logistics },
+    { factor: 'Aggregation', text: viewModel.aggregation ? 'Potentially suitable' : 'Not required', source: viewModel.aggregation?.source || 'UNAVAILABLE' },
+  ] : [];
 
   return (
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 pb-28 md:pb-24 max-w-4xl mx-auto p-4 md:p-8">
@@ -172,7 +194,7 @@ export const DecisionDetailPage: React.FC = () => {
           </div>
           
           <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3 text-brand-deep uppercase">
-            {decision.recommendation?.replace(/_/g, ' ') || 'UNKNOWN'}
+            {viewModel?.actionLabel || decision.recommendation?.replace(/_/g, ' ') || 'Monitor Market Signals'}
           </h2>
           
           <div className="text-sm font-medium text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 flex items-center gap-2 mx-auto sm:mx-0">
@@ -189,7 +211,7 @@ export const DecisionDetailPage: React.FC = () => {
         <div className="p-6">
           <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Why this decision?</h3>
           <ul className="space-y-3">
-            {reasons.map((r, i) => (
+            {(reasons.length ? reasons : viewModel?.reasons || []).map((r, i) => (
               <li key={i} className="flex items-start gap-3">
                 <CheckCircle2 size={18} className="text-green-600 shrink-0 mt-0.5" />
                 <span className="text-gray-700">{r}</span>
@@ -204,23 +226,19 @@ export const DecisionDetailPage: React.FC = () => {
       {lot.status !== 'TRANSACTION_ACTIVE' && lot.status !== 'COMPLETED' && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-white border-gray-200 p-6">
-          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Market Signals</h3>
+          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">RECOMMENDED MARKET</h3>
           <div className="space-y-4">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Modal Price</span>
-              <span className="font-bold text-gray-900">{market_signals?.modal_price ? formatCurrency(market_signals.modal_price) : '---'}</span>
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <span className="text-sm font-medium text-gray-500">Market</span>
+              <span className="font-bold text-gray-900">{intelligence.selectedMarketName}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Movement</span>
-              <span className="font-bold text-gray-900">{market_signals?.price_movement || '---'}</span>
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <span className="text-sm font-medium text-gray-500">Expected Market Price</span>
+              <span className="font-bold text-gray-900">₹{intelligence.snapshot.modal_price?.toLocaleString() || '—'}/q</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Pressure</span>
-              <span className="font-bold text-gray-900">{market_signals?.pressure || '---'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Selling Window</span>
-              <span className="font-bold text-gray-900">{market_signals?.selling_window || '---'}</span>
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-bold text-green-700">Estimated Net Realization</span>
+              <span className="font-black text-green-800 text-lg">₹{intelligence.netRealizationPerQuintal?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || '---'}/q</span>
             </div>
           </div>
         </Card>
@@ -252,82 +270,84 @@ export const DecisionDetailPage: React.FC = () => {
       </div>
       )}
 
-      {/* NET REALIZATION WATERFALL */}
-      {best_opportunity && decision.net_realization && (
-        <section className="mt-12">
-          <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Calculator className="text-brand-deep" />
-            {t('decisions.netRealizationBreakdown', 'Net Realization Breakdown')}
-          </h2>
+      {/* LOGISTICS & STORAGE & SELL VS STORE */}
+      {lot.status !== 'TRANSACTION_ACTIVE' && lot.status !== 'COMPLETED' && (
+        <section id="storage" className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <Card className="bg-white border-gray-200 p-6 flex flex-col">
+             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><Truck size={14}/> Logistics</h3>
+             {intelligence.logistics ? (
+                <div className="flex-1 flex flex-col text-sm">
+                   <div className="mb-auto">
+                     <span className="text-gray-900 font-bold block mb-1">{intelligence.logistics.route.origin} → {intelligence.logistics.route.destination}</span>
+                     <span className="text-gray-500 block mb-3">{intelligence.logistics.distanceKm} km</span>
+                     <span className="font-bold text-gray-900 block mb-1">₹{intelligence.logistics.estimatedCostRs.toLocaleString()} transport</span>
+                   </div>
+                   <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2 text-green-600 font-bold text-[10px] uppercase tracking-widest">
+                      <CheckCircle2 size={14} /> {intelligence.logistics.availability}
+                   </div>
+                </div>
+             ) : (
+                <p className="text-sm text-gray-500 italic">Logistics information unavailable.</p>
+             )}
+          </Card>
           
-          <div className="bg-gray-50 rounded-3xl p-6 md:p-8 border border-gray-100 space-y-2">
-            {/* Gross Value */}
-            <div className="bg-white rounded-2xl p-4 md:p-5 shadow-sm relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
-                  <TrendingUp size={18} className="text-gray-600" />
+          <Card className="bg-white border-gray-200 p-6 flex flex-col">
+             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><Package size={14}/> Storage</h3>
+             {intelligence.storage ? (
+                <div className="flex-1 flex flex-col text-sm">
+                   <div className="mb-auto">
+                     <span className="text-gray-900 font-bold block mb-1">{intelligence.storage.centerName}</span>
+                     <span className="text-gray-500 block mb-3">{intelligence.storage.distanceKm} km</span>
+                     <span className="font-bold text-gray-900 block mb-1">₹{intelligence.storage.costPerTonnePerDayRs}/tonne/day</span>
+                   </div>
+                   <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2 text-green-600 font-bold text-[10px] uppercase tracking-widest">
+                      <CheckCircle2 size={14} /> Capacity {intelligence.storage.availability}
+                   </div>
                 </div>
-                <div>
-                  <p className="text-base font-bold text-gray-900">{t('decisions.grossSaleValue', 'Gross Sale Value')}</p>
-                </div>
-              </div>
-              <div className="text-xl font-bold text-gray-900 numeric ml-14 sm:ml-0">
-                {formatCurrency(decision.gross_value)}
-              </div>
-            </div>
-            
-            <div className="py-1 pl-24 hidden sm:block"><ArrowDownIcon className="text-gray-300 w-6 h-6" /></div>
+             ) : (
+                <p className="text-sm text-gray-500 italic">Storage information unavailable.</p>
+             )}
+          </Card>
 
-            {/* Transport */}
-            <div className="bg-red-50/50 border border-red-100 rounded-2xl p-4 md:p-5 shadow-sm relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ml-0 sm:ml-12">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0 text-red-600">
-                  <Truck size={18} />
+          <Card className="bg-white border-gray-200 p-6 flex flex-col">
+             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><TrendingUp size={14}/> Sell vs Store</h3>
+             {intelligence.sellVsStore ? (
+                <div className="flex-1 flex flex-col text-sm">
+                   <div className="mb-auto space-y-2">
+                     <div className="flex justify-between items-center pb-2 border-b border-gray-100">
+                        <span className="text-gray-500">Sell Now Net</span>
+                        <span className="font-bold text-gray-900">₹{(intelligence.sellVsStore.sellNowNetRs / (intelligence.normalizedQuantityKg / 100)).toLocaleString(undefined, {maximumFractionDigits: 0})}/q</span>
+                     </div>
+                     <div className="flex justify-between items-center">
+                        <span className="text-gray-500">Estimated Store Net</span>
+                        <span className="font-bold text-gray-900">₹{(intelligence.sellVsStore.storeNetRs / (intelligence.normalizedQuantityKg / 100)).toLocaleString(undefined, {maximumFractionDigits: 0})}/q</span>
+                     </div>
+                   </div>
+                   <div className={`mt-4 pt-3 border-t border-gray-100 flex items-center gap-2 font-bold text-[10px] uppercase tracking-widest ${intelligence.sellVsStore.signal === 'CONSIDER_STORAGE' ? 'text-orange-600' : 'text-green-600'}`}>
+                      <CheckCircle2 size={14} /> {intelligence.sellVsStore.signal === 'CONSIDER_STORAGE' ? 'Consider Storage' : 'Sell Now Favorable'}
+                   </div>
                 </div>
-                <div>
-                  <p className="text-base font-bold text-red-900">{t('decisions.transport', 'Transport')}</p>
-                </div>
-              </div>
-              <div className="text-xl font-bold text-red-700 ml-14 sm:ml-0 flex items-center gap-2 numeric">
-                {decision.transport_cost ? `- ${formatCurrency(decision.transport_cost)}` : 'Unavailable'}
-              </div>
-            </div>
-
-            <div className="py-1 pl-24 hidden sm:block"><ArrowDownIcon className="text-gray-300 w-6 h-6" /></div>
-
-            {/* Handling */}
-            <div className="bg-red-50/50 border border-red-100 rounded-2xl p-4 md:p-5 shadow-sm relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ml-0 sm:ml-12">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0 text-red-600">
-                  <Receipt size={18} />
-                </div>
-                <div>
-                  <p className="text-base font-bold text-red-900">{t('decisions.handling', 'Handling & Other Charges')}</p>
-                </div>
-              </div>
-              <div className="text-xl font-bold text-red-700 ml-14 sm:ml-0 flex items-center gap-2 numeric">
-                {decision.handling_cost ? `- ${formatCurrency(decision.handling_cost)}` : 'Unavailable'}
-              </div>
-            </div>
-
-            <div className="py-1 pl-24 hidden sm:block"><ArrowDownIcon className="text-gray-300 w-6 h-6" /></div>
-
-            {/* Net Realization */}
-            <div className="bg-green-50/80 border-2 border-green-500 rounded-2xl p-6 md:p-8 shadow-md relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="flex items-center gap-5 relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-green-600 text-white shadow-sm flex items-center justify-center shrink-0">
-                  <Calculator size={28} />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-green-700 uppercase tracking-widest mb-1">{t('decisions.estimatedNetRealization', 'Estimated Net Realization')}</p>
-                </div>
-              </div>
-              <div className="text-4xl md:text-5xl font-display font-bold text-green-800 relative z-10 whitespace-nowrap numeric">
-                {formatCurrency(decision.net_realization)}
-              </div>
-            </div>
-          </div>
+             ) : (
+                <p className="text-sm text-gray-500 italic">Sell vs store unavailable.</p>
+             )}
+          </Card>
         </section>
+      )}
+
+      {/* ENWR AWARENESS */}
+      {lot.status !== 'TRANSACTION_ACTIVE' && lot.status !== 'COMPLETED' && intelligence.storage && (
+         <div className="mt-8">
+            <ENWRAwareness />
+         </div>
+      )}
+
+      {lot.status !== 'TRANSACTION_ACTIVE' && lot.status !== 'COMPLETED' && viewModel?.aggregation && (
+        <Card className="mt-8 bg-white border-gray-200">
+          <div id="aggregation" />
+          <div className="p-6"><div className="flex justify-between gap-4 items-start"><div><h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Farmer / FPO aggregation</h3><p className="text-sm text-gray-600 mt-2">Combining compatible Grade A onion lots may help meet a buyer’s volume requirement.</p></div><span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded uppercase">Supplied data</span></div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5 text-sm"><div><span className="text-gray-500 block">Your lot</span><strong>{viewModel.intelligence.normalizedQuantityKg.toLocaleString()} kg</strong></div><div><span className="text-gray-500 block">Compatible group</span><strong>{viewModel.aggregation.groupName}</strong></div><div><span className="text-gray-500 block">Combined potential</span><strong>{viewModel.aggregation.combinedKg.toLocaleString()} kg</strong></div><div><span className="text-gray-500 block">Buyer need</span><strong>{viewModel.aggregation.buyerNeedKg.toLocaleString()} kg</strong></div></div>
+          <p className="text-xs text-green-700 font-medium mt-5">Potential benefit: the combined volume can meet the buyer quantity threshold; shared logistics may reduce per-unit cost. This does not join you to an FPO or guarantee a sale.</p></div>
+        </Card>
       )}
 
       {/* FEASIBILITY & CONSTRAINTS */}
@@ -336,32 +356,11 @@ export const DecisionDetailPage: React.FC = () => {
         <Card className="bg-white border-gray-200">
           <div className="p-6">
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Feasibility constraints</h3>
-            <div className="space-y-4">
-              {constraints.map((c, i) => (
-                <div key={i} className={`p-4 rounded-xl border ${
-                  c.status === 'FEASIBLE' ? 'bg-green-50 border-green-100' :
-                  c.status === 'AT_RISK' ? 'bg-amber-50 border-amber-100' : 'bg-red-50 border-red-100'
-                }`}>
-                  <p className="font-bold text-gray-900 mb-2">{c.type}</p>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-500">Your requirement:</span>
-                    <span className="font-semibold">{c.farmer_requirement}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Buyer offering:</span>
-                    <span className="font-semibold">{c.buyer_offering}</span>
-                  </div>
-                  {c.status !== 'FEASIBLE' && (
-                    <div className={`mt-3 pt-3 border-t text-sm font-bold flex items-center gap-2 ${
-                      c.status === 'AT_RISK' ? 'border-amber-200 text-amber-700' : 'border-red-200 text-red-700'
-                    }`}>
-                      <AlertTriangle size={16} />
-                      {c.status === 'AT_RISK' ? 'At Risk' : 'Infeasible'}
-                    </div>
-                  )}
-                </div>
-              ))}
-              {constraints.length === 0 && <p className="text-gray-500 text-sm">No specific constraints evaluated.</p>}
+            <div className="space-y-3">
+              {feasibilityItems.map(item => <div key={item.key} className={`p-4 rounded-xl border ${item.status === 'FEASIBLE' ? 'bg-green-50 border-green-100' : item.status === 'ATTENTION' ? 'bg-amber-50 border-amber-100' : 'bg-gray-50 border-gray-100'}`}>
+                <div className="flex gap-2"><span aria-hidden="true" className={`font-bold ${item.status === 'FEASIBLE' ? 'text-green-700' : item.status === 'ATTENTION' ? 'text-amber-700' : 'text-gray-500'}`}>{item.status === 'FEASIBLE' ? '✓' : item.status === 'ATTENTION' ? '⚠' : '•'}</span><div><p className="font-bold text-gray-900 text-sm">{item.title}</p><p className="text-xs text-gray-600 mt-1 leading-relaxed">{item.detail}</p></div></div>
+              </div>)}
+              {feasibilityItems.length > 0 && <div className="pt-3 border-t border-gray-100"><p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Feasibility summary</p><p className="text-xs text-gray-700 mt-1">{feasibilityItems.filter(item => item.status === 'FEASIBLE').length} checks feasible{feasibilityItems.some(item => item.status === 'ATTENTION') ? '; attention is needed before the selected route can be fully executed.' : '.'}</p></div>}
             </div>
           </div>
         </Card>
@@ -369,22 +368,19 @@ export const DecisionDetailPage: React.FC = () => {
         <Card className="bg-white border-gray-200 flex flex-col h-full">
           <div className="p-6 flex-1 flex flex-col">
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Other Alternatives</h3>
-            {alternatives.length > 0 ? (
+            {decisionAlternatives.length > 0 ? (
               <ul className="space-y-4 flex-1">
-                {alternatives.map((alt, i) => (
-                  <li key={i} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                    <div className="flex justify-between mb-2">
-                      <span className="font-bold text-gray-900">{alt.title}</span>
-                      <span className="text-gray-900">{formatCurrency(alt.value)}/{alt.unit}</span>
-                    </div>
-                    <p className="text-sm text-red-600 bg-red-50 px-2 py-1 rounded inline-block">Not selected</p>
-                    <p className="text-xs text-gray-500 mt-2">Reason: {alt.reason_rejected}</p>
+                {decisionAlternatives.map(alt => (
+                  <li key={alt.key} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="flex justify-between gap-3 mb-2"><span className="font-bold text-gray-900 text-sm">{alt.title}</span>{alt.value && <span className="text-xs font-bold text-green-700 text-right">{alt.value}</span>}</div>
+                    <p className="text-xs text-gray-600 leading-relaxed">{alt.detail}</p>
+                    <div className="flex justify-between items-center mt-3"><span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">{alt.source === 'CURATED_DEMO' ? 'Curated demo' : alt.source === 'SUPPLIED_DATA' ? 'Supplied data' : 'Project data'}</span><button type="button" className="text-xs font-bold text-brand-primary hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-primary rounded" onClick={() => alt.actionPath.startsWith('#') ? document.getElementById(alt.actionPath.slice(1))?.scrollIntoView({ behavior: 'smooth' }) : navigate(alt.actionPath)}>{alt.actionLabel} →</button></div>
                   </li>
                 ))}
               </ul>
             ) : (
               <div className="flex-1 flex flex-col justify-center items-center text-center p-6">
-                <p className="text-gray-500">No other alternatives available.</p>
+                <p className="text-sm font-bold text-gray-700">NO ADDITIONAL ALTERNATIVES IDENTIFIED</p><p className="text-xs text-gray-500 mt-2">Based on the available market, buyer, logistics and storage information, no additional actionable option is supported.</p><Button variant="secondary" className="mt-4" onClick={() => navigate('/farmer/market')}>View Market Intelligence</Button>
               </div>
             )}
           </div>
@@ -424,7 +420,7 @@ export const DecisionDetailPage: React.FC = () => {
                   <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">{t('decisions.decisionBasis', 'Decision Basis / Evidence')}</h3>
                 </div>
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-600">
-                  {evidence.map((ev, i) => (
+                  {decisionEvidence.map((ev, i) => (
                     <div key={i} className="flex items-center gap-1.5" title={ev.source}>
                       <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span> 
                       {ev.factor}: {ev.text} <span className="text-xs text-gray-400">({ev.source})</span>
@@ -465,21 +461,3 @@ export const DecisionDetailPage: React.FC = () => {
     </div>
   );
 };
-
-// Helper component for the down arrow in the waterfall
-function ArrowDownIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg 
-      {...props} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round"
-    >
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <polyline points="19 12 12 19 5 12" />
-    </svg>
-  );
-}

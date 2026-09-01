@@ -216,3 +216,69 @@ export function calculateOpportunityScore(
   return { score, status, reasons };
 }
 
+export function normalizeQuantity(quantity: number, unit: string): number {
+  const qUnit = unit.toLowerCase();
+  if (qUnit === 'quintal' || qUnit === 'quintals' || qUnit === 'q') return quantity * 100;
+  if (qUnit === 'tonne' || qUnit === 'tonnes' || qUnit === 't' || qUnit === 'mt') return quantity * 1000;
+  if (qUnit === 'kg' || qUnit === 'kilogram' || qUnit === 'kilograms') return quantity;
+  return quantity; // Default to assuming it's kg or pre-normalized if unknown
+}
+
+export function calculateGrossValue(quantityKg: number, pricePerQuintal: number): number {
+  return pricePerQuintal * (quantityKg / 100);
+}
+
+export function calculateNetRealization(grossValue: number, transportCost: number, storageCost: number = 0, handlingCost: number = 0): number {
+  return grossValue - transportCost - storageCost - handlingCost;
+}
+
+export interface SellVsStoreResult {
+  sellNowNetRs: number;
+  storeNetRs: number;
+  storeCostRs: number;
+  expectedFuturePricePerQuintal: number;
+  differenceRs: number;
+  signal: 'SELL_NOW' | 'CONSIDER_STORAGE' | 'STORE' | 'UNAVAILABLE';
+  isFavorable: boolean;
+}
+
+export type ArrivalTrend = 'INCREASING' | 'DECLINING' | 'STABLE' | 'INSUFFICIENT_DATA';
+
+/** Compares the earliest and latest valid observations without inventing data. */
+export function calculateArrivalTrend(arrivals: Array<number | null | undefined>): ArrivalTrend {
+  const values = arrivals.filter((value): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0);
+  if (values.length < 2 || values[0] === 0) return 'INSUFFICIENT_DATA';
+  const change = (values[values.length - 1] - values[0]) / values[0];
+  if (change > 0.1) return 'INCREASING';
+  if (change < -0.1) return 'DECLINING';
+  return 'STABLE';
+}
+
+export function calculateSellVsStore(
+  quantityKg: number,
+  pricePerQuintal: number | null,
+  totalTransportCost: number | null,
+  costPerTonnePerDayRs: number | null,
+  days: number = 30,
+  expectedFuturePricePerQuintal?: number | null,
+  handlingCostRs: number = 0
+): SellVsStoreResult {
+  if (!pricePerQuintal || totalTransportCost === null || quantityKg <= 0) {
+    return { sellNowNetRs: 0, storeNetRs: 0, storeCostRs: 0, expectedFuturePricePerQuintal: 0, differenceRs: 0, signal: 'UNAVAILABLE', isFavorable: false };
+  }
+
+  const grossValue = calculateGrossValue(quantityKg, pricePerQuintal);
+  const sellNowNetRs = calculateNetRealization(grossValue, totalTransportCost, 0, handlingCostRs);
+
+  if (costPerTonnePerDayRs === null) {
+    return { sellNowNetRs, storeNetRs: sellNowNetRs, storeCostRs: 0, expectedFuturePricePerQuintal: pricePerQuintal, differenceRs: 0, signal: 'UNAVAILABLE', isFavorable: false };
+  }
+
+  const storeCostRs = costPerTonnePerDayRs * days * (quantityKg / 1000);
+  const futurePrice = expectedFuturePricePerQuintal && expectedFuturePricePerQuintal > 0 ? expectedFuturePricePerQuintal : pricePerQuintal;
+  const storeNetRs = calculateNetRealization(calculateGrossValue(quantityKg, futurePrice), totalTransportCost, storeCostRs, handlingCostRs);
+  const differenceRs = storeNetRs - sellNowNetRs;
+  const perQuintalDifference = differenceRs / (quantityKg / 100);
+  const signal = differenceRs > Math.max(50, sellNowNetRs * 0.02) ? 'STORE' : perQuintalDifference >= -25 ? 'CONSIDER_STORAGE' : 'SELL_NOW';
+  return { sellNowNetRs, storeNetRs, storeCostRs, expectedFuturePricePerQuintal: futurePrice, differenceRs, signal, isFavorable: signal !== 'SELL_NOW' };
+}

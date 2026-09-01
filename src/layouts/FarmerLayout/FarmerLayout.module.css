@@ -153,7 +153,7 @@
   .main {
     margin-left: 0;
     padding: var(--space-16);
-    padding-bottom: 80px; /* Space for bottom nav */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* Space for bottom nav and iPhone home indicator */
   }
   
   .bottomNav {
@@ -164,7 +164,7 @@
     right: 0;
     background-color: var(--surface);
     border-top: 1px solid var(--border);
-    padding: var(--space-8) var(--space-12);
+    padding: var(--space-8) max(var(--space-12), env(safe-area-inset-right)) calc(var(--space-8) + env(safe-area-inset-bottom)) max(var(--space-12), env(safe-area-inset-left));
     justify-content: space-around;
     z-index: 40;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
@@ -178,7 +178,8 @@
     color: var(--text-placeholder);
     text-decoration: none;
     padding: var(--space-8) 0;
-    min-width: 64px;
+    min-width: 0;
+    flex: 1 1 0;
   }
   
   .bottomNavItem.active {
@@ -188,5 +189,30 @@
   .bottomNavText {
     font-size: 11px;
     font-weight: 500;
+  }
+}
+
+/* iPhone 14 Pro Max is 430 CSS px wide in portrait. Keep content comfortably within its safe viewport. */
+@media (max-width: 480px) {
+  .main {
+    padding: var(--space-12);
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+
+  .bottomNav {
+    gap: 2px;
+  }
+
+  .bottomNavItem {
+    padding: 6px 0;
+  }
+
+  .bottomNavText {
+    font-size: 10px;
+    line-height: 1.2;
+    max-width: 68px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

@@ -7,7 +7,7 @@ export type MarketResearchRecord = {
   observationDate: string | null;
   scope: "onion" | "all_commodities";
   source: string | null;
-  sourceType: "CURATED";
+  sourceType: "CURATED" | "CURATED_DEMO";
   status: "available" | "unavailable";
   reliabilityNotes?: string;
 };
@@ -26,8 +26,13 @@ export const marketResearchDataset: MarketResearchRecord[] = [
   { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "price", value: 3900, unit: "quintals", observationDate: "2026-08-18", scope: "onion", source: "Mandi Bhav India", sourceType: "CURATED", status: "available" },
   { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "price", value: 3450, unit: "quintals", observationDate: "2026-08-17", scope: "onion", source: "Mandi Bhav India", sourceType: "CURATED", status: "available" },
   { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "price", value: 3200, unit: "quintals", observationDate: "2026-08-14", scope: "onion", source: "Mandi Bhav India", sourceType: "CURATED", status: "available" },
-  // PIMPALGAON BASWANT ARRIVAL
-  { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "arrival", value: 316, unit: "tonnes", observationDate: "2026-07-20", scope: "onion", source: "AgMart", sourceType: "CURATED", status: "available" },
+  // PIMPALGAON BASWANT ARRIVALS (Declining trend)
+  { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "arrival", value: 550, unit: "tonnes", observationDate: "2026-08-12", scope: "onion", source: "AgMart", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "arrival", value: 480, unit: "tonnes", observationDate: "2026-08-15", scope: "onion", source: "AgMart", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "arrival", value: 450, unit: "tonnes", observationDate: "2026-08-18", scope: "onion", source: "AgMart", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "arrival", value: 410, unit: "tonnes", observationDate: "2026-08-21", scope: "onion", source: "AgMart", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "arrival", value: 350, unit: "tonnes", observationDate: "2026-08-25", scope: "onion", source: "AgMart", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Pimpalgaon Baswant APMC", crop: "Onion", metric: "arrival", value: 316, unit: "tonnes", observationDate: "2026-08-29", scope: "onion", source: "AgMart", sourceType: "CURATED_DEMO", status: "available" },
 
   // LASALGAON PRICES
   { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "price", value: 3650, unit: "quintals", observationDate: "2026-08-29", scope: "onion", source: "RatesWale", sourceType: "CURATED", status: "available" },
@@ -41,8 +46,13 @@ export const marketResearchDataset: MarketResearchRecord[] = [
   { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "price", value: 2900, unit: "quintals", observationDate: "2026-08-14", scope: "onion", source: "RatesWale", sourceType: "CURATED", status: "available" },
   { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "price", value: 2150, unit: "quintals", observationDate: "2026-08-08", scope: "onion", source: "RatesWale", sourceType: "CURATED", status: "available" },
   { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "price", value: 2100, unit: "quintals", observationDate: "2026-08-04", scope: "onion", source: "RatesWale", sourceType: "CURATED", status: "available" },
-  // LASALGAON ARRIVAL
-  { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "arrival", value: 8000, unit: "quintals", observationDate: "2026-08-14", scope: "onion", source: "Economic Times / market officials", sourceType: "CURATED", status: "available" },
+  // LASALGAON ARRIVALS (Stable/Increasing trend)
+  { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "arrival", value: 7500, unit: "quintals", observationDate: "2026-08-12", scope: "onion", source: "Economic Times / market officials", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "arrival", value: 7600, unit: "quintals", observationDate: "2026-08-15", scope: "onion", source: "Economic Times / market officials", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "arrival", value: 7500, unit: "quintals", observationDate: "2026-08-18", scope: "onion", source: "Economic Times / market officials", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "arrival", value: 7800, unit: "quintals", observationDate: "2026-08-21", scope: "onion", source: "Economic Times / market officials", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "arrival", value: 7900, unit: "quintals", observationDate: "2026-08-25", scope: "onion", source: "Economic Times / market officials", sourceType: "CURATED_DEMO", status: "available" },
+  { market: "Lasalgaon (Vinchur) APMC", crop: "Onion", metric: "arrival", value: 8100, unit: "quintals", observationDate: "2026-08-29", scope: "onion", source: "Economic Times / market officials", sourceType: "CURATED_DEMO", status: "available" },
 
   // YEOLA PRICES
   { market: "Yeola APMC", crop: "Onion", metric: "price", value: 3600, unit: "quintals", observationDate: "2026-08-29", scope: "onion", source: "Mandi Bhav India", sourceType: "CURATED", status: "available" },

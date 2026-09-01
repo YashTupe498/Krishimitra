@@ -4,15 +4,15 @@ import {
   Calendar, Package, RefreshCw, Activity, MapPin,
   Truck, Box, Lightbulb, MessageSquare, Target, ShoppingBag, Star, Bell, ShieldCheck, CheckCircle2, AlertCircle, TrendingUp as TrendingUpIcon
 } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../../components/ui/Button';
-import type { Lot } from '../../types/lot';
 import { farmerLotsApi } from '../../services/farmerLotsApi';
-import { marketResearchDataset } from '../../data/marketResearchDataset';
-import { calculateMarketPressure, calculateSellingWindow, calculateOpportunityScore } from '../../utils/marketIntelligence';
+import { getMarketIntelligence } from '../../services/marketIntelligence/marketIntelligenceResolver';
+import type { UnifiedMarketIntelligence } from '../../services/marketIntelligence/marketIntelligenceResolver';
+import { LogisticsDetailsModal } from '../../components/farmer/market/LogisticsDetailsModal';
+import { StorageDetailsModal } from '../../components/farmer/market/StorageDetailsModal';
 import { useTranslation } from 'react-i18next';
-import { BuyerVerificationBadge } from '../../components/buyer/BuyerVerificationBadge';
 import { BuyerTrustModal } from '../../components/farmer/offers/BuyerTrustModal';
 
 const premiumCard = "bg-[#FCFDFB] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-[#D8E2DB] flex flex-col relative transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_30px_rgba(25,77,46,0.12)] hover:border-[#194D2E] group";
@@ -60,22 +60,30 @@ export const MarketIntelligencePage: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any>(null);
-  const [, setLotContext] = useState<Lot | null>(null);
-  const [selectedMarket, setSelectedMarket] = useState('');
+  const [selectedMarket, setSelectedMarket] = useState('pimpalgaon-baswant');
   const [isTrustModalOpen, setIsTrustModalOpen] = useState(false);
+  const [intelligence, setIntelligence] = useState<UnifiedMarketIntelligence | null>(null);
+  const [isLogisticsModalOpen, setIsLogisticsModalOpen] = useState(false);
+  const [isStorageModalOpen, setIsStorageModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        let crop = 'Onion';
-        let district = 'Nashik';
+        let lot: any = {
+          id: id || 'demo-lot',
+          crop: 'Onion',
+          quantity: '141',
+          unit: 'kg',
+          location: 'Nashik, Maharashtra', district: 'Nashik', state: 'Maharashtra', qualityGrade: 'A',
+          farmerId: 'demo-farmer-id', status: 'MARKET_ANALYSIS_READY', qualityAssessment: null,
+          constraints: { paymentRequirement: 'Flexible', transportCapability: 'Available', storageCapability: 'Available' },
+          createdAt: '', updatedAt: ''
+        };
+
         if (id) {
           const { data: { session } } = await supabase.auth.getSession();
-          const lot = await farmerLotsApi.get(session?.access_token || '', id);
-          setLotContext(lot);
-          crop = lot.crop;
+          lot = await farmerLotsApi.get(session?.access_token || '', id);
         } else {
           const { data: { user } } = await supabase.auth.getUser();
           if (user) {
@@ -85,39 +93,14 @@ export const MarketIntelligencePage: React.FC = () => {
               .eq('id', user.id)
               .single();
             if (profile) {
-              if (profile.primary_crop) crop = profile.primary_crop;
-              if (profile.district) district = profile.district;
+              if (profile.primary_crop) lot.crop = profile.primary_crop;
+              if (profile.district) lot.district = profile.district;
             }
           }
         }
 
-        const mockMarkets = [
-          { market_name: 'Pimpalgaon Baswant APMC', min_price: 3800, modal_price: 4200, max_price: 4500, price_unit: 'quintals', observation_date: '2026-08-29', freshness: 'CURRENT', source_type: 'CURATED', source_name: 'Mandi Bhav' },
-          { market_name: 'Lasalgaon(Vinchur) APMC', min_price: 3600, modal_price: 3650, max_price: 4400, price_unit: 'quintals', observation_date: '2026-08-28', freshness: 'CURRENT', source_type: 'CURATED', source_name: 'Mandi Bhav' },
-          { market_name: 'Yeola APMC', min_price: 3500, modal_price: 3600, max_price: 4200, price_unit: 'quintals', observation_date: '2026-08-29', freshness: 'CURRENT', source_type: 'CURATED', source_name: 'Mandi Bhav' },
-          { market_name: 'Manmad APMC', min_price: 3400, modal_price: 3600, max_price: 4100, price_unit: 'quintals', observation_date: '2026-08-27', freshness: 'CURRENT', source_type: 'CURATED', source_name: 'Mandi Bhav' }
-        ];
-
-        const completeData = {
-          lot_id: id || 'demo-lot',
-          crop,
-          location: { district, state: 'Maharashtra', village: null, taluka: null },
-          snapshot: mockMarkets[0],
-          markets: mockMarkets,
-          selected_market: mockMarkets[0].market_name,
-          trend: { direction: 'UP', price_change: 150, percentage_change: 3.5 },
-          pressure: { pressure: 'HIGH', reasons: [] },
-          sale_window: { window: 'FAVORABLE_NOW', advice: '' },
-          history: marketResearchDataset.map((d: any) => ({ date: d.observationDate, modal_price: d.value, arrival_quantity: 8000, market_name: d.market })),
-          data_freshness: 'CURRENT',
-          source_type: 'AI Curated',
-          source_name: 'KrishiMitra Intelligence',
-          observation_date: '2026-08-29'
-        };
-
-        await new Promise(r => setTimeout(r, 400));
-        setData(completeData);
-        setSelectedMarket(completeData.markets[0]?.market_name || '');
+        const resolvedData = await getMarketIntelligence(lot, selectedMarket);
+        setIntelligence(resolvedData);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch market data');
       } finally {
@@ -126,7 +109,7 @@ export const MarketIntelligencePage: React.FC = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, selectedMarket]);
 
   if (loading) {
     return (
@@ -138,7 +121,7 @@ export const MarketIntelligencePage: React.FC = () => {
     );
   }
 
-  if (error || !data) {
+  if (error || !intelligence) {
     return (
       <div className="max-w-6xl mx-auto flex flex-col items-center justify-center p-16 text-center">
         <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
@@ -150,30 +133,22 @@ export const MarketIntelligencePage: React.FC = () => {
   }
 
   /* ── Computed Data ── */
-  const active = data.markets.find((m: any) => m.market_name === selectedMarket) || data.markets[0];
-  const highestPrice = Math.max(...data.markets.map((m: any) => m.modal_price || 0));
-
-  // Normalize market name for matching against dataset (handles "Lasalgaon(Vinchur)" vs "Lasalgaon (Vinchur)")
-  const normalizeMarketName = (name: string) => name.replace(/\(/g, ' (').replace(/  +/g, ' ').trim();
-  const selectedNormalized = normalizeMarketName(selectedMarket);
-
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr + 'T00:00:00');
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    return `${months[d.getMonth()]} ${d.getDate()}`;
-  };
-
-  const priceHistory = marketResearchDataset
-    .filter((d: any) => d.metric === 'price' && normalizeMarketName(d.market) === selectedNormalized)
-    .sort((a: any, b: any) => new Date(a.observationDate || '').getTime() - new Date(b.observationDate || '').getTime())
-    .map((d: any) => ({ date: formatDate(d.observationDate), fullDate: d.observationDate, modal_price: d.value }));
-
-  const arrivalRecord = marketResearchDataset.find((d: any) => d.metric === 'arrival' && normalizeMarketName(d.market) === selectedNormalized && d.status === 'available');
-  const arrivalData = arrivalRecord ? { value: arrivalRecord.value || 0, unit: arrivalRecord.unit, observationDate: arrivalRecord.observationDate, scope: arrivalRecord.scope, sourceType: arrivalRecord.sourceType } : null;
-
-  const frontendPressure = calculateMarketPressure(data.trend.direction, data.trend.percentage_change, []);
-  const frontendWindow = calculateSellingWindow(frontendPressure.level, data.trend.direction);
-  const oppScore = calculateOpportunityScore(active?.modal_price || 0, highestPrice, frontendPressure.level, false);
+  const active = intelligence.snapshot;
+  const highestPrice = intelligence.highestNearbyPrice;
+  const priceHistory = intelligence.priceHistory;
+  const arrivalHistory = intelligence.arrivalHistory;
+  const computedDirection = intelligence.trend.direction;
+  const computedPct = intelligence.trend.percentage_change;
+  const frontendPressure = intelligence.pressure;
+  const frontendWindow = intelligence.sellingWindow;
+  const oppScore = { status: intelligence.opportunityStatus, score: intelligence.opportunityScore, reasons: intelligence.opportunityReasons };
+  const logisticsData = intelligence.logistics;
+  const storageData = intelligence.storage;
+  const netRealization = intelligence.netRealizationPerQuintal;
+  const isNetRealizationFavorable = intelligence.sellVsStore?.isFavorable ?? true;
+  const arrivalData = arrivalHistory.length > 0 ? arrivalHistory[arrivalHistory.length - 1] : null;
+  const formattedArrivalHistory = arrivalHistory.map(a => ({ date: a.date, arrival: a.arrival_quantity, fullDate: (a as any).fullDate }));
+  const data = { crop: intelligence.lot.crop, location: { district: intelligence.lot.district, state: intelligence.lot.state }, observation_date: intelligence.observationDate, markets: intelligence.nearbyMarkets };
 
   return (
     <div className="max-w-6xl mx-auto px-4 md:px-8 pb-16 pt-4">
@@ -186,7 +161,7 @@ export const MarketIntelligencePage: React.FC = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <span className="text-xs text-red-500 font-medium">{t("marketIntelligence.lastUpdated")} {data.observation_date}</span>
+            <span className="text-xs text-gray-500 font-medium">{t("marketIntelligence.lastUpdated")} {data.observation_date}</span>
             <span className="inline-block w-2 h-2 bg-green-500 rounded-full ml-2"></span>
             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{t("marketIntelligence.dataCurrent")}</p>
           </div>
@@ -202,12 +177,12 @@ export const MarketIntelligencePage: React.FC = () => {
           <div className="w-10 h-10 rounded-lg bg-[#EDF2EE] flex items-center justify-center"><Package size={18} className="text-[#194D2E]" /></div>
           <div>
             <span className="text-base font-bold text-gray-900">{translateDynamic(data.crop)}</span>
-            <span className="ml-2 text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded">{t("marketIntelligence.grade")}</span>
+            <span className="ml-2 text-[10px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded">{t("marketIntelligence.grade")} {intelligence.lot.qualityGrade || '—'}</span>
             <p className="text-xs text-gray-500 mt-0.5">{data.location.district}, {data.location.state}</p>
           </div>
         </div>
         <div className="flex items-center gap-8 text-xs text-gray-500">
-          <div className="text-center"><span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">{t("marketIntelligence.quantity")}</span><span className="font-bold text-gray-900 text-sm">141 kg</span></div>
+          <div className="text-center"><span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">{t("marketIntelligence.quantity")}</span><span className="font-bold text-gray-900 text-sm">{intelligence.lot.quantity} {intelligence.lot.unit}</span></div>
           <div className="text-center"><span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">{t("marketIntelligence.availability")}</span><span className="font-bold text-gray-900 text-sm">{t("marketIntelligence.immediate")}</span></div>
         </div>
         <div className="flex items-center gap-2">
@@ -223,8 +198,10 @@ export const MarketIntelligencePage: React.FC = () => {
         <div className={`${premiumCard} md:col-span-3`}>
           <h3 className={premiumHeader}><TrendingUpIcon size={14}/> {t("marketIntelligence.currentModalPrice")}</h3>
           <span className="text-4xl font-black text-gray-900 tracking-tight">₹{active?.modal_price?.toLocaleString() || '--'}<span className="text-sm font-bold text-gray-400">/q</span></span>
-          <span className="text-xs text-green-600 font-bold mt-1">↑ {data.trend.percentage_change || 0}%</span>
-          <p className="text-[10px] text-gray-500 font-medium mt-2">{t("marketIntelligence.pricesMovingUpward")}</p>
+          <span className={`text-xs font-bold mt-1 ${computedDirection === 'UP' ? 'text-green-600' : computedDirection === 'DOWN' ? 'text-orange-500' : 'text-gray-500'}`}>
+            {computedDirection === 'UP' ? '↑' : computedDirection === 'DOWN' ? '↓' : '→'} {computedPct}%
+          </span>
+          <p className="text-[10px] text-gray-500 font-medium mt-2">{computedDirection === 'UP' ? t("marketIntelligence.pricesMovingUpward") : computedDirection === 'DOWN' ? 'Prices trending downward' : 'Prices remaining stable'}</p>
           <div className="flex gap-6 pt-4 mt-auto border-t border-gray-100 text-[9px] text-gray-400 font-bold uppercase tracking-widest">
             <div><span className="block text-xs text-gray-900">₹{active?.min_price?.toLocaleString()}</span>{t("marketIntelligence.low")}:</div>
             <div><span className="block text-xs text-gray-900">₹{active?.max_price?.toLocaleString()}</span>{t("marketIntelligence.high")}:</div>
@@ -264,11 +241,11 @@ export const MarketIntelligencePage: React.FC = () => {
           <div className="grid grid-cols-2 gap-4 pt-4 mt-6 border-t border-gray-100">
             <div>
               <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest block mb-1">{t("marketIntelligence.arrivalsTrend")}</span>
-              <span className="text-xs font-bold text-gray-900">{t("marketIntelligence.unavailable")}</span>
+              <span className="text-xs font-bold text-gray-900">{intelligence.arrivalTrend === 'DECLINING' ? 'Declining' : intelligence.arrivalTrend === 'INCREASING' ? 'Increasing' : intelligence.arrivalTrend === 'STABLE' ? 'Stable' : t("marketIntelligence.unavailable")}</span>
             </div>
             <div>
               <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest block mb-1">{t("marketIntelligence.buyerDemand")}</span>
-              <span className="text-xs font-bold text-gray-900">{t("marketIntelligence.unavailable")}</span>
+              <span className="text-xs font-bold text-gray-900">Demo demand</span>
             </div>
           </div>
         </div>
@@ -303,30 +280,37 @@ export const MarketIntelligencePage: React.FC = () => {
         <div className={`${premiumCard} md:col-span-3`}>
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-0">{t("marketIntelligence.nearbyMarkets")}</h3>
-            <select className="text-[10px] border rounded px-2 py-1 bg-white" value={selectedMarket} onChange={e => setSelectedMarket(e.target.value)}>
-              {data.markets.map((m: any) => <option key={m.market_name} value={m.market_name}>{translateDynamic(m.market_name)}</option>)}
+            <select aria-label="Select a market" className="text-[10px] border rounded px-2 py-1 bg-white" value={selectedMarket} onChange={e => setSelectedMarket(e.target.value)}>
+              {data.markets.map((m: any) => <option key={m.marketId} value={m.marketId}>{translateDynamic(m.market_name)}</option>)}
             </select>
           </div>
           <div className="space-y-3 mt-2">
             {data.markets.map((m: any) => {
-              const isSelected = m.market_name === selectedMarket;
+              const isSelected = m.marketId === selectedMarket;
               const diff = highestPrice - (m.modal_price || 0);
               const barWidth = highestPrice > 0 ? ((m.modal_price || 0) / highestPrice) * 100 : 0;
+              
+              const mNet = intelligence.nearbyNetRealizationPerQuintal[m.marketId];
+
               return (
-                <div key={m.market_name} className="cursor-pointer" onClick={() => setSelectedMarket(m.market_name)}>
+                <button type="button" key={m.marketId} className="cursor-pointer text-left w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#194D2E] rounded" onClick={() => setSelectedMarket(m.marketId)} aria-pressed={isSelected}>
                   <div className="flex justify-between items-center mb-1">
                     <span className={`text-[11px] font-bold ${isSelected ? 'text-[#194D2E]' : 'text-gray-600'}`}>{translateDynamic(m.market_name)}</span>
                     <span className={`text-sm font-black ${isSelected ? 'text-[#194D2E]' : 'text-gray-800'}`}>₹{(m.modal_price || 0).toLocaleString()}/q</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden mb-1">
                     <div className={`h-full rounded-full transition-all duration-500 ${isSelected ? 'bg-[#194D2E]' : 'bg-[#4A8B6B]'}`} style={{ width: `${barWidth}%` }} />
                   </div>
-                  <div className="flex justify-between items-center mt-0.5">
-                    <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{t("marketIntelligence.modalPrice")}</span>
+                  <div className="flex justify-between items-center">
+                    {mNet ? (
+                      <span className="text-[9px] font-bold text-gray-500">Net: ₹{mNet.toLocaleString(undefined, {maximumFractionDigits: 0})}/q</span>
+                    ) : (
+                      <span className="text-[9px] font-bold text-gray-400">Net: Unavailable</span>
+                    )}
                     {diff === 0 ? <span className="text-[8px] font-bold text-green-600 uppercase tracking-widest">{t("marketIntelligence.highest")}</span>
                     : <span className="text-[8px] font-bold text-red-500 uppercase tracking-widest">↘ ₹{diff.toLocaleString()}</span>}
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -336,7 +320,7 @@ export const MarketIntelligencePage: React.FC = () => {
         <div className={`${premiumCard} md:col-span-5`}>
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-0">{t("marketIntelligence.priceTrend")}</h3>
-            <select className="text-[10px] border rounded px-2 py-1 bg-white">
+            <select aria-label="Price-history period" className="text-[10px] border rounded px-2 py-1 bg-white">
               <option value="1Y">{t("marketIntelligence.twelveMonths")}</option>
             </select>
           </div>
@@ -356,20 +340,42 @@ export const MarketIntelligencePage: React.FC = () => {
         <div className={`${premiumCard} md:col-span-4`}>
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-0">{t("marketIntelligence.marketArrivals")}</h3>
-            <select className="text-[10px] border rounded px-2 py-1 bg-white"><option>{t("marketIntelligence.twelveMonths")}</option></select>
+            <select aria-label="Arrival-history period" className="text-[10px] border rounded px-2 py-1 bg-white"><option>{t("marketIntelligence.twelveMonths")}</option></select>
           </div>
           {arrivalData ? (
             <div className="flex-1 flex flex-col justify-center py-4">
-              <span className="text-2xl font-black text-gray-900 tracking-tight">
-                {arrivalData.value.toLocaleString()} {arrivalData.unit === 'tonnes' ? 'T' : arrivalData.unit === 'quintals' ? 'qtl' : arrivalData.unit}
-              </span>
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">{t("marketIntelligence.latest")} ({arrivalData.observationDate})</span>
-              <p className="text-[10px] text-gray-500 font-medium leading-relaxed mt-4">
-                {arrivalData.scope === 'all_commodities'
-                  ? translateDynamic("Showing market-wide arrivals across all commodities (not onion-specific).")
-                  : translateDynamic("Only single historical observation available for this market")}
-              </p>
-              <div className="mt-4"><span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest bg-[#EDF2EE] px-2 py-1 rounded">{t("marketIntelligence.historicalCurated")}</span></div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-black text-gray-900 tracking-tight">
+                  {((arrivalData as any).arrival_quantity || 0).toLocaleString()} {((arrivalData as any).unit || 'tonnes') === 'tonnes' ? 'T' : ((arrivalData as any).unit || 'tonnes') === 'quintals' ? 'qtl' : ((arrivalData as any).unit || 'tonnes')}
+                </span>
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Latest ({((arrivalData as any).fullDate || '')})</span>
+              </div>
+              
+              {formattedArrivalHistory.length > 1 ? (
+                <div className="h-24 w-full mt-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={formattedArrivalHistory} margin={{ top: 0, right: 0, bottom: 0, left: -25 }}>
+                      <XAxis dataKey="date" tick={{ fontSize: 8, fill: '#aaa' }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fontSize: 8, fill: '#aaa' }} axisLine={false} tickLine={false} />
+                      <Tooltip cursor={{fill: '#f3f4f6'}} contentStyle={{ fontSize: '10px' }} />
+                      <Bar dataKey="arrival" fill="#4A8B6B" radius={[2, 2, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <p className="text-[9px] text-gray-500 font-medium leading-relaxed mt-2">
+                    {intelligence.arrivalTrend === 'DECLINING' ? '↓ Arrivals declining. Recent arrivals are lower than earlier observations, indicating relatively tighter supply.' : intelligence.arrivalTrend === 'INCREASING' ? '↑ Arrivals increasing. Recent arrivals are higher, indicating potential near-term supply pressure.' : '→ Arrivals are stable or mixed across the available observations.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-4 border border-dashed border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <p className="text-[10px] text-gray-500 font-medium">
+                    1 historical observation
+                  </p>
+                  <p className="text-[9px] text-gray-400 mt-1">
+                    More observations are required for a reliable arrival trend.
+                  </p>
+                </div>
+              )}
+              <div className="mt-4"><span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest bg-[#EDF2EE] px-2 py-1 rounded">{intelligence.sources.arrivals === 'CURATED_DEMO' ? 'CURATED DEMO' : intelligence.sources.arrivals}</span></div>
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center py-8">
@@ -385,7 +391,7 @@ export const MarketIntelligencePage: React.FC = () => {
         <div className={`${premiumCard} md:col-span-4 ${oppScore.status === 'STRONG' ? 'bg-[#F4F9F5] border-[#C3D9CB]' : oppScore.status === 'GOOD' ? 'bg-[#FCFDFB] border-[#D8E2DB]' : 'bg-[#FFF9F2] border-[#FCECD8]'}`}>
           <h3 className={premiumHeader}><Target size={14}/> {t("marketIntelligence.marketOpportunity")}</h3>
           <div className="flex items-baseline gap-3 mb-4">
-            <span className={`text-4xl font-black ${oppScore.status === 'STRONG' ? 'text-green-600' : oppScore.status === 'GOOD' ? 'text-[#194D2E]' : 'text-orange-500'}`}>{oppScore.score || 98}</span>
+            <span className={`text-4xl font-black ${oppScore.status === 'STRONG' ? 'text-green-600' : oppScore.status === 'GOOD' ? 'text-[#194D2E]' : 'text-orange-500'}`}>{oppScore.score ?? '—'}</span>
             <span className="text-base font-black text-gray-900 tracking-tight">{translateDynamic(oppScore.status)} {t("marketIntelligence.opportunity")}</span>
           </div>
           <ul className="space-y-2">
@@ -402,7 +408,7 @@ export const MarketIntelligencePage: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
               <ShoppingBag size={14}/> {t("marketIntelligence.buyerDemand")}</h3>
-            <span className="text-[10px] font-bold text-green-700">1 {t("marketIntelligence.active")}</span>
+            <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded uppercase">Curated demo</span>
           </div>
           <div className="flex-1 flex flex-col py-2 relative">
             <div className="flex justify-between items-center border-b border-gray-100 pb-2 mb-2">
@@ -427,7 +433,7 @@ export const MarketIntelligencePage: React.FC = () => {
               <div>
                 <span className="font-bold text-gray-900 text-sm">Nashik Fresh Foods</span>
                 <div className="mt-1">
-                  <BuyerVerificationBadge buyerId="buyer-demo-1" showText={true} />
+                  <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded uppercase">Demo buyer profile</span>
                 </div>
               </div>
               <span className="text-xs font-black text-green-700 bg-green-50 px-2 py-1 rounded">92% MATCH</span>
@@ -455,20 +461,94 @@ export const MarketIntelligencePage: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center font-black text-gray-900 text-base border border-gray-100 shadow-sm shrink-0">A</div>
             <div>
-              <span className="text-sm font-black text-gray-900 tracking-tight">{t("marketIntelligence.grade")}</span>
-              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 block">{t("marketIntelligence.yourLotGrade")}</span>
+              <span className="text-sm font-black text-gray-900 tracking-tight">Grade {intelligence.lot.qualityGrade || '—'} · Compatible</span>
+              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 block">Your lot · curated demo buyer requirement: Grade A</span>
             </div>
           </div>
         </div>
 
-        <div className={`${premiumCard} md:col-span-4 flex flex-col justify-center`}>
-          <h3 className="text-[9px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5 mb-3"><Truck size={12}/> {t("marketIntelligence.logistics")}</h3>
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{t("marketIntelligence.dataUnavailable")}</p>
+        <div className={`${premiumCard} md:col-span-4 flex flex-col`}>
+          <div className="flex justify-between items-center mb-3">
+             <h3 className="text-[9px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5"><Truck size={12}/> {t("marketIntelligence.logistics")}</h3>
+             {logisticsData && <span className="text-[8px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase tracking-widest">DEMO</span>}
+          </div>
+          {logisticsData ? (
+             <div className="flex-1 flex flex-col text-sm">
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Recommended Route</span>
+                <span className="font-bold text-gray-900 text-xs mb-3">{logisticsData.route.origin} → {logisticsData.route.destination}</span>
+                <div className="grid grid-cols-2 gap-3 mb-auto">
+                   <div>
+                      <span className="text-[9px] text-gray-400 block">Distance</span>
+                      <span className="font-bold text-gray-900">{logisticsData.distanceKm} km</span>
+                   </div>
+                   <div>
+                      <span className="text-[9px] text-gray-400 block">Est. Cost</span>
+                      <span className="font-bold text-gray-900">₹{logisticsData.estimatedCostRs.toLocaleString()}</span>
+                   </div>
+                   <div>
+                      <span className="text-[9px] text-gray-400 block">Transport</span>
+                      <span className="font-bold text-gray-900 text-xs truncate block">{logisticsData.transportType}</span>
+                   </div>
+                   <div>
+                      <span className="text-[9px] text-gray-400 block">Est. Time</span>
+                      <span className="font-bold text-gray-900">{logisticsData.estimatedTimeMin} min</span>
+                   </div>
+                </div>
+                <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                   <span className="text-[10px] font-bold text-green-600 flex items-center gap-1"><CheckCircle2 size={12}/> Available</span>
+                   <span className="text-[10px] font-bold text-[#194D2E] cursor-pointer hover:underline" onClick={() => setIsLogisticsModalOpen(true)}>View details →</span>
+                </div>
+             </div>
+          ) : (
+             <div className="flex-1 flex flex-col justify-center text-center py-4">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("marketIntelligence.dataUnavailable")}</p>
+                <p className="text-[9px] text-gray-400 font-medium">Transport route and cost information will appear when available.</p>
+             </div>
+          )}
         </div>
 
-        <div className={`${premiumCard} md:col-span-4 flex flex-col justify-center`}>
-          <h3 className="text-[9px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5 mb-3"><Box size={12}/> {t("marketIntelligence.storage")}</h3>
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{t("marketIntelligence.informationUnavailable")}</p>
+        <div className={`${premiumCard} md:col-span-4 flex flex-col`}>
+          <div className="flex justify-between items-center mb-3">
+             <h3 className="text-[9px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5"><Box size={12}/> {t("marketIntelligence.storage")} & Decision</h3>
+             {storageData && <span className="text-[8px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded uppercase tracking-widest">DEMO</span>}
+          </div>
+          {storageData ? (
+             <div className="flex-1 flex flex-col text-sm">
+                <span className="font-bold text-gray-900 text-xs mb-3">{storageData.centerName} ({storageData.distanceKm}km)</span>
+                
+                {/* Sell vs Store Insight */}
+                <div className="bg-gray-50 rounded-lg p-3 mb-auto">
+                   <div className="flex justify-between items-center mb-2">
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Sell vs Store</span>
+                   </div>
+                   <div className="flex justify-between text-xs mb-1">
+                      <span className="text-gray-600">Sell Now Net:</span>
+                      <span className="font-bold text-gray-900">{netRealization ? `₹${netRealization.toLocaleString(undefined, {maximumFractionDigits: 0})}/q` : 'Data unavailable'}</span>
+                   </div>
+                   <div className="flex justify-between text-xs mb-1">
+                      <span className="text-gray-600">Store Cost (30d):</span>
+                      <span className="font-bold text-gray-900">₹{(storageData.costPerTonnePerDayRs * 30 * (100/1000)).toLocaleString(undefined, {maximumFractionDigits: 0})}/q</span>
+                   </div>
+                   {intelligence.sellVsStore && <div className="flex justify-between text-xs mb-3">
+                      <span className="text-gray-600">Estimated store net:</span>
+                      <span className="font-bold text-gray-900">₹{(intelligence.sellVsStore.storeNetRs / (intelligence.normalizedQuantityKg / 100)).toLocaleString(undefined, {maximumFractionDigits: 0})}/q</span>
+                   </div>}
+                   <div className={`text-[10px] font-bold px-2 py-1 rounded ${netRealization && isNetRealizationFavorable ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}`}>
+                      {netRealization && isNetRealizationFavorable ? 'Signal: Storage worth considering' : 'Signal: Selling more favorable'}
+                   </div>
+                </div>
+                
+                <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                   <span className="text-[10px] font-bold text-green-600 flex items-center gap-1"><CheckCircle2 size={12}/> Capacity Available</span>
+                   <span className="text-[10px] font-bold text-[#194D2E] cursor-pointer hover:underline" onClick={() => setIsStorageModalOpen(true)}>View storage →</span>
+                </div>
+             </div>
+          ) : (
+             <div className="flex-1 flex flex-col justify-center text-center py-4">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("marketIntelligence.dataUnavailable")}</p>
+                <p className="text-[9px] text-gray-400 font-medium">Storage availability and cost information will appear when available.</p>
+             </div>
+          )}
         </div>
       </div>
 
@@ -479,17 +559,43 @@ export const MarketIntelligencePage: React.FC = () => {
             <Lightbulb size={14}/> {t("marketIntelligence.kmRecommendation")}
           </div>
           <h2 className="text-3xl font-black text-[#1B4E2E] tracking-tight leading-tight mb-8">
-            {t("marketIntelligence.considerSelling")}
+            {frontendWindow.level === 'FAVORABLE' ? t("marketIntelligence.considerSelling") : frontendWindow.level === 'CAUTION' ? 'Consider Waiting or Storage' : 'Monitor Market Signals'}
           </h2>
           <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{t("marketIntelligence.why")}</span>
           <div className="space-y-3 mt-3">
+            {computedDirection === 'UP' && (
+              <div className="flex items-center gap-3">
+                <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+                <span className="text-sm font-medium text-gray-900 leading-relaxed">Current price is moving upward ({computedPct}%).</span>
+              </div>
+            )}
+            {((active?.modal_price || 0) >= highestPrice) && highestPrice > 0 && (
+              <div className="flex items-center gap-3">
+                <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+                <span className="text-sm font-medium text-gray-900 leading-relaxed">Selected market has the highest observed regional price.</span>
+              </div>
+            )}
+            {formattedArrivalHistory.length >= 2 && (formattedArrivalHistory[formattedArrivalHistory.length - 1].arrival || 0) < (formattedArrivalHistory[formattedArrivalHistory.length - 2].arrival || 0) && (
+              <div className="flex items-center gap-3">
+                <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+                <span className="text-sm font-medium text-gray-900 leading-relaxed">Recent arrivals are tightening, indicating supply pressure.</span>
+              </div>
+            )}
+            {netRealization && isNetRealizationFavorable && (
+               <div className="flex items-center gap-3">
+                  <CheckCircle2 size={16} className="text-green-600 shrink-0" />
+                  <span className="text-sm font-medium text-gray-900 leading-relaxed">Estimated net realization remains favorable compared to storage costs.</span>
+               </div>
+            )}
+            {computedDirection === 'DOWN' && (
+               <div className="flex items-center gap-3">
+                  <AlertCircle size={16} className="text-orange-500 shrink-0" />
+                  <span className="text-sm font-medium text-gray-900 leading-relaxed">Prices are trending downward, suggesting caution.</span>
+               </div>
+            )}
             <div className="flex items-center gap-3">
               <CheckCircle2 size={16} className="text-green-600 shrink-0" />
-              <span className="text-sm font-medium text-gray-900 leading-relaxed">{t("marketIntelligence.reason1")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle2 size={16} className="text-green-600 shrink-0" />
-              <span className="text-sm font-medium text-gray-900 leading-relaxed">{t("marketIntelligence.reason2")}</span>
+              <span className="text-sm font-medium text-gray-900 leading-relaxed">A curated demo buyer requirement matches this crop and grade.</span>
             </div>
           </div>
         </div>
@@ -536,8 +642,15 @@ export const MarketIntelligencePage: React.FC = () => {
             <p className="text-xs text-gray-700">{t("marketIntelligence.sellingWindowDesc")}</p>
           </div>
         </div>
+        <div className="mt-6 pt-4 border-t border-gray-100 flex flex-wrap gap-x-5 gap-y-2 text-[9px] font-bold text-gray-500 uppercase tracking-widest">
+          <span>Price: {intelligence.sources.price === 'CURATED_DEMO' ? 'Curated demo' : intelligence.sources.price}</span>
+          <span>Arrivals: {intelligence.sources.arrivals === 'CURATED_DEMO' ? 'Curated demo' : intelligence.sources.arrivals}</span>
+          <span>Logistics: {intelligence.sources.logistics === 'CURATED_DEMO' ? 'Curated demo' : intelligence.sources.logistics}</span>
+          <span>Storage: {intelligence.sources.storage === 'CURATED_DEMO' ? 'Curated demo' : intelligence.sources.storage}</span>
+        </div>
+        <LogisticsDetailsModal isOpen={isLogisticsModalOpen} onClose={() => setIsLogisticsModalOpen(false)} logistics={logisticsData} netImpactPerQuintalRs={logisticsData ? (logisticsData.estimatedCostRs / (intelligence.normalizedQuantityKg/100)) : null} />
+      <StorageDetailsModal isOpen={isStorageModalOpen} onClose={() => setIsStorageModalOpen(false)} storage={storageData} sellVsStore={intelligence.sellVsStore} />
       </div>
-
     </div>
   );
 };
