@@ -1,0 +1,421 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { 
+  ArrowLeft, MapPin, TrendingUp, TrendingDown, Minus, Info, Calendar, 
+  Package, AlertCircle, RefreshCw, Activity, ChevronDown
+} from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { Button } from '../../components/ui/Button';
+import type { MarketIntelligenceData } from '../../types/market';
+import { BarChart, Bar, Cell, XAxis, Tooltip, ResponsiveContainer, YAxis, LineChart, Line } from 'recharts';
+import type { Lot } from '../../types/lot';
+import { farmerLotsApi } from '../../services/farmerLotsApi';
+
+export const MarketIntelligencePage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const [data, setData] = useState<MarketIntelligenceData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedMarket, setSelectedMarket] = useState<string>('');
+  
+  const [lotContext, setLotContext] = useState<Lot | null>(null);
+  const [resolvedLotId, setResolvedLotId] = useState<string | null>(null);
+  const lotIdParam = searchParams.get('lotId');
+  const id = lotIdParam || resolvedLotId;
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getSession().then(async ({ data: sessionData }) => {
+      const token = sessionData.session?.access_token;
+      if (!token) return;
+      const target = lotIdParam ? await farmerLotsApi.get(token, lotIdParam) : (await farmerLotsApi.list(token))[0];
+      if (active && target) {
+        setLotContext(target);
+        setResolvedLotId(target.id);
+      }
+    }).catch(() => {
+      if (active) setLotContext(null);
+    });
+    return () => { active = false; };
+  }, [lotIdParam]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    if (!id) {
+      setError('Please create a lot in "My Lots" first to view your personalized market intelligence.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      
+      const url = `/api/v1/market-intelligence/${id}${selectedMarket ? `?market=${encodeURIComponent(selectedMarket)}` : ''}`;
+
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        let errMsg = `Error ${response.status}: Failed to fetch`;
+        try {
+          const errBody = await response.json();
+          errMsg = `Error ${response.status}: ${errBody.detail || JSON.stringify(errBody)}`;
+        } catch (e) {
+          // Ignore
+        }
+        throw new Error(errMsg);
+      }
+      
+      const result = await response.json();
+      setData(result);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'We couldn\'t load market information.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [id, selectedMarket]);
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto space-y-6 animate-pulse p-4 md:p-8">
+        <div className="h-8 bg-gray-100 rounded w-1/3 mb-4"></div>
+        <div className="h-20 bg-gray-50 rounded w-full"></div>
+        <div className="h-96 bg-gray-50 rounded w-full"></div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="max-w-5xl mx-auto flex flex-col items-center justify-center py-20 px-4 text-center">
+        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Market data unavailable</h2>
+        <p className="text-sm text-gray-600 max-w-md break-words mb-6">Unable to load the latest market information. {error}</p>
+        <div className="flex gap-4">
+          <Button variant="secondary" onClick={() => navigate(id ? `/farmer/lots/${id}` : '/farmer/lots')}>
+            Go Back
+          </Button>
+          <Button onClick={fetchData} className="flex items-center">
+            <RefreshCw className="w-4 h-4 mr-2" /> Try Refreshing
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data.snapshot && data.data_freshness === 'OUTDATED') {
+    return (
+      <div className="max-w-5xl mx-auto flex flex-col items-center justify-center py-20 px-4 text-center">
+        <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Market Data Unavailable</h2>
+        <p className="text-gray-600 mb-6">Market information is currently unavailable for this crop and location.</p>
+        <Button variant="secondary" onClick={() => navigate(id ? `/farmer/lots/${id}` : '/farmer/lots')}>
+          Return to Lot
+        </Button>
+      </div>
+    );
+  }
+
+  const chartData = [...data.history].reverse().map(h => ({
+    date: h.date,
+    price: h.modal_price
+  })).filter(h => h.price !== null);
+
+  const currentArrival = data.history.length > 0 ? data.history[0].arrival_quantity : null;
+  const recentArrivals = data.history.slice(1, 5).map(h => h.arrival_quantity).filter(a => a !== null) as number[];
+  const avgArrival = recentArrivals.length > 0 ? recentArrivals.reduce((a, b) => a + b, 0) / recentArrivals.length : null;
+
+  const highestMarket = data.markets.reduce((prev, curr) => (curr.modal_price || 0) > (prev.modal_price || 0) ? curr : prev, data.markets[0]);
+
+  return (
+    <div className="max-w-5xl mx-auto pb-16 p-4 md:p-8 animate-in fade-in duration-500">
+      
+      {/* 1. Header */}
+      <div className="flex items-start justify-between mb-8">
+        <div className="flex items-start gap-4">
+          <button 
+            className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-500 transition-colors shrink-0 mt-1"
+            onClick={() => navigate(id ? `/farmer/lots/${id}` : '/farmer/lots')}
+            aria-label="Back"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="text-3xl font-display font-bold text-gray-900 tracking-tight mb-1">Market Intelligence</h1>
+            <p className="text-base text-gray-500">Understand what the market is telling you before you sell.</p>
+          </div>
+        </div>
+        <button 
+          onClick={fetchData}
+          className="flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50"
+        >
+          <RefreshCw size={16} /> <span className="hidden sm:inline">Refresh</span>
+        </button>
+      </div>
+
+      {/* 2. Produce Context & 3. Data Freshness */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10 pb-6 border-b border-gray-200">
+        <div className="flex flex-wrap items-center gap-3 text-sm font-bold text-gray-800">
+          <div className="uppercase tracking-wide">{data.crop}</div>
+          {lotContext && <div className="text-gray-400 font-normal">•</div>}
+          {lotContext && <div>{lotContext.quantity} {lotContext.unit}</div>}
+          {lotContext?.qualityGrade && <div className="text-gray-400 font-normal">•</div>}
+          {lotContext?.qualityGrade && <div>Grade {lotContext.qualityGrade}</div>}
+          <div className="text-gray-400 font-normal">•</div>
+          <div className="flex items-center text-gray-600 font-medium"><MapPin className="w-4 h-4 mr-1 text-gray-400"/> {data.location.district}, {data.location.state}</div>
+        </div>
+        
+        <div className="flex items-center text-xs font-medium bg-gray-50 px-3 py-2 rounded-md border border-gray-100">
+          <div className={`w-2 h-2 rounded-full mr-2 ${data.data_freshness === 'CURRENT' ? 'bg-green-500' : data.data_freshness === 'STALE' ? 'bg-amber-500' : 'bg-red-500'}`}></div>
+          <span className="text-gray-900 font-bold mr-1">{data.data_freshness === 'CURRENT' ? 'Market data current' : data.data_freshness === 'STALE' ? 'Market data slightly old' : 'Market data outdated'}</span>
+          <span className="text-gray-400 mx-2">|</span>
+          <span className="text-gray-600">Latest observation: {data.observation_date}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        {/* LEFT COLUMN: Market Overview */}
+        <div className="lg:col-span-4 space-y-10">
+          
+          <section>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">What is the market saying?</h2>
+            
+            <div className="mb-6">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Current Modal Price</p>
+              <div className="text-4xl font-bold text-gray-900 tracking-tight">
+                ₹{data.snapshot?.modal_price?.toLocaleString() || '--'} <span className="text-lg font-normal text-gray-500">/ {data.snapshot?.price_unit || 'q'}</span>
+              </div>
+              <p className="text-sm text-gray-500 mt-1">Most commonly reported market price.</p>
+            </div>
+
+            <div className="flex gap-6 mb-8 border-t border-gray-100 pt-6">
+              <div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Low</p>
+                <p className="text-lg font-semibold text-gray-700">₹{data.snapshot?.min_price?.toLocaleString() || '--'}</p>
+              </div>
+              <div className="w-px bg-gray-100"></div>
+              <div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">High</p>
+                <p className="text-lg font-semibold text-gray-700">₹{data.snapshot?.max_price?.toLocaleString() || '--'}</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Price Trend</p>
+                <div className="flex items-start gap-2">
+                  <div className="mt-0.5">
+                    {data.trend.direction === 'UP' && <TrendingUp className="text-green-600 w-5 h-5" />}
+                    {data.trend.direction === 'DOWN' && <TrendingDown className="text-red-600 w-5 h-5" />}
+                    {data.trend.direction === 'STABLE' && <Minus className="text-gray-500 w-5 h-5" />}
+                    {data.trend.direction === 'INSUFFICIENT_DATA' && <AlertCircle className="text-gray-400 w-5 h-5" />}
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-gray-900">
+                      {data.trend.direction === 'UP' && 'Prices are moving upward'}
+                      {data.trend.direction === 'DOWN' && 'Prices are moving downward'}
+                      {data.trend.direction === 'STABLE' && 'Prices are stable'}
+                      {data.trend.direction === 'INSUFFICIENT_DATA' && 'Not enough historical data'}
+                      {data.trend.percentage_change !== null && <span className="text-gray-500 font-normal ml-2">· {data.trend.percentage_change > 0 ? '+' : ''}{data.trend.percentage_change}%</span>}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Market Arrivals</p>
+                {currentArrival !== null ? (
+                  <p className="text-base font-bold text-gray-900">{currentArrival.toLocaleString()} q <span className="text-sm font-normal text-gray-500">reported on {data.observation_date}</span></p>
+                ) : (
+                  <div>
+                    <p className="text-base font-bold text-gray-900">Data unavailable</p>
+                    <p className="text-sm text-gray-500 mt-1">Arrival information is currently unavailable for this market.</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Market Pressure</p>
+                {data.pressure.pressure === 'INSUFFICIENT_DATA' ? (
+                  <div>
+                    <p className="text-base font-bold text-gray-900">Not enough data</p>
+                    <p className="text-sm text-gray-500 mt-1">Recent arrival quantity data is unavailable.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-base font-bold text-gray-900 capitalize">{data.pressure.pressure.toLowerCase()}</p>
+                    <p className="text-sm text-gray-500 mt-1">{data.pressure.reasons[0]}</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Selling Window</p>
+                {data.sale_window.window === 'INSUFFICIENT_DATA' ? (
+                  <div>
+                    <p className="text-base font-bold text-gray-900">Not enough data</p>
+                    <p className="text-sm text-gray-500 mt-1">Not enough market data is available to evaluate the current selling window.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-base font-bold text-gray-900">
+                      {data.sale_window.window === 'FAVORABLE_NOW' && "Current window looks favorable"}
+                      {data.sale_window.window === 'CONSIDER_WAITING' && "Consider waiting"}
+                      {data.sale_window.window === 'NEUTRAL' && "Neutral conditions"}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">{data.sale_window.advice}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        {/* RIGHT COLUMN: Comparison & Interpretation */}
+        <div className="lg:col-span-8 space-y-12">
+          
+          <section>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Nearby Markets</h2>
+                <p className="text-sm text-gray-500">Compare current reported prices across nearby mandis.</p>
+              </div>
+              <div className="relative">
+                <select 
+                  aria-label="Selected market" 
+                  value={data.selected_market || selectedMarket} 
+                  onChange={(event) => setSelectedMarket(event.target.value)} 
+                  className="appearance-none pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary w-full sm:w-auto transition-all cursor-pointer"
+                >
+                  {data.markets.map((market) => (
+                    <option key={market.market_name} value={market.market_name}>{market.market_name}</option>
+                  ))}
+                </select>
+                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+              </div>
+            </div>
+
+            {highestMarket && (
+              <div className="mb-6 flex items-center text-sm">
+                <span className="font-bold text-gray-900 mr-2">Highest reported price:</span>
+                <span className="text-brand-primary font-bold">{highestMarket.market_name} (₹{highestMarket.modal_price?.toLocaleString()})</span>
+              </div>
+            )}
+
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data.markets} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="market_name" type="category" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#4b5563', fontWeight: 600}} width={140} />
+                  <Tooltip 
+                    cursor={{fill: '#f9fafb'}}
+                    contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    formatter={(value: any) => [`₹${value?.toLocaleString() ?? '--'} / q`, 'Modal Price']}
+                    labelStyle={{ color: '#111827', fontWeight: 600, marginBottom: '4px' }}
+                  />
+                  <Bar dataKey="modal_price" radius={[0, 4, 4, 0]} barSize={32}>
+                    {data.markets.map((market, index) => (
+                      <Cell 
+                        key={market.market_name} 
+                        fill={market.market_name === (data.selected_market || selectedMarket) ? '#16a34a' : '#e5e7eb'} 
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </section>
+
+          <section className="pt-10 border-t border-gray-100">
+            <h2 className="text-xl font-bold text-gray-900 mb-1">What does this mean?</h2>
+            <p className="text-sm text-gray-500 mb-8">A simple explanation of the market data for your produce.</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100">
+                  <TrendingUp className="w-5 h-5 text-gray-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-1">Prices</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {data.trend.direction === 'UP' && "Recent observed prices are moving upward."}
+                    {data.trend.direction === 'DOWN' && "Recent observed prices are moving downward."}
+                    {data.trend.direction === 'STABLE' && "Recent observed prices are relatively stable."}
+                    {data.trend.direction === 'INSUFFICIENT_DATA' && "Not enough recent observations are available to identify a clear trend."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100">
+                  <Package className="w-5 h-5 text-gray-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-1">Arrivals</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {currentArrival && avgArrival && currentArrival > avgArrival * 1.1 ? "Reported arrival volumes are above the recent average." : 
+                     currentArrival && avgArrival && currentArrival < avgArrival * 0.9 ? "Reported arrival volumes are below the recent average." :
+                     currentArrival ? "Reported arrival volumes are steady." : "Arrival data is currently unavailable."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100">
+                  <Activity className="w-5 h-5 text-gray-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-1">Market Pressure</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {data.pressure.pressure === 'INSUFFICIENT_DATA' ? "Not enough data to assess current supply pressure." : data.pressure.reasons[0] + "."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100">
+                  <Calendar className="w-5 h-5 text-gray-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-1">Selling Window</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {data.sale_window.window === 'INSUFFICIENT_DATA' ? "Not enough information to identify a clear selling window." : data.sale_window.advice}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      {/* Footer / Provenance */}
+      <div className="mt-16 pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-500">
+        <div>
+          <span className="font-bold text-gray-700">Data & source</span>
+        </div>
+        <div className="flex gap-4">
+          <span>{data.source_type}</span>
+          <span>•</span>
+          <span>{data.source_name}</span>
+        </div>
+      </div>
+      
+    </div>
+  );
+};

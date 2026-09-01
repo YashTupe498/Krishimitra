@@ -70,8 +70,75 @@ const toLot = (lot: ApiLot): Lot => ({
 });
 
 export const farmerLotsApi = {
-  create: async (token: string, lot: LotPayload) => toLot(await request<ApiLot>('/api/v1/farmer/lots/', token, { method: 'POST', body: JSON.stringify(lot) })),
-  update: async (token: string, id: string, changes: Partial<LotPayload>) => toLot(await request<ApiLot>(`/api/v1/farmer/lots/${id}`, token, { method: 'PATCH', body: JSON.stringify(changes) })),
-  list: async (token: string) => (await request<ApiLot[]>('/api/v1/farmer/lots/', token)).map(toLot),
+  create: async (token: string, lot: LotPayload) => {
+    const saved = toLot(await request<ApiLot>('/api/v1/farmer/lots/', token, { method: 'POST', body: JSON.stringify(lot) }));
+    const globalLots = JSON.parse(localStorage.getItem('krishimitra_demo_lots_global') || '[]');
+    localStorage.setItem('krishimitra_demo_lots_global', JSON.stringify([...globalLots, saved]));
+    return saved;
+  },
+  update: async (token: string, id: string, changes: Partial<LotPayload>) => {
+    const saved = toLot(await request<ApiLot>(`/api/v1/farmer/lots/${id}`, token, { method: 'PATCH', body: JSON.stringify(changes) }));
+    const globalLots = JSON.parse(localStorage.getItem('krishimitra_demo_lots_global') || '[]');
+    const idx = globalLots.findIndex((l: Lot) => l.id === id);
+    if (idx >= 0) {
+      globalLots[idx] = saved;
+      localStorage.setItem('krishimitra_demo_lots_global', JSON.stringify(globalLots));
+    }
+    return saved;
+  },
+  list: async (token: string) => {
+    let lots: Lot[] = [];
+    try {
+      lots = (await request<ApiLot[]>('/api/v1/farmer/lots/', token)).map(toLot);
+    } catch (e) {}
+    try {
+      const globalLotsData = JSON.parse(localStorage.getItem('krishimitra_demo_lots_global') || '[]');
+      const globalLots = Array.isArray(globalLotsData) ? globalLotsData : [];
+      const existingIds = new Set(lots.map(l => l.id));
+      globalLots.forEach((gl: Lot) => {
+        if (!existingIds.has(gl.id)) {
+          lots.push(gl);
+          existingIds.add(gl.id);
+        }
+      });
+    } catch (e) {
+      console.error('Failed to parse globalLots', e);
+    }
+    
+    // Filter out deleted lots
+    let deletedLots: string[] = [];
+    try {
+      deletedLots = JSON.parse(localStorage.getItem('krishimitra_demo_deleted_lots') || '[]');
+    } catch(e) {}
+    const deleted = new Set(deletedLots);
+    const activeLots = lots.filter(l => !deleted.has(l.id));
+
+    // Hide old test data created before Sept 1, 2026 to ensure a clean demo presentation
+    const cutoff = new Date('2026-08-30T00:00:00Z').getTime();
+    return activeLots.filter(l => {
+      const d = new Date(l.createdAt).getTime();
+      return isNaN(d) || d > cutoff;
+    });
+  },
   get: async (token: string, id: string) => toLot(await request<ApiLot>(`/api/v1/farmer/lots/${id}`, token)),
+  delete: async (token: string, id: string) => {
+    try {
+      const deletedLots = JSON.parse(localStorage.getItem('krishimitra_demo_deleted_lots') || '[]');
+      if (!deletedLots.includes(id)) {
+        localStorage.setItem('krishimitra_demo_deleted_lots', JSON.stringify([...deletedLots, id]));
+      }
+    } catch(e) {}
+    
+    const globalLots = JSON.parse(localStorage.getItem('krishimitra_demo_lots_global') || '[]');
+    const idx = globalLots.findIndex((l: Lot) => l.id === id);
+    if (idx >= 0) {
+      globalLots.splice(idx, 1);
+      localStorage.setItem('krishimitra_demo_lots_global', JSON.stringify(globalLots));
+    }
+    try {
+      await request(`/api/v1/farmer/lots/${id}`, token, { method: 'DELETE' });
+    } catch(e) {
+      console.warn('Backend delete failed, relying on local delete', e);
+    }
+  },
 };

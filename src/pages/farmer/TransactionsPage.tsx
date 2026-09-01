@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Package, ChevronRight, Search, Filter, TrendingUp,
-  CheckCircle2, Clock, AlertTriangle, IndianRupee,
+  ChevronRight, Search, TrendingUp,
+  CheckCircle2, Clock, IndianRupee,
   ArrowUpRight, Leaf
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';

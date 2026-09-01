@@ -342,7 +342,7 @@ export const MarketIntelligencePage: React.FC = () => {
               <LineChart data={priceHistory} margin={{ top: 10, right: 10, bottom: 10, left: -10 }}>
                 <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#aaa' }} tickMargin={8} interval={0} angle={-30} textAnchor="end" height={40} />
                 <YAxis tick={{ fontSize: 9, fill: '#aaa' }} domain={['auto', 'auto']} axisLine={false} tickLine={false} tickFormatter={(v: number) => `₹${v.toLocaleString()}`} />
-                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }} formatter={(v: any) => [`₹${v}`, 'modal_price']} labelFormatter={(label: string) => label} />
+                <Tooltip formatter={(value: any) => [`₹${value}`, 'Price']} labelFormatter={(label: any) => `${label}`} />
                 <Line type="monotone" dataKey="modal_price" stroke="#16a34a" strokeWidth={2} dot={{ r: 3, fill: '#16a34a', stroke: '#fff', strokeWidth: 1 }} activeDot={{ r: 5, fill: '#16a34a', stroke: '#fff', strokeWidth: 2 }} />
               </LineChart>
             </ResponsiveContainer>

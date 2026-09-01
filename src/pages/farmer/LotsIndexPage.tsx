@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Package, MapPin, CheckCircle2 } from 'lucide-react';
+import { Plus, Package, MapPin, CheckCircle2, Trash2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import type { Lot } from '../../types/lot';
@@ -15,10 +15,14 @@ export const LotsIndexPage: React.FC = () => {
   const [lots, setLots] = useState<Lot[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadLots = () => {
     const token = session?.access_token;
     if (!token) return;
     farmerLotsApi.list(token).then(setLots).catch((cause) => setError(cause instanceof Error ? cause.message : 'Unable to load lots.'));
+  };
+
+  useEffect(() => {
+    loadLots();
   }, [session?.access_token]);
 
   return (
@@ -58,10 +62,26 @@ export const LotsIndexPage: React.FC = () => {
                   <div className="w-14 h-14 bg-gray-50 border border-gray-100 text-3xl flex items-center justify-center rounded-2xl shrink-0">
                     {emoji}
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 leading-tight">
-                      {t(`data.crops.${lot.crop}`, lot.crop)}
-                    </h3>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-lg font-bold text-gray-900 leading-tight">
+                        {t(`data.crops.${lot.crop}`, lot.crop)}
+                      </h3>
+                      <button 
+                        className="text-gray-400 hover:text-red-600 transition-colors bg-white hover:bg-red-50 p-1.5 rounded-md"
+                        title="Delete lot"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Are you sure you want to delete this lot?')) {
+                            const token = session?.access_token || 'anon';
+                            await farmerLotsApi.delete(token, lot.id);
+                            loadLots();
+                          }
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                     <div className="text-sm font-medium text-gray-500 mt-1 flex flex-col gap-1">
                       <span className="flex items-center gap-1.5"><Package size={14} /> {lot.quantity} {lot.unit}</span>
                       <span className="flex items-center gap-1.5"><MapPin size={14} /> {lot.location}</span>

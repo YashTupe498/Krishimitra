@@ -1,0 +1,1795 @@
+<USER_REQUEST>
+# KRISHIMITRA — MARKET INTELLIGENCE PAGE
+# COMPLETE UI/UX REDESIGN IMPLEMENTATION TASK
+
+ROLE:
+Act as a Principal/Senior Product Designer + Senior Frontend Engineer with 10+ years of experience designing production-grade data products, decision-support systems, AgTech platforms, financial dashboards, and accessible user experiences.
+
+You are working on the existing KrishiMitra application.
+
+I want you to redesign the Farmer Market Intelligence page to a genuinely high-quality, decision-oriented product experience.
+
+This is NOT a request to simply change colors, add shadows, or make existing cards prettier.
+
+You must rethink the information hierarchy, layout, visual hierarchy, data presentation, empty states, and interaction design while preserving the existing application's functionality and backend completely.
+
+============================================================
+1. TARGET PAGE
+============================================================
+
+Current route:
+
+/farmer/market?lotId=<lotId>
+
+Current page:
+
+Market Intelligence
+
+The page analyzes market conditions for the farmer's selected produce lot.
+
+The screenshots provided in this conversation show the current implementation.
+
+The current page contains:
+
+- Farmer sidebar
+- Market Intelligence heading
+- Back navigation
+- Refresh
+- Lot/produce context
+- Market Data Status
+- Nearby Mandi Prices
+- Selected market dropdown
+- Price chart
+- Minimum price
+- Modal price
+- Maximum price
+- Recent Price Trend
+- Market Arrivals
+- Market Pressure
+- Sale Window Insight
+- What Does This Mean?
+- Data Type
+- Source
+
+============================================================
+2. PRODUCT PURPOSE
+============================================================
+
+The page should help a farmer understand:
+
+1. What is my produce currently worth?
+2. What are nearby markets reporting?
+3. Which market has the strongest reported price?
+4. Are prices moving upward or downward?
+5. What is happening with market arrivals?
+6. What does market pressure indicate?
+7. Is there enough information to determine a selling window?
+8. What does all this information mean in simple language?
+
+The page is therefore a DECISION-SUPPORT EXPERIENCE.
+
+Do not design it as a generic analytics dashboard.
+
+The farmer should not need to understand technical market terminology to use it.
+
+The experience should communicate:
+
+"Here is what is happening in the market, here is the evidence, and here is what this information means."
+
+============================================================
+3. SIH / PRODUCT CONTEXT
+============================================================
+
+KrishiMitra is intended to address:
+
+- transparent price discovery
+- localized market intelligence
+- nearby mandi price comparison
+- market trends
+- arrival volumes
+- market pressure
+- sale-window intelligence
+- buyer discovery
+- quality requirements
+- logistics
+- storage
+- payment reliability
+- improved farmer bargaining power
+- reduced information asymmetry
+- reduced transaction cost
+- improved price realization
+
+The UI should therefore make market information understandable and actionable.
+
+However:
+
+DO NOT invent recommendations.
+
+DO NOT invent market data.
+
+DO NOT create new business logic.
+
+Only present and explain information already provided by the existing application.
+
+============================================================
+4. ABSOLUTE BACKEND / FUNCTIONALITY CONSTRAINT
+============================================================
+
+THIS IS A FRONTEND UI/UX REDESIGN ONLY.
+
+DO NOT MODIFY:
+
+- backend
+- backend APIs
+- API endpoints
+- HTTP methods
+- API request payloads
+- API response structures
+- database
+- database schema
+- business logic
+- calculations
+- market intelligence algorithms
+- market pressure calculations
+- sale-window calculations
+- market data ingestion
+- data normalization
+- recommendation logic
+- feasibility logic
+- net realization logic
+- authentication
+- authorization
+- routing
+- existing services
+- existing hooks
+- existing API clients
+- existing validation rules
+
+DO NOT create new backend functionality.
+
+DO NOT change the meaning of any existing data.
+
+DO NOT create a second implementation of existing logic.
+
+DO NOT move business logic into the frontend.
+
+DO NOT calculate new business metrics simply to make the UI look better.
+
+The frontend may change HOW information is presented.
+
+It must NOT change WHAT the information means.
+
+============================================================
+5. VERY IMPORTANT — DATA SEMANTICS
+============================================================
+
+This rule is critical:
+
+You may change presentation.
+
+You may NOT change meaning.
+
+Example:
+
+Existing backend state:
+
+INSUFFICIENT_DATA
+
+Allowed frontend presentation:
+
+"Not enough data to assess market pressure."
+
+NOT allowed:
+
+"Market pressure is low."
+
+Another example:
+
+Existing backend trend:
+
+UP +2.44%
+
+Allowed:
+
+"Prices are moving upward · +2.44%"
+
+NOT allowed:
+
+"Prices will continue rising."
+
+Another example:
+
+Existing price:
+
+₹4200 / quintal
+
+Allowed:
+
+"Modal price ₹4,200 / quintal"
+
+NOT allowed:
+
+"Your produce is worth ₹4,200."
+
+The UI must never turn observed market data into a stronger claim than the existing system supports.
+
+============================================================
+6. FIRST STEP — INSPECT THE CODE
+============================================================
+
+Before making ANY modifications:
+
+1. Inspect the repository.
+2. Locate:
+
+src/pages/farmer/MarketIntelligencePage.tsx
+
+3. Identify all child components.
+4. Identify all imported components.
+5. Identify all hooks.
+6. Identify all API/service calls.
+7. Identify all state variables.
+8. Identify selected market state.
+9. Identify refresh behavior.
+10. Identify chart implementation.
+11. Identify price calculations already supplied to the UI.
+12. Identify trend calculations already supplied to the UI.
+13. Identify arrival data/state.
+14. Identify market pressure state.
+15. Identify sale-window state.
+16. Identify explanation data.
+17. Identify loading states.
+18. Identify error states.
+19. Identify insufficient-data states.
+20. Identify provenance/source data.
+
+Read the actual implementation before redesigning it.
+
+Do not rely only on the screenshots.
+
+============================================================
+7. BASELINE TEST
+============================================================
+
+Before changing anything:
+
+Run the application.
+
+Open:
+
+/farmer/market?lotId=<existing-lot-id>
+
+Confirm the existing page works.
+
+Record internally:
+
+- current layout
+- current API requests
+- current displayed values
+- selected market behavior
+- refresh behavior
+- chart behavior
+- navigation behavior
+- existing errors/warnings
+
+Do not modify anything until this baseline is understood.
+
+============================================================
+8. GIT SAFETY
+============================================================
+
+Before changes:
+
+Run:
+
+git status
+
+Do NOT:
+
+- git reset
+- git checkout another branch
+- git merge
+- git rebase
+- delete user work
+- overwrite unrelated changes
+
+Preserve all pre-existing user changes.
+
+Only modify files required for this UI redesign.
+
+============================================================
+9. DESIGN PRINCIPLE
+============================================================
+
+The current page visually feels like:
+
+CARD
+CARD
+CARD
+CHART
+CARD
+CARD
+CARD
+DARK CARD
+
+Do NOT reproduce this pattern.
+
+The redesign should feel like one cohesive market intelligence workspace.
+
+Use:
+
+- typography
+- whitespace
+- section hierarchy
+- subtle dividers
+- restrained surfaces
+- meaningful grouping
+- data visualization
+
+rather than putting every element inside a floating rounded white card.
+
+Cards should only exist where they communicate meaningful grouping or emphasis.
+
+============================================================
+10. DESIGN INSPIRATION
+============================================================
+
+Study relevant current UI/UX patterns from:
+
+- Dribbble farmer market dashboards
+- AgTech dashboards
+- agricultural market-price dashboards
+- modern financial market dashboards
+- modern data analytics products
+- decision-support interfaces
+- Google-style information hierarchy
+- professional marketplace dashboards
+
+Relevant Dribbble search directions:
+
+- Farmer Dashboard
+- Agriculture Dashboard
+- Mandi Price Dashboard
+- AgTech Dashboard
+- Market Analytics Dashboard
+- Data Visualization Dashboard
+- Decision Support Dashboard
+- Modern Analytics Dashboard
+- Marketplace Dashboard
+
+Use these references to understand:
+
+- hierarchy
+- spacing
+- information density
+- data visualization
+- interaction patterns
+- typography
+- responsive behavior
+- empty states
+
+DO NOT copy a Dribbble design.
+
+DO NOT clone another company's interface.
+
+Create an original KrishiMitra design.
+
+============================================================
+11. DESIGN QUALITY BAR
+============================================================
+
+The final page should feel like:
+
+- mature production software
+- trustworthy
+- calm
+- highly legible
+- data-driven
+- professional
+- farmer-friendly
+
+Think:
+
+Google-level information hierarchy
++
+modern AgTech
++
+financial market clarity
++
+farmer accessibility
+
+Avoid:
+
+- childish UI
+- excessive green
+- excessive cards
+- excessive gradients
+- excessive shadows
+- excessive rounded rectangles
+- excessive pastel colors
+- glassmorphism everywhere
+- decorative charts
+- unnecessary illustrations
+- generic SaaS dashboard styling
+
+============================================================
+12. PAGE INFORMATION ARCHITECTURE
+============================================================
+
+Target conceptual hierarchy:
+
+1. Header
+2. Produce context
+3. Data freshness / provenance
+4. Market overview
+5. Nearby market comparison
+6. Price trend + arrivals
+7. Market pressure + selling window
+8. Plain-language interpretation
+9. Data/source
+
+The first viewport should communicate the most important market information.
+
+The user should not have to scroll extensively before understanding the current market situation.
+
+============================================================
+13. HEADER
+============================================================
+
+Use:
+
+Market Intelligence
+
+Subtitle:
+
+Understand what the market is telling you before you sell.
+
+Keep the existing Back navigation.
+
+Keep Refresh.
+
+Refresh should remain a secondary action.
+
+Do not allow Refresh to visually compete with the primary market information.
+
+Preserve the existing refresh functionality exactly.
+
+If a loading state already exists, improve its visual presentation without changing behavior.
+
+============================================================
+14. PRODUCE CONTEXT
+============================================================
+
+Create a compact context strip.
+
+It should clearly communicate:
+
+THIS ANALYSIS IS FOR MY LOT
+
+Display existing information such as:
+
+Crop
+Quantity
+Grade
+Location
+
+Example:
+
+ONION
+9 kg
+Grade A
+
+Nashik District, Maharashtra
+
+Use only existing data.
+
+Do not invent a grade.
+
+Do not invent location.
+
+Do not change the lot data.
+
+Do not create a new API request.
+
+============================================================
+15. MARKET DATA FRESHNESS
+============================================================
+
+Redesign the current Market Data Status.
+
+Current information may include:
+
+- CURRENT
+- Latest observation
+- Source
+
+Present it as a compact trust indicator.
+
+Example:
+
+● Market data current
+
+Latest observation · 29 Aug 2026
+Source · Government-source-derived market data
+
+Keep all existing provenance information.
+
+Do not remove source information.
+
+Do not change freshness calculations.
+
+Do not create a new freshness algorithm.
+
+============================================================
+16. PRIMARY MARKET OVERVIEW
+============================================================
+
+This should be the visual focal point.
+
+Heading:
+
+Market overview
+
+or:
+
+What is the market saying?
+
+The primary information should be the modal market price.
+
+============================================================
+17. MODAL PRICE
+============================================================
+
+The current:
+
+Minimum
+Modal
+Maximum
+
+three-card equal hierarchy is not ideal.
+
+Make Modal Price primary.
+
+Example:
+
+CURRENT MODAL PRICE
+
+₹4,200 / quintal
+
+Most commonly reported price
+
+Secondary:
+
+Low ₹700
+High ₹4,991
+
+Use the actual values returned by the existing application.
+
+Do not change calculations.
+
+Do not imply this is the farmer's guaranteed selling price.
+
+Do not say:
+
+"You will get ₹4,200."
+
+Instead say:
+
+"Most commonly reported market price."
+
+============================================================
+18. PRICE MOVEMENT
+============================================================
+
+Bring the existing trend closer to the primary price.
+
+Example:
+
+↑ Up 2.44%
+
+Recent observed prices are moving upward.
+
+This should visually connect:
+
+PRICE
++
+DIRECTION
+
+Do not create a forecast.
+
+Do not say:
+
+"Prices will rise tomorrow."
+
+Only communicate existing observed trend data.
+
+============================================================
+19. MINIMUM / MAXIMUM PRICE
+============================================================
+
+Do not completely remove minimum and maximum.
+
+They remain useful context.
+
+But visually subordinate them to modal price.
+
+Possible:
+
+Low
+₹700 / quintal
+
+High
+₹4,991 / quintal
+
+Keep them concise.
+
+============================================================
+20. NEARBY MARKET COMPARISON
+============================================================
+
+This is one of the most important sections.
+
+Title:
+
+Nearby Markets
+
+Subtitle:
+
+Compare current reported prices across nearby mandis.
+
+Use the existing selected-market dropdown.
+
+Do not remove it.
+
+Do not change its behavior.
+
+============================================================
+21. CHART DESIGN
+============================================================
+
+Prefer a clean horizontal bar chart if the existing data structure allows it without changing functionality.
+
+Example conceptual presentation:
+
+Pimpalgaon Baswant
+██████████████████ ₹4,200
+
+Lasalgaon (Vinchur)
+███████████████ ₹3,650
+
+Yeola APMC
+██████████████ ₹3,600
+
+Manmad APMC
+██████████████ ₹3,600
+
+Requirements:
+
+- price value visible
+- market name readable
+- unit clear
+- selected market visually distinguishable
+- highest reported value easy to compare
+- responsive
+- readable on mobile
+
+Do not invent markets.
+
+Do not invent prices.
+
+Do not change the data ordering unless it is purely presentational and does not affect existing selection semantics.
+
+============================================================
+22. RECHARTS
+============================================================
+
+If the existing application uses Recharts:
+
+Reuse it if practical.
+
+Do not replace the charting library unless there is a compelling frontend-only reason.
+
+Restyle the chart professionally.
+
+Remove unnecessary chart junk.
+
+Do NOT blindly remove every gridline.
+
+Keep only visual references that materially help the farmer compare values.
+
+Do not change chart data.
+
+Do not change calculations.
+
+Do not change tooltips' underlying values.
+
+============================================================
+23. SELECTED MARKET
+============================================================
+
+Preserve selected market behavior exactly.
+
+Changing:
+
+Selected market
+
+must continue to trigger the same existing behavior/data update.
+
+Do not make it a static visual control.
+
+Make the dropdown visually integrated with the Nearby Markets section.
+
+Do not change its options.
+
+============================================================
+24. PRICE TREND SECTION
+============================================================
+
+Create a compact but meaningful trend panel.
+
+If historical data exists:
+
+Show a clean line chart.
+
+Requirements:
+
+- minimal gridlines
+- readable axis/context
+- latest value emphasized
+- trend direction visible
+- percentage visible
+- no chart decoration that adds noise
+
+If historical data is insufficient:
+
+DO NOT render a fake or misleading chart.
+
+Instead show:
+
+Price trend
+
+Not enough historical data
+
+Use a polished empty state.
+
+============================================================
+25. MARKET ARRIVALS
+============================================================
+
+Create a meaningful data state.
+
+If arrival data exists:
+
+Present it visually in the most appropriate existing format.
+
+If unavailable:
+
+Use:
+
+Market arrivals
+
+Data unavailable
+
+Arrival information is currently unavailable for this market.
+
+Optionally include a short static explanation:
+
+Arrival volumes can help explain market supply conditions.
+
+Do not create arrival values.
+
+Do not calculate market pressure in the frontend.
+
+============================================================
+26. MARKET PRESSURE
+============================================================
+
+Current raw enum-like state:
+
+INSUFFICIENT_DATA
+
+must NOT dominate the UI.
+
+Translate it into a farmer-friendly presentation.
+
+Example:
+
+Market pressure
+
+Not enough data
+
+Recent arrival quantity data is unavailable.
+
+Why this matters:
+
+Arrival information helps assess current supply pressure.
+
+IMPORTANT:
+
+This is a presentation change only.
+
+Do not change the underlying state.
+
+Do not calculate a new pressure score.
+
+Do not infer high/low pressure.
+
+============================================================
+27. SALE WINDOW
+============================================================
+
+Present the existing Sale Window Insight clearly.
+
+Example:
+
+Selling window
+
+Not enough data
+
+Not enough market data is available to evaluate the current selling window.
+
+If existing backend provides a valid sale-window recommendation:
+
+display it clearly.
+
+If backend says insufficient data:
+
+DO NOT invent:
+
+SELL NOW
+
+WAIT
+
+STORE
+
+or any other recommendation.
+
+This distinction is critical.
+
+============================================================
+28. "BEST MARKET" RULE
+============================================================
+
+DO NOT introduce a new concept called "Best Market" unless the existing application already provides that concept.
+
+Highest reported price is NOT automatically the best market.
+
+The product architecture includes constraint-aware net realization, which can account for:
+
+- transport
+- storage
+- handling
+- aggregation
+- other costs
+- farmer constraints
+
+Therefore:
+
+If existing UI/data already identifies a preferred market:
+
+display it.
+
+If not:
+
+you may say:
+
+"Highest reported price"
+
+but NOT:
+
+"Best market"
+
+Do not create new business logic to determine the best market.
+
+============================================================
+29. MARKET OVERVIEW SHOULD NOT MAKE A SELLING DECISION
+============================================================
+
+The Market Intelligence page explains observed market data.
+
+It should not pretend that:
+
+highest price = best decision.
+
+The UI must distinguish:
+
+OBSERVED DATA
+
+from
+
+INTERPRETATION
+
+from
+
+FINAL DECISION / RECOMMENDATION
+
+If a recommendation already exists in the backend/application, display it.
+
+Otherwise, do not invent one.
+
+============================================================
+30. WHAT DOES THIS MEAN?
+============================================================
+
+This section should be one of the strongest UX improvements.
+
+Replace the visually disconnected dark box with a polished plain-language interpretation section.
+
+Heading:
+
+What does this mean?
+
+Subtitle:
+
+A simple explanation of the market data for your produce.
+
+Use a structured layout:
+
+Prices
+Recent observed prices are moving upward.
+
+Arrivals
+Arrival data is currently unavailable.
+
+Market pressure
+Not enough data to assess current supply pressure.
+
+Selling window
+Not enough information to identify a clear selling window.
+
+Use existing explanation content whenever possible.
+
+Do not invent claims.
+
+============================================================
+31. DATA / INTERPRETATION / RECOMMENDATION
+============================================================
+
+Visually distinguish these three concepts.
+
+DATA:
+
+₹4,200 modal price
++2.44% recent trend
+
+INTERPRETATION:
+
+Recent prices are moving upward.
+
+LIMITATION:
+
+Arrival data unavailable.
+
+RECOMMENDATION:
+
+Only display if an existing system recommendation exists.
+
+This is critical for user trust.
+
+============================================================
+32. DATA & SOURCE
+============================================================
+
+At the bottom, present a compact:
+
+Data & source
+
+Include existing:
+
+- Data Type
+- Source
+
+Do not remove provenance.
+
+Do not alter source wording.
+
+Do not claim live data if it is not live.
+
+============================================================
+33. INSUFFICIENT DATA UX
+============================================================
+
+This must be treated as a first-class UX state.
+
+Differentiate:
+
+Loading
+No data
+Insufficient data
+Error
+Current data
+
+Do not make all four look identical.
+
+For insufficient data:
+
+Use a neutral visual treatment.
+
+Explain:
+
+What is missing?
+
+Why does it matter?
+
+What can the farmer still understand?
+
+Do not invent a solution.
+
+============================================================
+34. ERROR STATES
+============================================================
+
+Design appropriate frontend presentation for existing errors.
+
+Examples:
+
+Market data unavailable
+
+Unable to load the latest market information.
+
+Try refreshing.
+
+Only show actions that already exist.
+
+Do not create new backend retry APIs.
+
+Reuse the existing Refresh action where appropriate.
+
+============================================================
+35. LOADING STATES
+============================================================
+
+If the current implementation has loading states:
+
+Improve them.
+
+Use:
+
+- skeletons
+- subtle placeholders
+- stable layout
+
+Avoid:
+
+- flashing content
+- layout jumping
+- fake values
+
+Do not make the UI wait unnecessarily.
+
+============================================================
+36. COLOR SYSTEM
+============================================================
+
+Use the existing KrishiMitra brand green as the primary interaction color.
+
+Use semantic color carefully.
+
+Green:
+positive/current/up
+
+Amber:
+caution/limited data
+
+Neutral:
+insufficient/unavailable
+
+Red:
+negative/error
+
+Do not make every card a different color.
+
+Color should communicate meaning.
+
+Not decoration.
+
+============================================================
+37. TYPOGRAPHY
+============================================================
+
+Use a mature typography hierarchy.
+
+Page title:
+strong
+
+Section title:
+clear
+
+Primary market number:
+very large
+
+Supporting numbers:
+medium
+
+Metadata:
+small but readable
+
+Explanations:
+comfortable reading size
+
+Avoid excessive:
+
+- ALL CAPS
+- bold text
+- tiny grey text
+
+Use sentence case for farmer-facing messages.
+
+Do not expose developer terminology unnecessarily.
+
+============================================================
+38. SPACING
+============================================================
+
+The current page has excessive whitespace inside some sections while also requiring too much vertical scrolling.
+
+Fix both.
+
+Create:
+
+- tighter section spacing
+- consistent internal spacing
+- comfortable field/data spacing
+- clear grouping
+
+Do not compress everything.
+
+The goal is:
+
+HIGH INFORMATION VALUE
++
+LOW COGNITIVE LOAD
+
+============================================================
+39. RESPONSIVE DESIGN
+============================================================
+
+Test:
+
+1440px
+1280px
+1024px
+768px
+480px
+390px
+360px
+
+Desktop:
+
+Use an analytical grid where appropriate.
+
+Potential structure:
+
+FULL WIDTH:
+Market overview
+
+TWO COLUMNS:
+Nearby Markets | Price Trend
+
+TWO COLUMNS:
+Market Arrivals | Market Pressure
+
+FULL WIDTH:
+Selling Window
+
+FULL WIDTH:
+What Does This Mean?
+
+However:
+
+Do not force two columns when the content becomes less readable.
+
+Mobile:
+
+Stack sections logically.
+
+Priority order:
+
+1. Market overview
+2. Nearby Markets
+3. Price Trend
+4. Arrivals
+5. Market Pressure
+6. Selling Window
+7. What Does This Mean?
+8. Data & Source
+
+No horizontal page scrolling.
+
+No clipped chart labels.
+
+No tiny unreadable charts.
+
+============================================================
+40. SIDEBAR
+============================================================
+
+Do NOT redesign the entire sidebar.
+
+Preserve:
+
+Dashboard
+My Lots
+Market Intelligence
+My Decisions
+Offers
+Transactions
+Language
+Voice Assistant
+Profile
+Logout
+
+Only ensure the active Market Intelligence state remains visually consistent.
+
+Do not modify navigation behavior.
+
+============================================================
+41. ACCESSIBILITY
+============================================================
+
+Improve accessibility without changing functionality.
+
+Ensure:
+
+- semantic headings
+- semantic buttons
+- accessible dropdown
+- keyboard navigation
+- visible focus states
+- appropriate labels
+- meaningful chart descriptions where possible
+- sufficient contrast
+- touch-friendly controls
+
+Do not add unnecessary aria-labels when native labels already provide the accessible name.
+
+Do not make visual-only controls interactive without keyboard support.
+
+============================================================
+42. MOBILE TOUCH TARGETS
+============================================================
+
+Interactive controls should be comfortably tappable.
+
+Avoid:
+
+- tiny dropdowns
+- tiny refresh button
+- tiny chart controls
+- cramped text
+
+Do not sacrifice desktop density to achieve this.
+
+============================================================
+43. ICONS
+============================================================
+
+Reuse the existing icon library if available.
+
+Lucide React is preferred if already installed.
+
+Use icons only when they communicate meaning.
+
+Do not decorate every heading with an icon.
+
+Icons should support:
+
+- price
+- trend
+- arrivals
+- market pressure
+- selling window
+- location
+- data source
+
+============================================================
+44. ANIMATIONS
+============================================================
+
+Use subtle transitions only.
+
+Allowed:
+
+- hover
+- focus
+- selected market
+- loading
+- chart appearance
+
+Avoid:
+
+- bouncing
+- excessive motion
+- large transforms
+- distracting animations
+
+Respect:
+
+prefers-reduced-motion
+
+============================================================
+45. DO NOT ADD FAKE FEATURES
+============================================================
+
+Do NOT add:
+
+- fake AI recommendations
+- fake buyer counts
+- fake demand
+- fake price forecasts
+- fake market alerts
+- fake market scores
+- fake storage suggestions
+- fake logistics costs
+- fake transaction data
+- fake buyer matches
+
+If the backend does not provide it, do not display it as fact.
+
+============================================================
+46. DO NOT MODIFY OTHER FEATURES
+============================================================
+
+Do not alter:
+
+- My Lots
+- Create Lot
+- Edit Lot
+- Quality Assessment
+- My Decisions
+- Offers
+- Transactions
+- Voice Assistant
+- Profile
+- Language
+- authentication
+
+This task is specifically:
+
+Market Intelligence UI/UX.
+
+============================================================
+47. COMPONENT REUSE
+============================================================
+
+Before creating new components:
+
+Check whether reusable components already exist.
+
+Reuse:
+
+- Card
+- Badge
+- Button
+- Select
+- Chart
+- Status
+- EmptyState
+- SectionHeader
+- Icon
+- Typography
+
+if they already exist.
+
+Do not introduce duplicate versions unnecessarily.
+
+============================================================
+48. DEPENDENCIES
+============================================================
+
+Do not install new packages unless absolutely necessary.
+
+If Recharts already exists:
+
+Reuse it.
+
+If Lucide already exists:
+
+Reuse it.
+
+Use the existing styling system.
+
+Do not introduce another CSS framework.
+
+============================================================
+49. STATE PRESERVATION
+============================================================
+
+Do not change:
+
+- selected market state
+- lotId
+- fetched data
+- refresh state
+- loading state
+- error state
+- chart state
+- navigation state
+
+The redesign must consume the same state.
+
+============================================================
+50. API PRESERVATION
+============================================================
+
+The exact existing API calls must remain unchanged.
+
+Before implementation identify:
+
+- endpoint
+- method
+- request
+- response
+- query parameters
+- error handling
+
+After implementation verify they are identical.
+
+Do not create duplicate requests.
+
+Do not accidentally trigger API calls on render.
+
+============================================================
+51. BUSINESS LOGIC PRESERVATION
+============================================================
+
+Do not recreate calculations in JSX.
+
+If the current component receives:
+
+modalPrice
+
+use it.
+
+Do not calculate modalPrice again.
+
+If it receives:
+
+priceTrend
+
+use it.
+
+Do not recreate trend logic.
+
+If it receives:
+
+marketPressure
+
+use it.
+
+Do not recreate marketPressure.
+
+If it receives:
+
+saleWindow
+
+use it.
+
+Do not recreate saleWindow.
+
+This prevents UI and backend logic from diverging.
+
+============================================================
+52. VERIFICATION — FUNCTIONAL
+============================================================
+
+After implementation verify:
+
+[ ] Page loads.
+[ ] Correct lot is shown.
+[ ] Crop is correct.
+[ ] Quantity is correct.
+[ ] Grade is correct.
+[ ] Location is correct.
+[ ] Market data status is correct.
+[ ] Selected market is correct.
+[ ] Selected market dropdown works.
+[ ] Changing selected market still works.
+[ ] Price values are unchanged.
+[ ] Minimum price is unchanged.
+[ ] Modal price is unchanged.
+[ ] Maximum price is unchanged.
+[ ] Trend value is unchanged.
+[ ] Trend direction is unchanged.
+[ ] Arrival state/value is unchanged.
+[ ] Market pressure state is unchanged.
+[ ] Sale-window state is unchanged.
+[ ] Explanation remains consistent with existing data.
+[ ] Source/provenance is unchanged.
+[ ] Refresh works.
+[ ] Back navigation works.
+
+============================================================
+53. VERIFICATION — DATA STATES
+============================================================
+
+Test:
+
+[ ] Normal data
+[ ] Insufficient data
+[ ] Empty data
+[ ] Loading
+[ ] API error
+[ ] Network error
+[ ] Refresh failure
+
+Each should have an appropriate visual state.
+
+============================================================
+54. VERIFICATION — RESPONSIVE
+============================================================
+
+Test:
+
+[ ] 1440px
+[ ] 1280px
+[ ] 1024px
+[ ] 768px
+[ ] 480px
+[ ] 390px
+[ ] 360px
+
+Check:
+
+[ ] No horizontal page scroll
+[ ] No clipped content
+[ ] No overlapping sections
+[ ] No broken chart labels
+[ ] No overlapping buttons
+[ ] No inaccessible controls
+[ ] Charts remain understandable
+[ ] Mobile hierarchy is correct
+
+============================================================
+55. VERIFICATION — ACCESSIBILITY
+============================================================
+
+Check:
+
+[ ] Keyboard navigation
+[ ] Focus states
+[ ] Labels
+[ ] Buttons
+[ ] Select
+[ ] Contrast
+[ ] Screen-reader meaningful text where appropriate
+
+============================================================
+56. VERIFICATION — BUILD
+============================================================
+
+Inspect package.json first.
+
+Run the project's actual configured commands for:
+
+- build
+- lint
+- typecheck
+- tests, if configured
+
+Do NOT assume:
+
+npm run build
+npm run lint
+tsc -b
+
+exist.
+
+Use the scripts actually defined by the project.
+
+Fix errors caused by your changes.
+
+Do not hide warnings/errors.
+
+============================================================
+57. BROWSER CONSOLE
+============================================================
+
+After implementation:
+
+Open the page in the browser.
+
+Check the developer console.
+
+There must be no new:
+
+- JavaScript errors
+- React errors
+- React warnings caused by the redesign
+- failed imports
+- invalid DOM nesting warnings
+
+============================================================
+58. NETWORK VERIFICATION
+============================================================
+
+Open browser network tools.
+
+Verify:
+
+- no duplicate API requests
+- no unexpected new API calls
+- no changed API endpoint
+- no changed request payload
+- no broken requests
+
+============================================================
+59. GIT DIFF VERIFICATION
+============================================================
+
+After implementation:
+
+Run:
+
+git status
+
+Then:
+
+git diff --name-only
+
+Then inspect the diff.
+
+Confirm:
+
+NO backend files changed.
+
+NO API files changed.
+
+NO database files changed.
+
+NO business logic files changed.
+
+NO unrelated files changed.
+
+If something unrelated changed accidentally:
+
+revert ONLY the accidental modification.
+
+Do not destroy pre-existing user work.
+
+============================================================
+60. FINAL QUALITY CHECK
+============================================================
+
+Before declaring complete, compare the redesigned page against the original screenshot.
+
+Ask:
+
+1. Is the primary market information immediately understandable?
+2. Is modal price visually dominant?
+3. Can a farmer compare nearby markets quickly?
+4. Can a farmer understand price direction?
+5. Are insufficient-data states understandable?
+6. Is technical terminology hidden behind farmer-friendly language?
+7. Is provenance still visible?
+8. Does the page feel cohesive rather than like many cards?
+9. Is there less cognitive load?
+10. Is there less unnecessary scrolling?
+11. Does the design feel professional enough for an SIH demonstration?
+12. Does it feel like a real production product?
+13. Does it remain honest about what the data can and cannot tell the farmer?
+
+============================================================
+61. IMPORTANT DESIGN RULE
+============================================================
+
+DO NOT optimize for:
+
+"more features"
+
+Optimize for:
+
+"better understanding"
+
+Every visual element should help the farmer answer:
+
+WHAT IS HAPPENING?
+WHY DOES IT MATTER?
+WHAT DO I KNOW?
+WHAT DON'T I KNOW?
+WHAT SHOULD I LOOK AT NEXT?
+
+Only show an actual recommendation when the existing system provides one.
+
+============================================================
+62. IMPORTANT IMPLEMENTATION RULE
+============================================================
+
+Do NOT stop once the UI visually looks good.
+
+You must verify the complete page.
+
+If something breaks:
+
+1. Identify the root cause.
+2. Fix it.
+3. Run the relevant verification again.
+4. Re-open the page.
+5. Test again.
+
+Do not leave known bugs unresolved.
+
+============================================================
+63. FINAL ACCEPTANCE CRITERIA
+============================================================
+
+The redesign is complete only if:
+
+[ ] Information hierarchy is substantially improved.
+[ ] Modal price is the primary market signal.
+[ ] Minimum/maximum prices are secondary.
+[ ] Nearby market comparison is easier.
+[ ] Selected market remains functional.
+[ ] Trend is easier to understand.
+[ ] Arrivals state is clearer.
+[ ] Market pressure is farmer-friendly.
+[ ] Sale window is farmer-friendly.
+[ ] Raw enum terminology is not exposed unnecessarily.
+[ ] "What Does This Mean?" is significantly improved.
+[ ] Data provenance remains visible.
+[ ] No new business logic was introduced.
+[ ] No fake data was introduced.
+[ ] No fake recommendations were introduced.
+[ ] Backend is untouched.
+[ ] API calls are unchanged.
+[ ] API payloads are unchanged.
+[ ] Database is untouched.
+[ ] Routing is unchanged.
+[ ] Validation is unchanged.
+[ ] Existing functionality works.
+[ ] Refresh works.
+[ ] Market selection works.
+[ ] Back navigation works.
+[ ] Loading states work.
+[ ] Error states work.
+[ ] Insufficient-data states work.
+[ ] Desktop works.
+[ ] Tablet works.
+[ ] Mobile works.
+[ ] Accessibility is improved.
+[ ] No new console errors.
+[ ] No duplicate API requests.
+[ ] Build passes.
+[ ] Lint passes if configured.
+[ ] Typecheck passes if configured.
+[ ] Tests pass if configured.
+[ ] No unrelated files were changed.
+
+============================================================
+64. FINAL REPORT
+============================================================
+
+When finished, provide a concise implementation report containing:
+
+1. Files changed
+2. Components changed
+3. Major UI/UX improvements
+4. Information architecture improvements
+5. Chart improvements
+6. Empty/insufficient-data improvements
+7. Responsive improvements
+8. Accessibility improvements
+9. Verification performed
+10. Build/lint/typecheck/test results
+11. Confirmation that backend/API/business logic were NOT changed
+12. Any pre-existing issue discovered
+
+IMPORTANT FINAL INSTRUCTION:
+
+Make the smallest safe code changes necessary to produce a genuinely high-quality redesign.
+
+Do not touch backend functionality.
+
+Do not change data semantics.
+
+Do not invent business logic.
+
+Do not merely add colors, shadows, gradients, or rounded cards.
+
+Think like a senior product designer first and a careful frontend engineer second.
+
+The final experience should make the farmer understand the market faster, with less cognitive effort, while remaining completely faithful to the existing KrishiMitra data and functionality.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-08-30T21:05:12+05:30.
+</ADDITIONAL_METADATA>

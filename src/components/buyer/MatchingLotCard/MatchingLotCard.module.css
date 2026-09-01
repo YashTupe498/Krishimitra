@@ -1,4 +1,4 @@
-.card { padding: var(--space-20) var(--space-24); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-resting); transition: all 0.2s ease-out; }
+.card { position: relative; padding: var(--space-20) var(--space-24); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-resting); transition: all 0.2s ease-out; }
 .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); border-color: var(--accent-signal); }
 .header { display: flex; align-items: flex-start; gap: var(--space-16); }
 .avatar { width: 56px; height: 56px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface-alt); font-size: 28px; }

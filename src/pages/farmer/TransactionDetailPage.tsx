@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, Package, MapPin, Truck, CheckCircle2,
-  Clock, AlertTriangle, FileText, IndianRupee, ShieldCheck,
-  ChevronRight, ArrowUpRight, Scale, ArrowRight
+  ArrowLeft, Package, Truck, CheckCircle2,
+  Clock, AlertTriangle, FileText, ShieldCheck,
+  ArrowUpRight, Scale, ArrowRight
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { transactionDemoService, statusLabel, statusColor, paymentStatusColor } from '../../services/transactionDemoService';
-import type { DemoTransaction, TxStatus, TxTimelineEvent } from '../../types/transaction';
+import type { DemoTransaction } from '../../types/transaction';
 import { Button } from '../../components/ui/Button';
 
 // Utility to format dates
@@ -545,7 +545,7 @@ export const TransactionDetailPage: React.FC = () => {
                     <div className="text-sm text-gray-800"><span className="font-semibold">Recommended Next Step:</span> {tx.grievanceDetails.recommendedNextStep}</div>
                   </div>
 
-                  <Button variant="outline" className="w-full bg-white text-red-700 border-red-200 hover:bg-red-50" onClick={() => navigate('/farmer/issues')}>
+                  <Button variant="secondary" className="w-full bg-white text-red-700 border-red-200 hover:bg-red-50" onClick={() => navigate('/farmer/issues')}>
                     Track Grievance / Resolution
                   </Button>
                 </div>
@@ -562,7 +562,7 @@ export const TransactionDetailPage: React.FC = () => {
                     <span className="text-gray-600">Grievance ID:</span>
                     <span className="font-mono font-bold">{tx.grievanceId}</span>
                   </div>
-                  <Button variant="outline" className="w-full bg-white text-red-700 border-red-200 hover:bg-red-50" onClick={() => navigate('/farmer/issues')}>
+                  <Button variant="secondary" className="w-full bg-white text-red-700 border-red-200 hover:bg-red-50" onClick={() => navigate('/farmer/issues')}>
                     Track Grievance / Resolution
                   </Button>
                 </div>
@@ -614,13 +614,13 @@ export const TransactionDetailPage: React.FC = () => {
               )}
               
               {(tx.status === 'DELIVERED' || tx.status === 'PAYMENT_PENDING' || tx.status === 'PAYMENT_INITIATED') && (
-                <Button className="w-full" variant="outline" onClick={() => handleAction('PAY')} disabled={updating}>
+                <Button className="w-full" variant="secondary" onClick={() => handleAction('PAY')} disabled={updating}>
                   Simulate Payment Received
                 </Button>
               )}
 
               {tx.status === 'DISPUTE' && (
-                <Button className="w-full" variant="outline" onClick={() => navigate('/farmer/issues')}>
+                <Button className="w-full" variant="secondary" onClick={() => navigate('/farmer/issues')}>
                   View Grievance
                 </Button>
               )}

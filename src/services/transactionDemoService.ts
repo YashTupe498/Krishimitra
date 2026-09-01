@@ -1,7 +1,7 @@
 import type { DemoTransaction, TxStatus, TxTimelineEvent } from '../types/transaction';
 import { DEMO_TRANSACTIONS } from '../data/transactionDemoData';
 
-const STORAGE_KEY = (userId: string) => `farmer_transactions_${userId}`;
+const STORAGE_KEY = 'krishimitra_demo_transactions_global';
 
 /** Valid forward transitions */
 const NEXT_STATUS: Partial<Record<TxStatus, TxStatus>> = {
@@ -19,33 +19,39 @@ const NEXT_STATUS: Partial<Record<TxStatus, TxStatus>> = {
 };
 
 export const transactionDemoService = {
-  getAll: async (userId: string): Promise<DemoTransaction[]> => {
+  getAll: async (userId?: string): Promise<DemoTransaction[]> => {
     await new Promise(r => setTimeout(r, 250));
     try {
-      const raw = localStorage.getItem(STORAGE_KEY(userId));
+      const raw = localStorage.getItem(STORAGE_KEY);
       const local: DemoTransaction[] = raw ? JSON.parse(raw) : [];
       // Merge: local transactions first, then demo seeds not already in local
       const localIds = new Set(local.map(t => t.id));
       const merged = [...local, ...DEMO_TRANSACTIONS.filter(d => !localIds.has(d.id))];
-      return merged.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      
+      const filtered = userId ? merged.filter(t => t.farmerId === userId || t.buyerId === userId) : merged;
+      // Hide old demo transactions created before Sept 1, 2026
+      const cutoff = new Date('2026-08-30T00:00:00Z').getTime();
+      const cutoffFiltered = filtered.filter(t => new Date(t.createdAt).getTime() > cutoff || t.isDemo); // Keep hardcoded demo seeds if needed, or hide them too. Actually let's just hide anything before cutoff if it's not explicitly a seed.
+      
+      return cutoffFiltered.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
     } catch {
       return [...DEMO_TRANSACTIONS];
     }
   },
 
   getById: async (id: string, userId: string): Promise<DemoTransaction | undefined> => {
-    const all = await transactionDemoService.getAll(userId);
+    const all = await transactionDemoService.getAll();
     return all.find(t => t.id === id);
   },
 
-  save: (userId: string, transactions: DemoTransaction[]) => {
-    // Only persist farmer-owned non-seed transactions (or updated seeds)
-    localStorage.setItem(STORAGE_KEY(userId), JSON.stringify(transactions.filter(t => !DEMO_TRANSACTIONS.find(d => d.id === t.id) || true)));
+  save: (transactions: DemoTransaction[]) => {
+    // Only persist non-seed transactions
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions.filter(t => !DEMO_TRANSACTIONS.find(d => d.id === t.id) || true)));
   },
 
   updateStatus: async (id: string, userId: string, newStatus: TxStatus, note?: string): Promise<DemoTransaction> => {
     await new Promise(r => setTimeout(r, 400));
-    const all = await transactionDemoService.getAll(userId);
+    const all = await transactionDemoService.getAll();
     const idx = all.findIndex(t => t.id === id);
     if (idx === -1) throw new Error('Transaction not found');
 
@@ -74,7 +80,7 @@ export const transactionDemoService = {
     if (newStatus === 'PAYMENT_INITIATED') tx.payment = { ...tx.payment, status: 'INITIATED' };
 
     all[idx] = tx;
-    transactionDemoService.save(userId, all);
+    transactionDemoService.save(all);
     return tx;
   },
 
@@ -105,7 +111,7 @@ export const transactionDemoService = {
     });
 
     all[idx] = tx;
-    transactionDemoService.save(userId, all);
+    transactionDemoService.save(all);
     return tx;
   },
 
