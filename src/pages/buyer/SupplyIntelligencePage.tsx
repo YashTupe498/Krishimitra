@@ -126,7 +126,7 @@ export const SupplyIntelligencePage: React.FC = () => {
     }, {} as Record<string, { totalKg: number, lots: typeof compatibleLots }>);
 
     const marketsList = Object.entries(marketGroups)
-      .map(([name, data]) => ({ name, ...data }))
+      .map(([name, data]) => ({ name, ...(data as any) }))
       .sort((a, b) => b.totalKg - a.totalKg);
 
     // Group by grade
@@ -190,7 +190,7 @@ export const SupplyIntelligencePage: React.FC = () => {
     return (
       <div className={styles.page}>
         <div className={styles.header}>
-          <h1>Supply Intelligence</h1>
+          <h1 className="text-[#14532D]">Supply Intelligence</h1>
           <p>Understand available supply, market conditions, and sourcing opportunities.</p>
         </div>
         <div className={styles.emptyState}>
@@ -206,7 +206,7 @@ export const SupplyIntelligencePage: React.FC = () => {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1>Supply Intelligence</h1>
+        <h1 className="text-[#14532D]">Supply Intelligence</h1>
         <p>Understand available supply, market conditions, and sourcing opportunities.</p>
       </div>
 

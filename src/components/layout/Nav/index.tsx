@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { Button } from '../../ui/Button';
 import { LanguageToggle } from '../../ui/LanguageToggle';
+import { KrishiMitraLogo } from '../../ui/KrishiMitraLogo';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import styles from './Nav.module.css';
 
@@ -28,10 +29,7 @@ export const Nav: React.FC = () => {
 
   return (
     <nav className={clsx(styles.nav, scrolled && styles.scrolled)}>
-      <Link to="/" className={styles.logo}>
-        <img src="/logo.jpg" alt="KrishiMitra Logo" style={{ height: '32px', borderRadius: '50%' }} />
-        <span>KrishiMitra</span>
-      </Link>
+      <KrishiMitraLogo size="sm" variant="compact" asLink className={styles.logo} />
 
       <div className={styles.links}>
         <a href="#how-it-works" className={styles.link}>{t('nav.howItWorks')}</a>

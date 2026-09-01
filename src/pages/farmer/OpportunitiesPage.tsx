@@ -44,7 +44,7 @@ export const OpportunitiesPage: React.FC = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">{t('opportunities.title')}</h1>
+      <h1 className="text-2xl font-bold mb-6 text-[#14532D]">{t('opportunities.title')}</h1>
 
       {loading ? (
         <p>{t('opportunities.loading')}</p>

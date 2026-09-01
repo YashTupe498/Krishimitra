@@ -97,7 +97,7 @@ export const FarmerOffersPage: React.FC = () => {
     <div className="max-w-6xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="h2 mb-2">My Offers</h1>
+          <h1 className="h2 mb-2 text-[#14532D]">My Offers</h1>
           <p className="body-base">Review buyer opportunities, respond to offers, and track your deals.</p>
         </div>
         <div className="flex items-center gap-3">

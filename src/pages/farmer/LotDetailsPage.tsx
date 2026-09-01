@@ -64,7 +64,7 @@ export const LotDetailsPage: React.FC = () => {
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
             {t('lotDetails.backLink', 'Back to My Lots')}
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 font-display">
+          <h1 className="text-2xl font-bold text-[#14532D] font-display">
             {t('lotDetails.title', 'LOT DETAILS')}
           </h1>
         </div>

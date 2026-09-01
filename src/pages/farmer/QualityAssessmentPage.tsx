@@ -210,7 +210,7 @@ export const QualityAssessmentPage: React.FC = () => {
           <ShieldCheck size={24} />
         </div>
         <div>
-          <h1 className="text-2xl font-display font-bold text-gray-900">{t('quality.headerTag', 'Quality Assessment')}</h1>
+          <h1 className="text-2xl font-display font-bold text-[#14532D]">{t('quality.headerTag', 'Quality Assessment')}</h1>
           <p className="text-gray-500 font-medium mt-1">
             {t(`data.crops.${lot.crop}`, lot.crop)} • {lot.quantity} {lot.unit} • {lot.location}
           </p>

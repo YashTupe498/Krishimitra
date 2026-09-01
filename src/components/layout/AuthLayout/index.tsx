@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { LanguageToggle } from '../../ui/LanguageToggle';
+import { KrishiMitraLogo } from '../../ui/KrishiMitraLogo';
 import styles from './AuthLayout.module.css';
 
 interface AuthLayoutProps {
@@ -16,9 +16,9 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, role }) => {
     <div className={styles.layout}>
       <div className={clsx(styles.contextPanel, role === 'farmer' ? styles.farmerBg : styles.buyerBg)}>
         <div className={styles.contextTop}>
-          <Link to="/" className={styles.logoWhite}>
-            <img src="/logo.jpg" alt="KrishiMitra Logo" />
-          </Link>
+          <div className={styles.logoWhite}>
+            <KrishiMitraLogo size="lg" variant="full" theme="dark" asLink />
+          </div>
           <LanguageToggle />
         </div>
         
@@ -36,9 +36,9 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, role }) => {
       </div>
       <div className={styles.formPanel}>
         <div className={styles.formTop}>
-          <Link to="/" className={styles.logo}>
-            <img src="/logo.jpg" alt="KrishiMitra Logo" />
-          </Link>
+          <div className={styles.logo}>
+            <KrishiMitraLogo size="lg" variant="full" asLink />
+          </div>
           <div className={styles.mobileLangToggle}>
             <LanguageToggle />
           </div>

@@ -302,7 +302,7 @@ export const CreateLotPage: React.FC<CreateLotPageProps> = ({ mode = 'create' })
       </div>
 
       <div className="mb-8">
-        <h1 className="text-3xl font-display font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-display font-bold text-[#14532D] mb-2">
           {mode === 'edit' ? t('createLot.editTitle', 'Edit Produce Lot') : t('createLot.title', 'Create a New Produce Lot')}
         </h1>
         <p className="text-gray-500 text-lg">Tell us about the produce you want to sell.</p>

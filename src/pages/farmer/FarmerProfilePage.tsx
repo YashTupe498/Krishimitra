@@ -162,7 +162,7 @@ export const FarmerProfilePage: React.FC = () => {
         {/* HEADER */}
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pt-2 mb-2">
           <div>
-            <h1 className="text-[28px] font-bold text-gray-900 tracking-tight mb-1">{t('profile.title')}</h1>
+            <h1 className="text-[28px] font-bold text-[#14532D] tracking-tight mb-1">{t('profile.title')}</h1>
             <p className="text-sm text-gray-500 font-medium">{t('profile.subtitle')}</p>
           </div>
           <div className="shrink-0">

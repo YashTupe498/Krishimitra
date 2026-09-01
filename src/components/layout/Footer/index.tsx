@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { KrishiMitraLogo } from '../../ui/KrishiMitraLogo';
 import styles from './Footer.module.css';
 
 export const Footer: React.FC = () => {
@@ -7,9 +8,7 @@ export const Footer: React.FC = () => {
     <footer className={styles.footer}>
       <div className={styles.content}>
         <div>
-          <Link to="/" className={styles.logo}>
-            <img src="/logo.jpg" alt="KrishiMitra Logo" style={{ height: '40px', borderRadius: '50%' }} />
-          </Link>
+          <KrishiMitraLogo size="sm" variant="full" asLink />
           <p className="body-small" style={{ color: 'var(--text-secondary)', maxWidth: '300px' }}>
             Empowering Indian farmers and buyers with transparent market intelligence and direct transactions.
           </p>

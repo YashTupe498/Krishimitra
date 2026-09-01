@@ -69,7 +69,7 @@ export const FarmerDashboardPage: React.FC = () => {
       {/* 1. HEADER */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 font-display">
+          <h1 className="text-2xl md:text-3xl font-bold text-[#14532D] font-display">
             {t('dashboard.goodMorning', 'Good morning')}, {firstName} 👋
           </h1>
           <p className="text-sm text-gray-600 mt-1">{t('dashboard.greetingSub', "Here's what matters for your produce today.")}</p>

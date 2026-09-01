@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../ui/Button';
-import { clsx } from 'clsx';
 import styles from './FinalCTA.module.css';
 
 export const FinalCTA: React.FC = () => {

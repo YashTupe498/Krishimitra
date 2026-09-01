@@ -55,7 +55,7 @@ export const IssuesGrievancesPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-2">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-[28px] font-bold text-gray-900 tracking-tight">Issues & Grievances</h1>
+              <h1 className="text-[28px] font-bold text-[#14532D] tracking-tight">Issues & Grievances</h1>
             </div>
             <p className="text-sm text-gray-500 mt-1">Get help with farming, market, buyer, payment and government-related issues.</p>
           </div>

@@ -80,7 +80,7 @@ export const FarmerTransactionsPage: React.FC = () => {
       <div className="mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">My Transactions</h1>
+            <h1 className="text-2xl font-black text-[#14532D] tracking-tight">My Transactions</h1>
             <p className="text-sm text-gray-500 mt-0.5">Track your produce from accepted offer to delivery and payment.</p>
           </div>
           <span className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-full uppercase tracking-widest">Demo Mode</span>

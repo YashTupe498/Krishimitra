@@ -12,13 +12,16 @@ import {
   MessageSquareWarning,
   Globe2,
   Mic,
+
   UserCircle,
   LogOut,
   Check
 } from 'lucide-react';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { useVoiceAssistant } from '../../hooks/useVoiceAssistant';
+import { KrishiMitraLogo } from '../../components/ui/KrishiMitraLogo';
 import { VoiceAssistantOverlay } from '../../components/farmer/voice/VoiceAssistantOverlay';
+import { SidebarNavItem } from '../../components/layout/SidebarNavItem';
 import styles from './FarmerLayout.module.css';
 
 export const FarmerLayout: React.FC = () => {
@@ -75,7 +78,7 @@ export const FarmerLayout: React.FC = () => {
       {/* Desktop Sidebar */}
       <aside className={clsx(styles.sidebar, styles.farmerSidebar)}>
         <div className={styles.logo}>
-          <img src="/logo.jpg" alt="KrishiMitra Logo" className={styles.logoImage} />
+          <KrishiMitraLogo size="md" variant="compact" asLink />
         </div>
         
         <div className={styles.navigationArea}>
@@ -83,16 +86,14 @@ export const FarmerLayout: React.FC = () => {
           <nav className={styles.primaryNav}>
             {primaryNav.map((item) => {
               const isActive = isRouteActive(item.path);
-              const Icon = item.icon;
               return (
-                <NavLink
+                <SidebarNavItem
                   key={item.path}
                   to={item.path}
-                  className={clsx(styles.navItem, isActive && styles.active)}
-                >
-                  <Icon size={20} className={styles.navIcon} />
-                  <span>{item.name}</span>
-                </NavLink>
+                  isActive={isActive}
+                  icon={item.icon}
+                  label={item.name}
+                />
               );
             })}
           </nav>
@@ -100,14 +101,12 @@ export const FarmerLayout: React.FC = () => {
           <div className={styles.secondaryNav}>
             <div className={styles.navGroup} style={{ paddingTop: 0 }}>{t('farmerNav.preferences', 'Preferences')}</div>
             <div className="relative">
-              <button
-                className={styles.navItem}
+              <SidebarNavItem
+                icon={Globe2}
+                label={t('farmerNav.language', 'Language')}
                 onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                aria-expanded={showLanguageMenu}
-              >
-                <Globe2 size={20} className={styles.navIcon} />
-                <span>{t('farmerNav.language', 'Language')}</span>
-              </button>
+                isActive={showLanguageMenu}
+              />
               {showLanguageMenu && (
                 <div className="absolute bottom-full left-4 mb-2 bg-white rounded-lg shadow-lg border border-gray-100 py-2 w-48 z-50">
                   <button onClick={() => changeLanguage('en')} className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center justify-between">
@@ -123,30 +122,28 @@ export const FarmerLayout: React.FC = () => {
               )}
             </div>
 
-            <button 
-              className={styles.navItem} 
+            <SidebarNavItem
+              icon={Mic}
+              label={t('farmerNav.voiceAssistant', 'Voice Assistant')}
               onClick={() => voice.startListening()}
-              aria-label="Start voice assistant"
-            >
-              <Mic size={20} className={styles.navIcon} />
-              <span>{t('farmerNav.voiceAssistant', 'Voice Assistant')}</span>
-            </button>
+            />
             
-            <NavLink
+            <SidebarNavItem
               to="/farmer/profile"
-              className={clsx(styles.navItem, isRouteActive('/farmer/profile') && styles.active)}
-            >
-              <UserCircle size={20} className={styles.navIcon} />
-              <span>{t('farmerNav.profile', 'Profile')}</span>
-            </NavLink>
+              isActive={isRouteActive('/farmer/profile')}
+              icon={UserCircle}
+              label={t('farmerNav.profile', 'Profile')}
+            />
           </div>
         </div>
 
         <div className={styles.sidebarFooter}>
-          <button className={clsx(styles.navItem, styles.logout)} onClick={handleLogout}>
-            <LogOut size={20} className={styles.navIcon} />
-            <span>{t('farmerNav.logout', 'Logout')}</span>
-          </button>
+          <SidebarNavItem
+            icon={LogOut}
+            label={t('farmerNav.logout', 'Logout')}
+            onClick={handleLogout}
+            variant="logout"
+          />
         </div>
       </aside>
 

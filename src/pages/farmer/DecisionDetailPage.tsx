@@ -124,7 +124,7 @@ export const DecisionDetailPage: React.FC = () => {
           <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
             {t('decisions.headerTag', 'Active Decision')}
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 font-display">
+          <h1 className="text-2xl font-bold text-[#14532D] font-display">
             {t('decisions.title', 'Where should you sell?')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">

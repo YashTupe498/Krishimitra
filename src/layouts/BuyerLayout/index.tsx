@@ -6,6 +6,8 @@ import {
   Mic, PackageSearch, Receipt, TrendingUp, UserCircle,
 } from 'lucide-react';
 import { useAuth } from '../../app/providers/AuthProvider';
+import { KrishiMitraLogo } from '../../components/ui/KrishiMitraLogo';
+import { SidebarNavItem } from '../../components/layout/SidebarNavItem';
 import styles from '../FarmerLayout/FarmerLayout.module.css';
 
 const menuItems = [
@@ -26,32 +28,44 @@ export const BuyerLayout: React.FC = () => {
   return (
     <div className={clsx(styles.layout, 'farmer-theme')}>
       <aside className={clsx(styles.sidebar, styles.farmerSidebar)}>
-        <div className={styles.logo}><img src="/logo.jpg" alt="KrishiMitra Logo" className={styles.logoImage} /></div>
+        <div className={styles.logo}>
+          <KrishiMitraLogo size="md" variant="compact" asLink />
+        </div>
         
         <div className={styles.navigationArea}>
           <div className={styles.navGroup}>Menu</div>
           <nav className={styles.primaryNav}>
-            {menuItems.map(({ name, icon: Icon, path }) => (
-              <NavLink key={path} to={path} className={clsx(styles.navItem, location.pathname === path && styles.active)}>
-                <Icon size={20} className={styles.navIcon} /><span>{name}</span>
-              </NavLink>
+            {menuItems.map(({ name, icon, path }) => (
+              <SidebarNavItem
+                key={path}
+                to={path}
+                isActive={location.pathname === path || location.pathname.startsWith(`${path}/`)}
+                icon={icon}
+                label={name}
+              />
             ))}
           </nav>
           
           <div className={styles.secondaryNav}>
             <div className={styles.navGroup} style={{ paddingTop: 0 }}>Preferences</div>
-            <button className={styles.navItem}><Globe2 size={20} className={styles.navIcon} /><span>Language</span></button>
-            <button className={styles.navItem}><Mic size={20} className={styles.navIcon} /><span>Voice Assistant</span></button>
-            <NavLink to="/buyer/profile" className={clsx(styles.navItem, location.pathname === '/buyer/profile' && styles.active)}>
-              <UserCircle size={20} className={styles.navIcon} /><span>Profile</span>
-            </NavLink>
+            <SidebarNavItem icon={Globe2} label="Language" />
+            <SidebarNavItem icon={Mic} label="Voice Assistant" />
+            <SidebarNavItem
+              to="/buyer/profile"
+              isActive={location.pathname === '/buyer/profile'}
+              icon={UserCircle}
+              label="Profile"
+            />
           </div>
         </div>
 
         <div className={styles.sidebarFooter}>
-          <button className={clsx(styles.navItem, styles.logout)} onClick={handleLogout}>
-            <LogOut size={20} className={styles.navIcon} /><span>Logout</span>
-          </button>
+          <SidebarNavItem
+            icon={LogOut}
+            label="Logout"
+            onClick={handleLogout}
+            variant="logout"
+          />
         </div>
       </aside>
       <main className={styles.main}><div className={styles.contentContainer}><Outlet /></div></main>

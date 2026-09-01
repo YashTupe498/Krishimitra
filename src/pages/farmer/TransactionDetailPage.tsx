@@ -110,7 +110,7 @@ export const TransactionDetailPage: React.FC = () => {
               {tx.isDemo && <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded uppercase font-bold tracking-widest">Demo</span>}
             </div>
             
-            <h1 className="text-3xl font-black text-gray-900 mb-1">{tx.crop} · {tx.quantityKg.toLocaleString()} kg</h1>
+            <h1 className="text-3xl font-black text-[#14532D] mb-1">{tx.crop} · {tx.quantityKg.toLocaleString()} kg</h1>
             
             <div className="flex items-center gap-2 text-sm text-gray-600 font-medium mb-4">
               <span>Grade {tx.grade}</span>
