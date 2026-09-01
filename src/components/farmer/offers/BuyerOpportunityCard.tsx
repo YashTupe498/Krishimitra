@@ -1,8 +1,10 @@
-import React from 'react';
-import { MapPin, Calendar, ShieldCheck, Tag } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Calendar, Tag } from 'lucide-react';
 import { Button } from '../../ui/Button';
 import type { BuyerOpportunity } from '../../../services/offerDemoService';
 import { MatchIndicators } from './MatchIndicators';
+import { BuyerVerificationBadge } from '../../buyer/BuyerVerificationBadge';
+import { BuyerTrustModal } from './BuyerTrustModal';
 
 export const BuyerOpportunityCard: React.FC<{
   opportunity: BuyerOpportunity;
@@ -16,16 +18,14 @@ export const BuyerOpportunityCard: React.FC<{
     return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
+  const [isTrustModalOpen, setIsTrustModalOpen] = useState(false);
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="p-5 border-b border-gray-100 flex justify-between items-start">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            {buyerProfile.verified && (
-              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-green-700 bg-green-50 px-2 py-0.5 rounded">
-                <ShieldCheck size={12} /> Verified Buyer
-              </span>
-            )}
+            <BuyerVerificationBadge buyerId={opportunity.requirement.buyerId} showText={true} />
             {isDemo && (
               <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                 Demo
@@ -34,6 +34,9 @@ export const BuyerOpportunityCard: React.FC<{
           </div>
           <h3 className="font-bold text-gray-900 text-lg">{buyerProfile.name}</h3>
         </div>
+        <button onClick={() => setIsTrustModalOpen(true)} className="text-[10px] font-bold uppercase tracking-widest text-brand-primary hover:text-brand-deep transition-colors bg-[#F4F9F5] px-2 py-1 rounded">
+          View Buyer
+        </button>
       </div>
       
       <div className="p-5">
@@ -78,6 +81,13 @@ export const BuyerOpportunityCard: React.FC<{
           Respond
         </Button>
       </div>
+
+      <BuyerTrustModal 
+        buyerId={opportunity.requirement.buyerId} 
+        buyerName={buyerProfile.name} 
+        isOpen={isTrustModalOpen} 
+        onClose={() => setIsTrustModalOpen(false)} 
+      />
     </div>
   );
 };

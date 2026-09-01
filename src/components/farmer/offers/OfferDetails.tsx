@@ -4,11 +4,12 @@ import { MapPin, Calendar, ShieldCheck, Tag, Leaf, X } from 'lucide-react';
 import type { BuyerOpportunity } from '../../../services/offerDemoService';
 import { MatchIndicators } from './MatchIndicators';
 
-export const OfferDetails: React.FC<{
+    export const OfferDetails: React.FC<{
   opportunity: BuyerOpportunity;
   onClose: () => void;
   onRespond: () => void;
-}> = ({ opportunity, onClose, onRespond }) => {
+  isOfferView?: boolean;
+}> = ({ opportunity, onClose, onRespond, isOfferView }) => {
   const { requirement, matchedLot, buyerProfile, isDemo } = opportunity;
   
   const formatDate = (dateStr?: string) => {
@@ -67,7 +68,7 @@ export const OfferDetails: React.FC<{
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Target Price</span>
-                <span className="text-sm font-bold text-green-700">₹4,350/q</span>
+                <span className="text-sm font-bold text-green-700">₹{requirement.pricePerQuintal ? requirement.pricePerQuintal.toLocaleString() : '4,350'}/q</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Payment</span>
@@ -98,19 +99,23 @@ export const OfferDetails: React.FC<{
           </div>
         </div>
 
-        <div className="mb-2">
-          <h4 className="text-sm font-black text-gray-900 mb-4">Why this matches your lot ({matchedLot.id})</h4>
-          <MatchIndicators score={opportunity.matchScore} />
-        </div>
+        {!isOfferView && (
+          <div className="mb-2">
+            <h4 className="text-sm font-black text-gray-900 mb-4">Why this matches your lot ({matchedLot.id})</h4>
+            <MatchIndicators score={opportunity.matchScore} />
+          </div>
+        )}
       </div>
       
       <div className="p-5 border-t border-gray-100 bg-gray-50 flex gap-3 sticky bottom-0 z-10">
         <Button onClick={onClose} variant="secondary" className="flex-1 bg-white">
           Close
         </Button>
-        <Button onClick={onRespond} className="flex-1">
-          Respond to Buyer
-        </Button>
+        {!isOfferView && (
+          <Button onClick={onRespond} className="flex-1">
+            Respond to Buyer
+          </Button>
+        )}
       </div>
     </div>
   );

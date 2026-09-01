@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Search, Loader2 } from 'lucide-react';
+// useNavigate removed
+import { Search, Loader2, Leaf, ArrowRight, Clock, CheckCircle2 } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { SegmentedControl } from '../../components/ui/SegmentedControl';
 import { supabase } from '../../lib/supabase';
 
 import { offerDemoService, type BuyerOpportunity, type AugmentedOffer } from '../../services/offerDemoService';
-import { OfferSummary } from '../../components/farmer/offers/OfferSummary';
+
 import { BuyerOpportunityCard } from '../../components/farmer/offers/BuyerOpportunityCard';
 import { OfferCard } from '../../components/farmer/offers/OfferCard';
 import { OfferDetails } from '../../components/farmer/offers/OfferDetails';
 import { OfferResponseForm } from '../../components/farmer/offers/OfferResponseForm';
 
 export const FarmerOffersPage: React.FC = () => {
-  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   
   // Data State
@@ -25,9 +25,10 @@ export const FarmerOffersPage: React.FC = () => {
   
   // Modal State
   const [selectedOpportunity, setSelectedOpportunity] = useState<BuyerOpportunity | null>(null);
+  const [selectedOfferDetails, setSelectedOfferDetails] = useState<AugmentedOffer | null>(null);
   const [isResponding, setIsResponding] = useState(false);
 
-  const [farmerId, setFarmerId] = useState('demo-farmer-id');
+
 
   const loadData = async () => {
     setLoading(true);
@@ -35,7 +36,7 @@ export const FarmerOffersPage: React.FC = () => {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token || 'dummy-token';
       const uid = session?.user?.id || 'demo-farmer-id';
-      setFarmerId(uid);
+
       
       const [opps, offs] = await Promise.all([
         offerDemoService.getBuyerOpportunities(token, uid),
@@ -73,70 +74,82 @@ export const FarmerOffersPage: React.FC = () => {
     loadData();
   };
 
-  const handleSimulateBuyerAcceptance = async () => {
-    // Hidden debug tool for demo purposes: forcibly accept the first 'SENT' offer
-    const sent = offers.find(o => o.status === 'SENT');
-    if (sent) {
-      await offerDemoService.simulateBuyerAcceptance(sent.id);
-      loadData();
-    }
-  };
-
-  // Filtering
-  const receivedOffers = offers.filter(o => o.status === 'RECEIVED');
-  const sentOffers = offers.filter(o => o.status === 'SENT');
-  const historyOffers = offers.filter(o => ['ACCEPTED', 'REJECTED', 'EXPIRED'].includes(o.status));
-
   const filteredOpportunities = opportunities.filter(opp => 
+    !searchQuery || 
     opp.buyerProfile.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     opp.requirement.crop.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filterOffers = (list: AugmentedOffer[]) => list.filter(o => 
-    o.buyerProfile.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (o.requirement?.crop.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filterOffers = (list: AugmentedOffer[]) => {
+    if (!searchQuery) return list;
+    const q = searchQuery.toLowerCase();
+    return list.filter(o => 
+      o.id.toLowerCase().includes(q) || 
+      o.buyerProfile.name.toLowerCase().includes(q) ||
+      o.requirement?.crop?.toLowerCase().includes(q)
+    );
+  };
+  const receivedOffers = offers.filter(o => o.status === 'SENT' || o.status === 'RECEIVED');
+  const sentOffers = offers.filter(o => o.status === ('NEGOTIATING' as any));
+  const historyOffers = offers.filter(o => ['ACCEPTED', 'REJECTED', 'EXPIRED'].includes(o.status));
 
   return (
-    <div className="max-w-6xl mx-auto pb-12">
-      <div className="flex justify-between items-end mb-8">
+    <div className="max-w-6xl mx-auto pb-24">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 mb-2">My Offers</h1>
-          <p className="text-gray-600">Review buyer opportunities, respond to offers, and track your deals.</p>
+          <h1 className="h2 mb-2">My Offers</h1>
+          <p className="body-base">Review buyer opportunities, respond to offers, and track your deals.</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-green-700 bg-green-50 px-3 py-1.5 rounded-full">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <div className="flex items-center gap-2 text-xs font-bold text-green-700 bg-green-50 px-3 py-1.5 rounded-full border border-green-200">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
             Data Current
           </div>
-          <Button variant="secondary" onClick={loadData} isLoading={loading}>Refresh</Button>
-          <Button variant="ghost" className="opacity-0 w-1" onClick={handleSimulateBuyerAcceptance} title="Simulate Buyer Acceptance">.</Button>
+          <Button variant="secondary" onClick={loadData} className="bg-white">Refresh</Button>
         </div>
       </div>
 
-      <OfferSummary metrics={{
-        activeOpportunities: opportunities.length,
-        offersReceived: receivedOffers.length,
-        pendingResponse: receivedOffers.length + sentOffers.length, // From both ends logically
-        accepted: offers.filter(o => o.status === 'ACCEPTED').length,
-      }} />
-
-      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="w-full sm:w-auto overflow-x-auto custom-scrollbar pb-2 sm:pb-0">
-          <SegmentedControl
-            value={activeTab}
-            onChange={setActiveTab}
-            options={[
-              { label: 'All', value: 'ALL' },
-              { label: 'Buyer Opportunities', value: 'OPPORTUNITIES' },
-              { label: 'Received Offers', value: 'RECEIVED' },
-              { label: 'Sent Offers', value: 'SENT' },
-              { label: 'History', value: 'HISTORY' },
-            ]}
-          />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 flex flex-col justify-between shadow-sm">
+          <div className="text-xs font-bold text-green-700 uppercase tracking-wider flex items-center gap-1 mb-2">
+            <Leaf size={14} /> Opportunities
+          </div>
+          <div className="text-3xl font-black text-gray-900">{opportunities.length}</div>
         </div>
-        <div className="relative w-full sm:w-64">
+        <div className="bg-white rounded-xl p-4 border border-gray-200 flex flex-col justify-between shadow-sm">
+          <div className="text-xs font-bold text-purple-700 uppercase tracking-wider flex items-center gap-1 mb-2">
+            <ArrowRight size={14} /> Received
+          </div>
+          <div className="text-3xl font-black text-gray-900">{receivedOffers.length}</div>
+        </div>
+        <div className="bg-white rounded-xl p-4 border border-gray-200 flex flex-col justify-between shadow-sm">
+          <div className="text-xs font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1 mb-2">
+            <Clock size={14} /> Pending
+          </div>
+          <div className="text-3xl font-black text-gray-900">{sentOffers.length}</div>
+        </div>
+        <div className="bg-white rounded-xl p-4 border border-gray-200 flex flex-col justify-between shadow-sm">
+          <div className="text-xs font-bold text-blue-600 uppercase tracking-wider flex items-center gap-1 mb-2">
+            <CheckCircle2 size={14} /> Accepted
+          </div>
+          <div className="text-3xl font-black text-gray-900">{historyOffers.filter(o => o.status === 'ACCEPTED').length}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <SegmentedControl 
+          options={[
+            { label: 'All', value: 'ALL' },
+            { label: 'Buyer Opportunities', value: 'OPPORTUNITIES' },
+            { label: 'Received Offers', value: 'RECEIVED' },
+            { label: 'Sent Offers', value: 'SENT' },
+            { label: 'History', value: 'HISTORY' }
+          ]}
+          value={activeTab}
+          onChange={setActiveTab}
+        />
+        
+        <div className="relative max-w-sm w-full">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <Input 
             value={searchQuery}
@@ -146,6 +159,35 @@ export const FarmerOffersPage: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* Payment Received Popup Notification */}
+      {offers.filter(o => o.paymentStatus === 'RECEIVED' || o.paymentStatus === 'CONFIRMED').map(offer => {
+        // Use sessionStorage to only show the popup once per session for this offer
+        const seenKey = `payment_popup_seen_${offer.id}`;
+        if (sessionStorage.getItem(seenKey)) return null;
+        
+        return (
+          <div key={`popup-${offer.id}`} className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-right-8 fade-in duration-500">
+            <div className="bg-white rounded-2xl p-4 shadow-[0_10px_40px_rgba(0,0,0,0.15)] border-l-4 border-green-500 max-w-sm flex items-start gap-4">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0 text-green-600">
+                <CheckCircle2 size={24} />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-black text-gray-900">Payment Received!</h4>
+                <p className="text-sm text-gray-600 mt-1">
+                  <strong>₹{offer.paymentAmount?.toLocaleString('en-IN') || offer.estimatedTotalValue.toLocaleString('en-IN')}</strong> received from <strong>{offer.buyerProfile.name}</strong> for {offer.requirement?.crop}.
+                </p>
+                <div className="mt-3 flex justify-end gap-2">
+                  <Button variant="secondary" className="py-1 px-3 text-xs" onClick={() => {
+                    sessionStorage.setItem(seenKey, 'true');
+                    loadData(); // Force re-render to hide
+                  }}>Dismiss</Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400">
@@ -193,7 +235,7 @@ export const FarmerOffersPage: React.FC = () => {
                       key={offer.id} 
                       offer={offer} 
                       type="received"
-                      onView={() => {}}
+                      onView={() => setSelectedOfferDetails(offer)}
                       onAccept={handleAcceptOffer}
                       onReject={handleRejectOffer}
                     />
@@ -219,7 +261,7 @@ export const FarmerOffersPage: React.FC = () => {
                       key={offer.id} 
                       offer={offer} 
                       type="sent"
-                      onView={() => {}}
+                      onView={() => setSelectedOfferDetails(offer)}
                     />
                   ))}
                 </div>
@@ -229,11 +271,11 @@ export const FarmerOffersPage: React.FC = () => {
 
           {(activeTab === 'ALL' || activeTab === 'HISTORY') && (
             <section>
-              {activeTab === 'ALL' && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Offer History</h2>}
+              {activeTab === 'ALL' && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">History</h2>}
               {filterOffers(historyOffers).length === 0 ? (
                 activeTab !== 'ALL' && (
                   <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
-                    <p className="text-sm font-bold text-gray-900 mb-1">No completed or closed offers yet.</p>
+                    <p className="text-sm font-bold text-gray-900 mb-1">No past offers.</p>
                   </div>
                 )
               ) : (
@@ -243,7 +285,7 @@ export const FarmerOffersPage: React.FC = () => {
                       key={offer.id} 
                       offer={offer} 
                       type="history"
-                      onView={() => navigate('/farmer/transactions')} // Directs to transactions generically since we don't store transactionId in offer directly in this demo
+                      onView={() => setSelectedOfferDetails(offer)}
                     />
                   ))}
                 </div>
@@ -260,6 +302,23 @@ export const FarmerOffersPage: React.FC = () => {
             opportunity={selectedOpportunity} 
             onClose={() => setSelectedOpportunity(null)} 
             onRespond={() => setIsResponding(true)}
+          />
+        </div>
+      )}
+
+      {selectedOfferDetails && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
+          <OfferDetails 
+            opportunity={{
+              requirement: selectedOfferDetails.requirement as any,
+              matchedLot: { id: selectedOfferDetails.lotId } as any,
+              matchScore: { overallScore: 100 } as any,
+              buyerProfile: selectedOfferDetails.buyerProfile,
+              isDemo: selectedOfferDetails.isDemo
+            }} 
+            isOfferView={true}
+            onClose={() => setSelectedOfferDetails(null)} 
+            onRespond={() => {}}
           />
         </div>
       )}

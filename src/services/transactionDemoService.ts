@@ -39,7 +39,7 @@ export const transactionDemoService = {
     }
   },
 
-  getById: async (id: string, userId: string): Promise<DemoTransaction | undefined> => {
+  getById: async (id: string, _userId: string): Promise<DemoTransaction | undefined> => {
     const all = await transactionDemoService.getAll();
     return all.find(t => t.id === id);
   },
@@ -49,7 +49,7 @@ export const transactionDemoService = {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions.filter(t => !DEMO_TRANSACTIONS.find(d => d.id === t.id) || true)));
   },
 
-  updateStatus: async (id: string, userId: string, newStatus: TxStatus, note?: string): Promise<DemoTransaction> => {
+  updateStatus: async (id: string, _userId: string, newStatus: TxStatus, note?: string): Promise<DemoTransaction> => {
     await new Promise(r => setTimeout(r, 400));
     const all = await transactionDemoService.getAll();
     const idx = all.findIndex(t => t.id === id);
@@ -84,7 +84,7 @@ export const transactionDemoService = {
     return tx;
   },
 
-  markPaymentReceived: async (id: string, userId: string): Promise<DemoTransaction> => {
+  markPaymentReceived: async (id: string, userId?: string): Promise<DemoTransaction> => {
     await new Promise(r => setTimeout(r, 600));
     const all = await transactionDemoService.getAll(userId);
     const idx = all.findIndex(t => t.id === id);
@@ -104,11 +104,15 @@ export const transactionDemoService = {
       reference: ref,
       paidAt: now,
     };
-    tx.timeline = tx.timeline.map((ev): TxTimelineEvent => {
+    tx.timeline = (tx.timeline || []).map((ev): TxTimelineEvent => {
       if (ev.status === 'PAYMENT_RECEIVED') return { ...ev, state: 'CURRENT', timestamp: now, note: `DEMO PAYMENT · ${ref}` };
       if (ev.state === 'CURRENT') return { ...ev, state: 'COMPLETED' };
       return ev;
     });
+
+    if (!tx.timeline.find(ev => ev.status === 'PAYMENT_RECEIVED')) {
+      tx.timeline.push({ status: 'PAYMENT_RECEIVED', label: 'Payment Received', state: 'CURRENT', timestamp: now, note: `DEMO PAYMENT · ${ref}` });
+    }
 
     all[idx] = tx;
     transactionDemoService.save(all);
@@ -132,7 +136,7 @@ export const transactionDemoService = {
     });
 
     all[idx] = tx;
-    transactionDemoService.save(userId, all);
+    transactionDemoService.save(all);
     return tx;
   },
 
@@ -151,7 +155,7 @@ export const transactionDemoService = {
     });
 
     all[idx] = tx;
-    transactionDemoService.save(userId, all);
+    transactionDemoService.save(all);
     return tx;
   },
 
@@ -168,7 +172,7 @@ export const transactionDemoService = {
     });
 
     all[idx] = tx;
-    transactionDemoService.save(userId, all);
+    transactionDemoService.save(all);
     return tx;
   },
 

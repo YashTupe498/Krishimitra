@@ -1,6 +1,6 @@
 import { buyerMarketplaceApi } from './buyerMarketplaceApi';
 import { farmerLotsApi } from './farmerLotsApi';
-import { DEMO_BUYER_REQUIREMENTS, DEMO_OFFERS, DEMO_BUYER_PROFILES } from '../data/offerDemoData';
+import { DEMO_OFFERS, DEMO_BUYER_PROFILES } from '../data/offerDemoData';
 import type { BuyerRequirement, Offer } from '../types/marketplace';
 import type { Lot } from '../types/lot';
 import { transactionDemoService } from './transactionDemoService';
@@ -26,6 +26,9 @@ export type AugmentedOffer = Offer & {
   buyerProfile: { name: string; verified: boolean; type: string };
   requirement?: BuyerRequirement;
   isDemo: boolean;
+  paymentStatus?: string;
+  paymentReference?: string;
+  paymentAmount?: number;
 };
 
 const STORAGE_KEY_OFFERS = 'farmer_demo_offers';
@@ -84,7 +87,11 @@ export const offerDemoService = {
   },
 
   getBuyerProfile: (buyerId: string) => {
-    return DEMO_BUYER_PROFILES[buyerId] || { name: `Buyer ${buyerId.substring(0, 6)}`, verified: false, type: 'Buyer' };
+    if (buyerId.length > 15 && !buyerId.startsWith('BUYER-') && !buyerId.startsWith('demo-')) {
+       // Force backend-generated UUIDs to look like the hardcoded buyer for demo consistency
+       return { name: `Buyer BUYER-`, verified: false, type: 'Buyer' };
+    }
+    return DEMO_BUYER_PROFILES[buyerId] || { name: `Buyer ${buyerId.substring(0, 6).toUpperCase()}-`, verified: false, type: 'Buyer' };
   },
 
   // 1. Fetch and deduplicate requirements
@@ -134,6 +141,7 @@ export const offerDemoService = {
     const localOffers = offerDemoService.getLocalOffers();
     const allOffers = [...liveOffers, ...localOffers];
     const reqs = await offerDemoService.getNormalizedRequirements();
+    const transactions = await transactionDemoService.getAll(farmerId);
     
     // Deduplicate
     const map = new Map<string, AugmentedOffer>();
@@ -144,11 +152,17 @@ export const offerDemoService = {
           displayStatus = 'RECEIVED';
         }
         
+        const tx = transactions.find(t => t.offerId === off.id);
+        
         map.set(off.id, {
           ...off,
           status: displayStatus,
           buyerProfile: offerDemoService.getBuyerProfile(off.buyerId),
-          requirement: reqs.find(r => r.id === off.requirementId)
+          requirement: reqs.find(r => r.id === off.requirementId),
+          isDemo: (off as any).isDemo || false,
+          paymentStatus: tx?.payment?.status,
+          paymentReference: tx?.payment?.reference,
+          paymentAmount: tx?.payment?.amountPaid,
         });
       }
     });
@@ -200,7 +214,7 @@ export const offerDemoService = {
     };
   },
 
-  getBuyerOpportunities: async (token: string, farmerId: string): Promise<BuyerOpportunity[]> => {
+  getBuyerOpportunities: async (token: string, _farmerId: string): Promise<BuyerOpportunity[]> => {
     // 1. Get farmer lots
     let lots: Lot[] = [];
     try {
@@ -238,12 +252,39 @@ export const offerDemoService = {
           matchedLot: bestLot,
           matchScore: bestScore,
           buyerProfile: offerDemoService.getBuyerProfile(req.buyerId),
-          isDemo: req.id.startsWith('DEMO-') || !!offerDemoService.getLocalRequirements().find(r => r.id === req.id)
+          isDemo: false // Synced requirements are real user data, not static demos
         });
       }
     });
 
-    return opportunities.sort((a, b) => b.matchScore.overallScore - a.matchScore.overallScore);
+    const sorted = opportunities.sort((a, b) => b.matchScore.overallScore - a.matchScore.overallScore);
+    
+    // Inject exactly one static demo opportunity as requested
+    const staticDemoOpp: BuyerOpportunity = {
+      requirement: {
+        id: 'STATIC-DEMO-REQ-1',
+        buyerId: 'demo-buyer-static',
+        crop: 'Onion',
+        quantityRequired: 100,
+        quantityUnit: 'KG',
+        minimumAcceptableLotQuantity: 50,
+        acceptedQualityGrades: ['A'],
+        district: 'Nashik',
+        state: 'Maharashtra',
+        maximumSourcingRadiusKm: 50,
+        paymentTimelineDays: 3,
+        deliveryPreference: 'FLEXIBLE',
+        pricePerQuintal: 4350,
+        status: 'ACTIVE',
+        createdAt: new Date().toISOString()
+      },
+      matchedLot: lots[0] || { id: 'demo-lot-fallback', crop: 'Onion', quantity: 100, unit: 'KG' } as any,
+      matchScore: { cropMatch: true, gradeMatch: true, quantityMatch: true, locationMatch: false, timingMatch: true, overallScore: 85 },
+      buyerProfile: { name: 'Buyer c2fecf', verified: false, type: 'Buyer' },
+      isDemo: true
+    };
+    
+    return [staticDemoOpp, ...sorted];
   },
 
   // 4. Create an offer (Farmer responding to a requirement)
@@ -307,7 +348,15 @@ export const offerDemoService = {
           amountPaid: 0,
           amountRemaining: offer.estimatedTotalValue,
           dueDate: new Date(Date.now() + 86400000 * (offer.paymentTimelineDays || 3)).toISOString()
-        }
+        },
+        timeline: [
+          { status: 'OFFER_ACCEPTED', label: 'Offer Accepted', timestamp: new Date().toISOString(), state: 'COMPLETED' },
+          { status: 'DELIVERED', label: 'Delivered', timestamp: new Date().toISOString(), state: 'COMPLETED' },
+          { status: 'PAYMENT_PENDING', label: 'Payment Due', timestamp: new Date().toISOString(), state: 'CURRENT' },
+          { status: 'PAYMENT_RECEIVED', label: 'Payment Received', state: 'PENDING' },
+          { status: 'COMPLETED', label: 'Completed', state: 'PENDING' },
+        ],
+        isDemo: true
       } as any; // Type override since DemoTransaction expects more fields but transactionDemoService provides fallbacks
 
       const txs = [...existingTxs, newTx];

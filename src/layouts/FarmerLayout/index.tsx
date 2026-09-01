@@ -17,6 +17,8 @@ import {
   Check
 } from 'lucide-react';
 import { useAuth } from '../../app/providers/AuthProvider';
+import { useVoiceAssistant } from '../../hooks/useVoiceAssistant';
+import { VoiceAssistantOverlay } from '../../components/farmer/voice/VoiceAssistantOverlay';
 import styles from './FarmerLayout.module.css';
 
 export const FarmerLayout: React.FC = () => {
@@ -25,6 +27,9 @@ export const FarmerLayout: React.FC = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  
+  // Voice Assistant Hook
+  const voice = useVoiceAssistant();
 
   // Load saved language on mount
   useEffect(() => {
@@ -116,7 +121,11 @@ export const FarmerLayout: React.FC = () => {
             )}
           </div>
 
-          <button className={styles.navItem} onClick={() => {}}>
+          <button 
+            className={styles.navItem} 
+            onClick={() => voice.startListening()}
+            aria-label="Start voice assistant"
+          >
             <Mic size={20} className={styles.navIcon} />
             <span>{t('farmerNav.voiceAssistant', 'Voice Assistant')}</span>
           </button>
@@ -160,6 +169,21 @@ export const FarmerLayout: React.FC = () => {
           );
         })}
       </nav>
+
+      {/* Voice Assistant Global Overlay */}
+      <div aria-live="polite">
+        <VoiceAssistantOverlay 
+          state={voice.state}
+          transcript={voice.transcript}
+          intentResult={voice.intentResult}
+          isSupported={voice.isSupported}
+          onClose={() => voice.stopListening()}
+          onConfirmNavigation={(route) => {
+            navigate(route);
+            voice.setState('IDLE');
+          }}
+        />
+      </div>
     </div>
   );
 };

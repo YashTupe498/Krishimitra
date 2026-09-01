@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { 
-  Calendar, Package, RefreshCw, Activity,
+  Calendar, Package, RefreshCw, Activity, MapPin,
   Truck, Box, Lightbulb, MessageSquare, Target, ShoppingBag, Star, Bell, ShieldCheck, CheckCircle2, AlertCircle, TrendingUp as TrendingUpIcon
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -12,6 +12,8 @@ import { farmerLotsApi } from '../../services/farmerLotsApi';
 import { marketResearchDataset } from '../../data/marketResearchDataset';
 import { calculateMarketPressure, calculateSellingWindow, calculateOpportunityScore } from '../../utils/marketIntelligence';
 import { useTranslation } from 'react-i18next';
+import { BuyerVerificationBadge } from '../../components/buyer/BuyerVerificationBadge';
+import { BuyerTrustModal } from '../../components/farmer/offers/BuyerTrustModal';
 
 const premiumCard = "bg-[#FCFDFB] rounded-2xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-[#D8E2DB] flex flex-col relative transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_12px_30px_rgba(25,77,46,0.12)] hover:border-[#194D2E] group";
 const premiumHeader = "text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4";
@@ -61,6 +63,7 @@ export const MarketIntelligencePage: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [, setLotContext] = useState<Lot | null>(null);
   const [selectedMarket, setSelectedMarket] = useState('');
+  const [isTrustModalOpen, setIsTrustModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -399,21 +402,50 @@ export const MarketIntelligencePage: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
               <ShoppingBag size={14}/> {t("marketIntelligence.buyerDemand")}</h3>
-            <span className="text-[10px] font-bold text-green-700">0 {t("marketIntelligence.active")}</span>
+            <span className="text-[10px] font-bold text-green-700">1 {t("marketIntelligence.active")}</span>
           </div>
-          <div className="flex-1 flex flex-col items-center justify-center py-6 relative">
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest z-10">{t("marketIntelligence.demandDataUnavailable")}</span>
-            <Box className="text-gray-100 absolute w-32 h-32 opacity-30" />
+          <div className="flex-1 flex flex-col py-2 relative">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-2 mb-2">
+              <span className="font-bold text-gray-900 text-sm">{translateDynamic(data.crop)}</span>
+              <span className="text-sm font-black text-gray-900">500 kg</span>
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <MapPin size={12} className="text-gray-400" />
+              <span className="text-xs text-gray-500 font-medium">Nashik, Maharashtra</span>
+            </div>
+            <div className="mt-3">
+              <span className="text-[9px] font-bold uppercase tracking-widest text-brand-primary bg-[#F4F9F5] px-2 py-0.5 rounded">HIGH DEMAND</span>
+            </div>
+            <Box className="text-gray-100 absolute w-32 h-32 opacity-30 right-0 bottom-0 pointer-events-none" />
           </div>
         </div>
 
         <div className={`${premiumCard} md:col-span-4`}>
           <h3 className={premiumHeader}><Star size={14}/> {t("marketIntelligence.bestBuyerMatch")}</h3>
-          <div className="flex-1 flex flex-col items-center justify-center py-6 relative">
-            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest z-10">{t("marketIntelligence.matchDataUnavailable")}</span>
-            <Star className="text-gray-100 absolute w-32 h-32 -right-4 -bottom-4 opacity-30" />
+          <div className="flex-1 flex flex-col py-2 relative z-10">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <span className="font-bold text-gray-900 text-sm">Nashik Fresh Foods</span>
+                <div className="mt-1">
+                  <BuyerVerificationBadge buyerId="buyer-demo-1" showText={true} />
+                </div>
+              </div>
+              <span className="text-xs font-black text-green-700 bg-green-50 px-2 py-1 rounded">92% MATCH</span>
+            </div>
+            <div className="mt-auto pt-4 flex gap-2">
+              <Button variant="secondary" onClick={() => setIsTrustModalOpen(true)} className="flex-1 text-xs py-1.5 h-auto bg-gray-50 hover:bg-gray-100 border-none">
+                View Buyer
+              </Button>
+            </div>
           </div>
         </div>
+        
+        <BuyerTrustModal 
+          buyerId="buyer-demo-1" 
+          buyerName="Nashik Fresh Foods" 
+          isOpen={isTrustModalOpen} 
+          onClose={() => setIsTrustModalOpen(false)} 
+        />
       </div>
 
       {/* ── ROW 4: Quality · Logistics · Storage ── */}

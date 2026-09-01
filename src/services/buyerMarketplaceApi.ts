@@ -59,7 +59,7 @@ export const buyerMarketplaceApi = {
     try {
       let saved = await request<any>('/api/v1/buyer/demands/', { method: 'POST', body: JSON.stringify({ crop: input.crop, required_quantity: input.quantityRequired, quantity_unit: input.quantityUnit, required_quality_grade: input.acceptedQualityGrades[0] || 'A', accepted_quality_grades: input.acceptedQualityGrades, delivery_location: input.district, payment_terms: input.paymentTimelineDays.toString(), status: input.status, price_per_quintal: input.pricePerQuintal }) });
       if (input.status === 'ACTIVE') {
-         const publishRes = await request(`/api/v1/buyer/demands/${saved.id}/publish`, { method: 'POST' });
+         const publishRes = await request<any>(`/api/v1/buyer/demands/${saved.id}/publish`, { method: 'POST' });
          if (publishRes && publishRes.id) saved = publishRes;
       }
       const req = requirement(saved);
@@ -248,12 +248,12 @@ export const buyerMarketplaceApi = {
     // Read from shared global transaction store
     const { transactionDemoService } = await import('./transactionDemoService');
     const all = await transactionDemoService.getAll('BUYER-001');
-    return all.map(t => ({ id: t.id, farmerId: t.farmerId, buyerId: t.buyerId, lotId: t.lotId, requirementId: t.offerId, quantity: t.quantityKg, totalValue: t.totalValue, transactionStatus: t.status, paymentStatus: t.payment.status, createdAt: t.createdAt || new Date().toISOString(), updatedAt: t.updatedAt || new Date().toISOString() }));
+    return all.map(t => ({ id: t.id, farmerId: t.farmerId, buyerId: t.buyerId, lotId: t.lotId, requirementId: t.offerId, quantity: t.quantityKg, totalValue: t.totalValue, transactionStatus: t.status, paymentStatus: t.payment.status, createdAt: t.createdAt || new Date().toISOString(), updatedAt: t.updatedAt || new Date().toISOString() } as unknown as MarketplaceTransaction));
   },
   getTransactionsByFarmer: async (): Promise<MarketplaceTransaction[]> => {
     const { transactionDemoService } = await import('./transactionDemoService');
     const all = await transactionDemoService.getAll();
-    return all.map(t => ({ id: t.id, farmerId: t.farmerId, buyerId: t.buyerId, lotId: t.lotId, requirementId: t.offerId, quantity: t.quantityKg, totalValue: t.totalValue, transactionStatus: t.status, paymentStatus: t.payment.status, createdAt: t.createdAt || new Date().toISOString(), updatedAt: t.updatedAt || new Date().toISOString() }));
+    return all.map(t => ({ id: t.id, farmerId: t.farmerId, buyerId: t.buyerId, lotId: t.lotId, requirementId: t.offerId, quantity: t.quantityKg, totalValue: t.totalValue, transactionStatus: t.status, paymentStatus: t.payment.status, createdAt: t.createdAt || new Date().toISOString(), updatedAt: t.updatedAt || new Date().toISOString() } as unknown as MarketplaceTransaction));
   },
   createOffer: async (input: Offer): Promise<Offer> => {
     // Sync with farmer UI by storing locally
@@ -275,5 +275,11 @@ export const buyerMarketplaceApi = {
       // Dummy response for compilation
       return {} as Offer;
     }
+  },
+  processPayment: async (transactionId: string): Promise<void> => {
+    const { transactionDemoService } = await import('./transactionDemoService');
+    await transactionDemoService.markPaymentReceived(transactionId);
+    notifyBuyerDataChanged();
+    window.dispatchEvent(new Event('krishimitra_transactions_updated'));
   },
 };

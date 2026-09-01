@@ -6,6 +6,7 @@ import { BuyerAuthPage } from '../../pages/public/BuyerAuthPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { FarmerLayout } from '../../layouts/FarmerLayout';
 import { FarmerDashboardPage } from '../../pages/farmer/DashboardPage';
+import { MyDecisionsPage } from '../../pages/farmer/MyDecisionsPage';
 import { DecisionDetailPage } from '../../pages/farmer/DecisionDetailPage';
 import { LotDetailsPage } from '../../pages/farmer/LotDetailsPage';
 import { LotsIndexPage } from '../../pages/farmer/LotsIndexPage';
@@ -19,6 +20,7 @@ import { BuyerDashboardPage } from '../../pages/buyer/DashboardPage';
 import { BuyerLayout } from '../../layouts/BuyerLayout';
 import { BuyerPlaceholderPage } from '../../pages/buyer/PlaceholderPage';
 import { BuyerLotRoute, BuyerMatchesPage, BuyerOffersPage, BuyerRequirementCreatePage, BuyerRequirementsPage, BuyerTransactionsPage } from '../../pages/buyer/WorkflowPages';
+import { BuyerProfilePage } from '../../pages/buyer/BuyerProfilePage';
 import { MarketIntelligencePage } from '../../pages/farmer/MarketIntelligencePage';
 import { OpportunitiesPage } from '../../pages/farmer/OpportunitiesPage';
 import { OpportunityDetailsPage } from '../../pages/farmer/OpportunityDetailsPage';
@@ -51,8 +53,10 @@ export const AppRouter: React.FC = () => {
           <Route path="/farmer/offers/opportunities" element={<OpportunitiesPage />} />
           <Route path="/farmer/offers/opportunities/:id" element={<OpportunityDetailsPage />} />
           
-          {/* Placeholders for other farmer routes */}
-          <Route path="/farmer/decisions" element={<div className="p-8">Decisions (Coming Soon)</div>} />
+          {/* Decisions */}
+          <Route path="/farmer/decisions" element={<MyDecisionsPage />} />
+          
+          {/* Other routes */}
           <Route path="/farmer/offers" element={<FarmerOffersPage />} />
           <Route path="/farmer/transactions" element={<FarmerTransactionsPage />} />
           <Route path="/farmer/transactions/:id" element={<TransactionDetailPage />} />
@@ -73,7 +77,7 @@ export const AppRouter: React.FC = () => {
           <Route path="/buyer/supply-intelligence" element={<BuyerPlaceholderPage title="Supply Intelligence" />} />
           <Route path="/buyer/offers" element={<BuyerOffersPage />} />
           <Route path="/buyer/transactions" element={<BuyerTransactionsPage />} />
-          <Route path="/buyer/profile" element={<BuyerPlaceholderPage title="Profile" />} />
+          <Route path="/buyer/profile" element={<BuyerProfilePage />} />
         </Route>
       </Route>
     </Routes>
