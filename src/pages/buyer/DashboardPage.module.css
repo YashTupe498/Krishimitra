@@ -1,6 +1,6 @@
 .dashboard { display: flex; flex-direction: column; gap: var(--space-32); padding-bottom: var(--space-32); }
 .header { display: flex; justify-content: space-between; gap: var(--space-24); }
-.header h1 { margin: 0; font-family: var(--font-display); font-size: 32px; color: var(--text-primary); }
+.header h1 { margin: 0; font-family: var(--font-display); font-size: 32px; color: #14532D; }
 .header p { margin: var(--space-4) 0 0; color: var(--text-secondary); font-size: 14px; }
 .location { display: inline-flex; align-items: center; gap: var(--space-8); margin-top: var(--space-12); color: var(--text-secondary); font-size: 14px; font-weight: 500; }
 .location svg { color: var(--brand-primary); }

@@ -52,7 +52,7 @@ export const Hero: React.FC = () => {
     <section className={styles.hero} ref={heroRef}>
       <div className={styles.container}>
         <div className={styles.content}>
-          <span className={clsx(styles.eyebrow, 'text-mono-label')}>{t('hero.eyebrow')}</span>
+          <span className={styles.eyebrow}>{t('hero.eyebrow')}</span>
           <h1 className={clsx("h1-display", styles.title)}>
             <span className={styles.titleLine}>
               {titleLine1Words.map((word, index) => (

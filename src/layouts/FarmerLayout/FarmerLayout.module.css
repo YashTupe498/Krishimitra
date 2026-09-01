@@ -17,6 +17,13 @@
   z-index: 40;
 }
 
+/* Farmer navigation uses an earthy, logo-led palette without affecting the buyer sidebar. */
+.farmerSidebar {
+  background-color: var(--sidebar-surface);
+  border-right-color: var(--sidebar-border);
+  overflow: hidden;
+}
+
 .logo {
   padding: var(--space-24) var(--space-24);
   display: flex;
@@ -77,6 +84,109 @@
   cursor: pointer;
   width: 100%;
   text-align: left;
+}
+
+.navigationArea {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--space-16);
+  scrollbar-width: thin;
+  scrollbar-color: var(--sidebar-scroll-thumb) transparent;
+}
+
+.navigationArea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.navigationArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navigationArea::-webkit-scrollbar-thumb {
+  background-color: var(--sidebar-scroll-thumb);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.sidebarFooter {
+  flex: 0 0 auto;
+  padding: var(--space-12);
+  border-top: 1px solid var(--sidebar-border);
+  background-color: var(--sidebar-surface);
+}
+
+.farmerSidebar .logo {
+  flex: 0 0 auto;
+  background-color: var(--sidebar-surface);
+  border-bottom-color: var(--sidebar-border);
+}
+
+.farmerSidebar .navGroup {
+  color: var(--sidebar-muted);
+}
+
+.farmerSidebar .primaryNav {
+  flex: 0 0 auto;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.farmerSidebar .secondaryNav {
+  margin: var(--space-16) var(--space-12) 0;
+  padding: var(--space-16) 0 0;
+  border-top-color: var(--sidebar-border);
+  background-color: transparent;
+}
+
+.farmerSidebar .navItem {
+  color: var(--sidebar-text);
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.farmerSidebar .navIcon {
+  color: var(--sidebar-icon);
+}
+
+.farmerSidebar .navItem:hover {
+  background-color: var(--sidebar-hover-bg);
+  color: var(--sidebar-hover-text);
+}
+
+.farmerSidebar .navItem:hover .navIcon {
+  color: var(--sidebar-hover-text);
+}
+
+.farmerSidebar .navItem.active {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
+  box-shadow: inset -3px 0 0 var(--sidebar-active-indicator);
+  border-right: 0;
+  border-radius: var(--radius-md);
+}
+
+.farmerSidebar .navItem.active .navIcon {
+  color: var(--sidebar-active-text);
+}
+
+.farmerSidebar .navItem:focus-visible {
+  outline: 2px solid var(--sidebar-active-indicator);
+  outline-offset: 2px;
+}
+
+.farmerSidebar .logout {
+  margin-top: 0;
+  color: var(--sidebar-logout-text);
+}
+
+.farmerSidebar .logout .navIcon {
+  color: var(--sidebar-logout-text);
+}
+
+.farmerSidebar .logout:hover {
+  background-color: var(--sidebar-logout-bg);
+  color: var(--sidebar-logout-text);
 }
 
 .navItem:hover {

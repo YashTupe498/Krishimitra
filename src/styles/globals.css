@@ -85,6 +85,28 @@ button {
   line-height: 1.4;
 }
 
+/* Shared heading treatment for the authentication pages. */
+.auth-page__intro {
+  margin-bottom: var(--space-32);
+}
+
+.auth-page__heading {
+  color: var(--auth-text);
+  font-family: var(--font-ui);
+  font-size: clamp(30px, 3vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+
+.auth-page__description {
+  max-width: 38ch;
+  margin-top: var(--space-12);
+  color: var(--auth-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
 .numeric {
   font-family: var(--font-ui);
   font-variant-numeric: tabular-nums;

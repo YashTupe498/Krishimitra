@@ -21,6 +21,7 @@ import { BuyerLayout } from '../../layouts/BuyerLayout';
 import { BuyerPlaceholderPage } from '../../pages/buyer/PlaceholderPage';
 import { BuyerLotRoute, BuyerMatchesPage, BuyerOffersPage, BuyerRequirementCreatePage, BuyerRequirementsPage, BuyerTransactionsPage } from '../../pages/buyer/WorkflowPages';
 import { BuyerProfilePage } from '../../pages/buyer/BuyerProfilePage';
+import { SupplyIntelligencePage } from '../../pages/buyer/SupplyIntelligencePage';
 import { MarketIntelligencePage } from '../../pages/farmer/MarketIntelligencePage';
 import { OpportunitiesPage } from '../../pages/farmer/OpportunitiesPage';
 import { OpportunityDetailsPage } from '../../pages/farmer/OpportunityDetailsPage';
@@ -74,7 +75,7 @@ export const AppRouter: React.FC = () => {
           <Route path="/buyer/matches" element={<BuyerMatchesPage />} />
           <Route path="/buyer/lots/:lotId" element={<BuyerLotRoute />} />
           <Route path="/buyer/market" element={<BuyerPlaceholderPage title="Supply Intelligence" />} />
-          <Route path="/buyer/supply-intelligence" element={<BuyerPlaceholderPage title="Supply Intelligence" />} />
+          <Route path="/buyer/supply-intelligence" element={<SupplyIntelligencePage />} />
           <Route path="/buyer/offers" element={<BuyerOffersPage />} />
           <Route path="/buyer/transactions" element={<BuyerTransactionsPage />} />
           <Route path="/buyer/profile" element={<BuyerProfilePage />} />

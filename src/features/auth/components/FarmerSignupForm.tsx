@@ -111,8 +111,8 @@ export const FarmerSignupForm: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.header}>
-        <h1 className={styles.title}>{t('auth.farmerSignupTitle')}</h1>
-        <p className={styles.subtitle}>{t('auth.createAccount')}</p>
+        <h2 className={styles.title}>{t('auth.createAccount')}</h2>
+        <p className={styles.subtitle}>Tell us a little about how you work.</p>
       </div>
 
       <FormMessage type="error" message={error} />

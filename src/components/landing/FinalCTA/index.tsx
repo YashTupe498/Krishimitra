@@ -49,7 +49,8 @@ export const FinalCTA: React.FC = () => {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
-        <h2 className={clsx("h2", styles.title)}>{t('cta.title')}</h2>
+        <h2 className={styles.title}>{t('cta.title', 'How do you want to use KrishiMitra?')}</h2>
+        <p className={styles.subtitle}>{t('cta.subtitle', 'Choose your role to get started.')}</p>
         
         <div className={styles.actions}>
           <Button 

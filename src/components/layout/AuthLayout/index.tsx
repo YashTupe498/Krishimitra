@@ -15,9 +15,9 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, role }) => {
   return (
     <div className={styles.layout}>
       <div className={clsx(styles.contextPanel, role === 'farmer' ? styles.farmerBg : styles.buyerBg)}>
-        <div className={styles.contextTop} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.contextTop}>
           <Link to="/" className={styles.logoWhite}>
-            <img src="/logo.jpg" alt="KrishiMitra Logo" style={{ height: '40px', borderRadius: '50%' }} />
+            <img src="/logo.jpg" alt="KrishiMitra Logo" />
           </Link>
           <LanguageToggle />
         </div>
@@ -35,9 +35,9 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, role }) => {
         </div>
       </div>
       <div className={styles.formPanel}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-64)' }}>
-          <Link to="/" className={styles.logo} style={{ marginBottom: 0 }}>
-            <img src="/logo.jpg" alt="KrishiMitra Logo" style={{ height: '40px', borderRadius: '50%' }} />
+        <div className={styles.formTop}>
+          <Link to="/" className={styles.logo}>
+            <img src="/logo.jpg" alt="KrishiMitra Logo" />
           </Link>
           <div className={styles.mobileLangToggle}>
             <LanguageToggle />

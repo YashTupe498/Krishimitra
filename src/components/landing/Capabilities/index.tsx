@@ -3,6 +3,7 @@ import { AlertCircle, ArrowRightLeft, Calculator, CheckSquare, Clock, LineChart 
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { Button } from '../../ui/Button';
+import { MarketSignalCard } from '../MarketSignalCard';
 import styles from './Capabilities.module.css';
 
 export const Capabilities: React.FC = () => {
@@ -46,24 +47,8 @@ export const Capabilities: React.FC = () => {
             </Button>
           </div>
 
-          <div className={styles.featureVisual} aria-hidden="true">
-            <div className={styles.visualHeader}>
-              <span className={clsx(styles.visualLabel, 'text-mono-label')}>MARKET SIGNAL</span>
-              <span className={styles.liveDot} />
-            </div>
-            <div className={styles.visualChart}>
-              <span className={styles.chartGuide} />
-              <span className={styles.chartGuide} />
-              <span className={styles.chartGuide} />
-              <span className={styles.chartLine} />
-              <span className={styles.chartPoint} />
-              <span className={styles.chartPoint} />
-              <span className={styles.chartPoint} />
-            </div>
-            <div className={styles.visualFooter}>
-              <span>PRICE TREND</span>
-              <strong>↗</strong>
-            </div>
+          <div className={styles.featureVisual}>
+            <MarketSignalCard />
           </div>
         </article>
 

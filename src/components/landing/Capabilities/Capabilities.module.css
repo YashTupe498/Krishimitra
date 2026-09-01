@@ -38,7 +38,7 @@
   max-width: 610px;
   flex-direction: column;
   align-items: flex-start;
-  padding: var(--space-64);
+  padding: var(--space-24) var(--space-48) var(--space-40);
 }
 
 .featureIntro {
@@ -127,125 +127,11 @@
 }
 
 .featureVisual {
-  position: relative;
   display: flex;
-  min-height: 100%;
-  padding: var(--space-40);
-  flex-direction: column;
-  justify-content: space-between;
+  min-height: 410px;
+  padding: 0;
   border-left: 1px solid var(--border);
-  background:
-    linear-gradient(90deg, transparent 49.8%, color-mix(in srgb, var(--border) 72%, transparent) 50%, transparent 50.2%),
-    linear-gradient(0deg, transparent 49.8%, color-mix(in srgb, var(--border) 72%, transparent) 50%, transparent 50.2%),
-    var(--surface-cool);
-  background-size: 64px 64px;
-}
-
-.featureVisual::after {
-  position: absolute;
-  inset: var(--space-32);
-  border: 1px solid color-mix(in srgb, var(--brand-deep) 20%, transparent);
-  border-radius: var(--radius-lg);
-  content: '';
-  pointer-events: none;
-}
-
-.visualHeader,
-.visualFooter {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.visualLabel,
-.visualFooter span {
-  color: var(--brand-deep);
-  font-size: 10px;
-}
-
-.liveDot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--success) 14%, transparent);
-}
-
-.visualChart {
-  position: relative;
-  z-index: 1;
-  height: 176px;
-  margin: var(--space-24) 0;
-}
-
-.chartGuide {
-  position: absolute;
-  right: 0;
-  left: 0;
-  height: 1px;
-  border-top: 1px dashed color-mix(in srgb, var(--brand-deep) 24%, transparent);
-}
-
-.chartGuide:nth-child(1) {
-  top: 16%;
-}
-
-.chartGuide:nth-child(2) {
-  top: 50%;
-}
-
-.chartGuide:nth-child(3) {
-  top: 84%;
-}
-
-.chartLine {
-  position: absolute;
-  top: 52%;
-  left: 8%;
-  width: 84%;
-  height: 52%;
-  border-top: 4px solid var(--brand-deep);
-  border-radius: 50% 50% 0 0;
-  transform: rotate(-10deg) skewX(-22deg);
-  transform-origin: left center;
-}
-
-.chartPoint {
-  position: absolute;
-  z-index: 1;
-  width: 14px;
-  height: 14px;
-  border: 3px solid var(--surface-cool);
-  border-radius: 50%;
-  background: var(--brand-primary);
-  box-shadow: 0 0 0 2px var(--brand-primary);
-}
-
-.chartPoint:nth-of-type(5) {
-  top: 65%;
-  left: 25%;
-}
-
-.chartPoint:nth-of-type(6) {
-  top: 49%;
-  left: 52%;
-}
-
-.chartPoint:nth-of-type(7) {
-  top: 25%;
-  left: 78%;
-}
-
-.visualFooter {
-  color: var(--brand-deep);
-}
-
-.visualFooter strong {
-  color: var(--brand-primary);
-  font-size: 28px;
-  line-height: 1;
+  background: var(--surface);
 }
 
 .grid {
@@ -311,7 +197,7 @@
   }
 
   .featureVisual {
-    min-height: 300px;
+    min-height: 380px;
     border-top: 1px solid var(--border);
     border-left: 0;
   }
@@ -335,12 +221,8 @@
   }
 
   .featureVisual {
-    min-height: 260px;
-    padding: var(--space-32) var(--space-24);
-  }
-
-  .featureVisual::after {
-    inset: var(--space-24);
+    min-height: 340px;
+    padding: 0;
   }
 
   .grid {

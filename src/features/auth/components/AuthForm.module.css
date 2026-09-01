@@ -97,3 +97,129 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Shared authentication presentation for both Farmer and Buyer flows. */
+.header,
+.loginHeader {
+  align-items: flex-start;
+  gap: var(--space-8);
+  margin-bottom: var(--space-4);
+  text-align: left;
+}
+
+.title {
+  color: var(--auth-text);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.subtitle {
+  color: var(--auth-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-16);
+}
+
+.passwordContainer {
+  position: relative;
+  min-width: 0;
+}
+
+.passwordToggle {
+  top: 35px;
+  right: var(--space-12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.passwordToggle:hover {
+  background: var(--auth-subtle);
+  color: var(--auth-primary);
+}
+
+.passwordToggle:focus-visible {
+  outline: 2px solid var(--auth-primary);
+  outline-offset: 1px;
+}
+
+.forgotPassword {
+  margin-top: -4px;
+}
+
+.forgotPassword button {
+  color: var(--auth-primary);
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 160ms ease;
+}
+
+.forgotPassword button:hover {
+  color: var(--auth-primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.submitBtn {
+  width: 100%;
+  min-height: 52px;
+  margin-top: var(--space-4);
+  border-radius: 12px;
+  background: var(--auth-primary);
+  box-shadow: 0 6px 14px rgba(22, 101, 52, 0.16);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--auth-primary-hover);
+  box-shadow: 0 8px 18px rgba(22, 101, 52, 0.2);
+}
+
+.form input,
+.form select {
+  height: 52px;
+  border-color: var(--auth-border);
+  border-radius: 11px;
+  background: var(--auth-card);
+  color: var(--auth-text);
+  font-size: 16px;
+}
+
+.form label {
+  color: var(--auth-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form input:focus,
+.form select:focus {
+  border-color: var(--auth-primary);
+  box-shadow: var(--auth-focus-ring);
+}
+
+@media (max-width: 640px) {
+  .form {
+    gap: var(--space-16);
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+}

@@ -108,8 +108,8 @@ export const BuyerSignupForm: React.FC = () => {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.header}>
-        <h1 className={styles.title}>{t('auth.buyerSignupTitle')}</h1>
-        <p className={styles.subtitle}>{t('auth.createAccount')}</p>
+        <h2 className={styles.title}>{t('auth.createAccount')}</h2>
+        <p className={styles.subtitle}>Tell us a little about how you source.</p>
       </div>
 
       <FormMessage type="error" message={error} />

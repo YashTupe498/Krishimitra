@@ -34,6 +34,26 @@
   --info: #2A6F77;
   --info-bg: #EAF3F2;
 
+  /* Authentication surfaces: quiet, agricultural, and deliberately restrained. */
+  --auth-surface: #FAF9F4;
+  --auth-card: #FFFEFA;
+  --auth-primary: #166534;
+  --auth-primary-hover: #14532D;
+  --auth-text: #17201A;
+  --auth-muted: #64706A;
+  --auth-border: #DCE5DD;
+  --auth-subtle: #F2F8F2;
+  --auth-focus-ring: 0 0 0 3px rgba(22, 101, 52, 0.16);
+
+  /* Landing market signal: observed-price visualization. */
+  --market-signal-strong: #14532D;
+  --market-signal: #25843A;
+  --market-signal-soft: #F2F8F2;
+  --market-signal-text: #17201A;
+  --market-signal-muted: #64706A;
+  --market-signal-border: #DCE5DD;
+  --market-signal-grid: #DDEBDD;
+
   /* Gradients */
   --hero-wash: linear-gradient(180deg, #FBF8F3 0%, #F5EFE4 100%);
   --recommended-border: linear-gradient(135deg, #2A6F77, #1F4B3F);
@@ -115,6 +135,32 @@
   --error-bg: #FEF2F2;
   --info: #0284C7; /* Calm blue */
   --info-bg: #F0F9FF;
+
+  /* Farmer sidebar: logo-led forest and sage on a warm off-white surface. */
+  --sidebar-surface: #FFFEFA;
+  --sidebar-border: #DDE7DE;
+  --sidebar-text: #26352C;
+  --sidebar-muted: #64706A;
+  --sidebar-icon: #64706A;
+  --sidebar-hover-bg: #F1F7F1;
+  --sidebar-hover-text: #1D5A35;
+  --sidebar-active-bg: #E7F3E8;
+  --sidebar-active-text: #14532D;
+  --sidebar-active-indicator: #2F7D32;
+  --sidebar-scroll-thumb: #B8CDBA;
+  --sidebar-logout-text: #B42318;
+  --sidebar-logout-bg: #FFF0EF;
+
+  /* Authentication surfaces: quiet, agricultural, and deliberately restrained. */
+  --auth-surface: #FAF9F4;
+  --auth-card: #FFFEFA;
+  --auth-primary: #166534;
+  --auth-primary-hover: #14532D;
+  --auth-text: #17201A;
+  --auth-muted: #64706A;
+  --auth-border: #DCE5DD;
+  --auth-subtle: #F2F8F2;
+  --auth-focus-ring: 0 0 0 3px rgba(22, 101, 52, 0.16);
 
   /* Gradients */
   --hero-wash: linear-gradient(180deg, #F9F9F8 0%, #F3F1ED 100%);

@@ -60,11 +60,9 @@ export const LoginForm: React.FC = () => {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <div className={styles.formContainer}>
-        <div className={styles.loginHeader}>
-          <h1 className={styles.title}>{t('auth.loginTitle')}</h1>
-          <p className={styles.subtitle}>{t('auth.signIn')}</p>
-        </div>
+      <div className={styles.loginHeader}>
+        <h2 className={styles.title}>{t('auth.signIn')}</h2>
+        <p className={styles.subtitle}>Sign in to your KrishiMitra account.</p>
       </div>
       <FormMessage type="error" message={error} />
       

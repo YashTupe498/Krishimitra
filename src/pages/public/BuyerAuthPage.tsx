@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthLayout } from '../../components/layout/AuthLayout';
 import { BuyerSignupForm } from '../../features/auth/components/BuyerSignupForm';
@@ -7,15 +7,19 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/Ta
 
 export const BuyerAuthPage: React.FC = () => {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState('login');
+  const isSignup = activeTab === 'signup';
   return (
     <AuthLayout role="buyer">
-      <div>
-        <h1 className="h2" style={{ marginBottom: '8px' }}>{t('authPages.welcomeBack')}</h1>
-        <p className="body-base" style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-          Connect with verified farmers and source quality produce.
-        </p>
+      <div className="auth-page">
+        <div className="auth-page__intro">
+          <h1 className="auth-page__heading">{isSignup ? t('authPages.createAccount') : t('authPages.welcomeBack')}</h1>
+          <p className="auth-page__description">
+            {isSignup ? 'Join KrishiMitra and build stronger agricultural partnerships.' : 'Connect with verified farmers and source quality produce.'}
+          </p>
+        </div>
 
-        <Tabs defaultValue="login">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <TabsTrigger value="login">{t('authPages.tabLogin')}</TabsTrigger>
             <TabsTrigger value="signup">{t('authPages.tabSignup')}</TabsTrigger>
