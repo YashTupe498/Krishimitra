@@ -219,7 +219,8 @@
     "saleWindowStatus": "सध्याची विक्रीची वेळ अनुकूल दिसत आहे",
     "saleWindowRecommendation": "लवकरच विकण्याचा विचार करा",
     "viewMarketAnalysis": "बाजार विश्लेषण पहा",
-    "viewAllLots": "[ सर्व लॉट पहा ]"
+    "viewAllLots": "[ सर्व लॉट पहा ]",
+    "pendingQuality": "गुणवत्ता प्रलंबित"
   },
   "data": {
     "crops": {
@@ -229,7 +230,12 @@
     "locations": {
       "Nashik": "नाशिक",
       "Pune": "पुणे",
-      "Pimpalgaon Market": "पिंपळगाव बाजार"
+      "Pimpalgaon Market": "पिंपळगाव बाजार",
+      "Maharashtra": "महाराष्ट्र",
+      "MH": "MH",
+      "nashik": "नाशिक",
+      "maharashtra": "महाराष्ट्र",
+      "mh": "MH"
     },
     "status": {
       "Decision Ready": "निर्णय घेण्यास तयार",
@@ -563,9 +569,9 @@
     "decisionLabel": "निर्णय",
     "sellVsStore": "विक्री विरुद्ध साठवण",
     "gradeLabel": "ग्रेड",
-    "trendDeclining": "Declining",
-    "trendIncreasing": "Increasing",
-    "trendStable": "Stable",
+    "trendDeclining": "कमी होत आहे",
+    "trendIncreasing": "वाढत आहे",
+    "trendStable": "स्थिर",
     "demoDemand": "डेमो मागणी",
     "nashikFreshFoods": "नाशिक फ्रेश फूड्स",
     "miniTruck": "मिनी ट्रक (1.5T)",
@@ -581,7 +587,25 @@
     "caution": "सावधगिरी",
     "days": "दिवस",
     "confidence": "विश्वासार्हता",
-    "medium": "मध्यम"
+    "medium": "मध्यम",
+    "dynamic": {
+      "Declining": "कमी होत आहे",
+      "Increasing": "वाढत आहे",
+      "Stable": "स्थिर",
+      "Nashik_Fresh_Foods": "नाशिक फ्रेश फूड्स",
+      "Maharashtra_Agro_Traders": "महाराष्ट्र ॲग्रो ट्रेडर्स",
+      "Mini_Truck__1_5T_": "मिनी ट्रक (1.5T)",
+      "Nashik_Farm": "नाशिक फार्म",
+      "Pimpalgaon_Baswant_APMC": "पिंपळगाव बसवंत एपीएमसी",
+      "Lasalgaon__Vinchur__APMC": "लासलगाव (विंचूर) एपीएमसी",
+      "Yeola_APMC": "येवला एपीएमसी",
+      "Manmad_APMC": "मनमाड एपीएमसी",
+      "Pimpalgaon_Cold_Chain___Warehousing__8km_": "पिंपळगाव कोल्ड चेन अँड वेअरहाऊसिंग (8किमी)",
+      "Lasalgaon_Storage__15km_": "लासलगाव स्टोरेज (15किमी)",
+      "Nashik_District__Maharashtra": "नाशिक जिल्हा, महाराष्ट्र",
+      "Curated_demo": "क्युरेटेड डेमो",
+      "CURATED_DEMO": "क्युरेटेड डेमो"
+    }
   },
   "opportunities": {
     "title": "ऑफर → संधी",
@@ -681,5 +705,133 @@
     "nameRequired": "पूर्ण नाव आवश्यक आहे.",
     "notProvided": "प्रदान केलेले नाही",
     "unknown": "अज्ञात"
+  },
+  "myDecisions": {
+    "title": "माझे निर्णय",
+    "subtitle": "तुमच्या शेतमालाचे काय करायचे ते समजून घ्या.",
+    "totalLots": "एकूण लॉट",
+    "actionable": "कृती करण्यायोग्य",
+    "needsAttention": "लक्ष देण्याची गरज आहे",
+    "groupOptions": "गट पर्याय",
+    "noActive": "कोणतेही सक्रिय निर्णय नाहीत",
+    "addOrRestore": "बाजार-आधारित निर्णय मिळविण्यासाठी लॉट जोडा किंवा पुनर्संचयित करा.",
+    "viewMyLots": "माझे लॉट पहा",
+    "recommendedAction": "शिफारस केलेली कृती",
+    "marketPrice": "बाजार भाव",
+    "estimatedNet": "अंदाजे निव्वळ",
+    "unavailable": "अनुपलब्ध",
+    "needsAttentionText": "लक्ष देण्याची गरज आहे",
+    "confidence": "आत्मविश्वास",
+    "viewDecision": "निर्णय पहा",
+    "removeDecision": "निर्णय काढायचा?",
+    "cancel": "रद्द करा",
+    "remove": "काढून टाका",
+    "priceMomentum": "किंमत गती",
+    "marketWatch": "बाजार निरीक्षण",
+    "arrivalsDown": "आवक",
+    "arrivalDataLimited": "आवक डेटा मर्यादित",
+    "buyerMatchLabel": "खरेदीदार जुळणी",
+    "grade": "ग्रेड",
+    "noGrade": "कोणताही ग्रेड नाही",
+    "header": "माझे निर्णय",
+    "stats": {
+      "totalLots": "एकूण लॉट्स",
+      "actionable": "कृती करण्यायोग्य",
+      "needsAttention": "लक्ष देणे आवश्यक",
+      "groupOptions": "गट पर्याय"
+    },
+    "empty": {
+      "title": "कोणतेही सक्रिय निर्णय नाहीत",
+      "subtitle": "बाजार-आधारित निर्णय मिळवण्यासाठी लॉट जोडा किंवा पुनर्संचयित करा.",
+      "action": "माझे लॉट पहा"
+    }
+  },
+  "offers": {
+    "title": "माझे प्रस्ताव",
+    "subtitle": "खरेदीदारांनी पाठवलेले प्रस्ताव आणि सक्रिय आवश्यकता व्यवस्थापित करा.",
+    "searchPlaceholder": "खरेदीदार किंवा पिके शोधा...",
+    "buyerOpportunities": "खरेदीदार संधी",
+    "tabs": {
+      "all": "सर्व",
+      "received": "प्राप्त झाले",
+      "sent": "पाठवले",
+      "history": "इतिहास"
+    },
+    "noOffers": "तुमच्याकडे अद्याप कोणतेही प्रस्ताव नाहीत.",
+    "noOffersDesc": "खरेदीदारांनी प्रस्ताव पाठवण्याची किंवा तुमच्या उत्पादनाशी जुळण्याची प्रतीक्षा करा."
+  },
+  "transactions": {
+    "title": "माझे व्यवहार",
+    "subtitle": "स्वीकारलेल्या प्रस्तावापासून ते वितरण आणि पेमेंटपर्यंत तुमच्या उत्पादनाचा मागोवा घ्या.",
+    "demoMode": "डेमो मोड",
+    "stats": {
+      "active": "सक्रिय",
+      "completed": "पूर्ण झाले",
+      "paymentPending": "पेमेंट प्रलंबित",
+      "totalValue": "एकूण मूल्य"
+    },
+    "searchPlaceholder": "आयडी, पीक, खरेदीदार किंवा बाजारानुसार व्यवहार शोधा...",
+    "status": "स्थिती: ",
+    "clearFilters": "फिल्टर साफ करा",
+    "noTransactions": "कोणतेही व्यवहार आढळले नाहीत",
+    "noTransactionsDesc": "तुमचे फिल्टर किंवा शोध शब्द समायोजित करण्याचा प्रयत्न करा.",
+    "viewDetails": "तपशील पहा"
+  },
+  "crops": {
+    "onion": "कांदा",
+    "potato": "बटाटा",
+    "tomato": "टोमॅटो",
+    "wheat": "गहू",
+    "rice": "तांदूळ"
+  },
+  "grades": {
+    "A": "ग्रेड A",
+    "B": "बी",
+    "C": "ग्रेड C",
+    "NoGrade": "कोणताही ग्रेड नाही"
+  },
+  "locations": {
+    "Nashik_Maharashtra": "नाशिक, महाराष्ट्र",
+    "Pune_Maharashtra": "पुणे, महाराष्ट्र"
+  },
+  "actions": {
+    "SELL_WITHIN_WINDOW": "पुढील 3-5 दिवसात विका",
+    "CONSIDER_STORAGE": "अल्प मुदतीच्या साठवणुकीचा विचार करा",
+    "MONITOR": "बाजाराच्या संकेतांचे निरीक्षण करा"
+  },
+  "markets": {
+    "Pimpalgaon_Baswant_APMC": "पिंपळगाव बसवंत APMC",
+    "Lasalgaon_APMC": "लासलगाव APMC",
+    "Pune_APMC": "पुणे APMC"
+  },
+  "confidence": {
+    "HIGH": "उच्च",
+    "MEDIUM": "मध्यम",
+    "LOW": "कमी"
+  },
+  "decisionDetail": {
+    "whyThisDecision": "हा निर्णय का?",
+    "atRisk": "धोक्यात",
+    "feasible": "शक्य",
+    "unavailable": "अनुपलब्ध",
+    "recommendedMarket": "शिफारस केलेला बाजार",
+    "market": "बाजार",
+    "expectedMarketPrice": "अपेक्षित बाजारभाव",
+    "estimatedNetRealization": "अंदाजे निव्वळ प्राप्ती",
+    "logistics": "लॉजिस्टिक्स",
+    "storage": "स्टोरेज",
+    "sellVsStore": "विक्री वि. स्टोरेज",
+    "enwrAwareness": "ई-एनडब्ल्यूआर जागरूकता",
+    "back": "मागे",
+    "noActionableOption": "कोणताही कार्यवाही योग्य पर्याय नाही"
+  },
+  "names": {
+    "Bhavya": "भव्य",
+    "bhavya": "भव्य",
+    "yash": "यश",
+    "Yash": "यश"
+  },
+  "units": {
+    "KG": "किलो"
   }
 }

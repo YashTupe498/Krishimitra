@@ -24,6 +24,14 @@ export const MarketIntelligencePage: React.FC = () => {
   /* ── dynamic translation helper for backend-generated English strings ── */
   const translateDynamic = (text: string) => {
     if (!text) return text;
+    
+    // Check our new dynamic mock mappings first
+    const safeKey = text.replace(/[^a-zA-Z0-9_]/g, '_');
+    const dynamicTranslation = t(`marketIntelligence.dynamic.${safeKey}`, { defaultValue: '' });
+    if (dynamicTranslation && dynamicTranslation !== `marketIntelligence.dynamic.${safeKey}`) {
+      return dynamicTranslation;
+    }
+
     const map: Record<string, string> = {
       "Recent arrival quantity data is unavailable to assess pressure.": t("marketIntelligence.unavailablePressureDesc"),
       "Arrivals are tightening while prices are moving upward, indicating stronger near-term supply pressure.": t("marketIntelligence.highPressureDesc"),

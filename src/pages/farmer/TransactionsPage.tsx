@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   ChevronRight, Search, TrendingUp,
@@ -20,6 +21,7 @@ const STATUS_FILTERS: Array<{ label: string; value: TxStatus | 'ALL' | 'ACTIVE' 
 ];
 
 export const FarmerTransactionsPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string>('demo-farmer-id');
   const [transactions, setTransactions] = useState<DemoTransaction[]>([]);
@@ -80,10 +82,10 @@ export const FarmerTransactionsPage: React.FC = () => {
       <div className="mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-black text-[#14532D] tracking-tight">My Transactions</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Track your produce from accepted offer to delivery and payment.</p>
+            <h1 className="text-2xl font-black text-[#14532D] tracking-tight">{t("transactions.title", "My Transactions")}</h1>
+            <p className="text-sm text-gray-500 mt-0.5">{t("transactions.subtitle", "Track your produce from accepted offer to delivery and payment.")}</p>
           </div>
-          <span className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-full uppercase tracking-widest">Demo Mode</span>
+          <span className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded-full uppercase tracking-widest">{t("transactions.demoMode", "Demo Mode")}</span>
         </div>
       </div>
 
@@ -92,8 +94,8 @@ export const FarmerTransactionsPage: React.FC = () => {
         {[
           { label: 'Active', value: stats.active, icon: <Clock size={14} />, color: 'text-blue-600', bg: 'bg-blue-50' },
           { label: 'Completed', value: stats.completed, icon: <CheckCircle2 size={14} />, color: 'text-green-700', bg: 'bg-green-50' },
-          { label: 'Payment Pending', value: stats.paymentPending, icon: <IndianRupee size={14} />, color: 'text-amber-700', bg: 'bg-amber-50' },
-          { label: 'Total Value', value: fmtCurrency(stats.totalValue), icon: <TrendingUp size={14} />, color: 'text-[#194D2E]', bg: 'bg-[#EDF7F0]' },
+          { label: t('transactions.stats.paymentPending', 'Payment Pending'), value: stats.paymentPending, icon: <IndianRupee size={14} />, color: 'text-amber-700', bg: 'bg-amber-50' },
+          { label: t('transactions.stats.totalValue', 'Total Value'), value: fmtCurrency(stats.totalValue), icon: <TrendingUp size={14} />, color: 'text-[#194D2E]', bg: 'bg-[#EDF7F0]' },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-xl border border-gray-100 shadow-[0_1px_6px_rgba(0,0,0,0.04)] p-4">
             <div className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest ${s.color} mb-2`}>
@@ -117,7 +119,9 @@ export const FarmerTransactionsPage: React.FC = () => {
           />
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {STATUS_FILTERS.map(f => (
+          {STATUS_FILTERS.map(f => {
+            const labels: Record<string, string> = { ALL: t('offers.tabs.all', 'All'), ACTIVE: t('transactions.stats.active', 'Active'), PAYMENT: t('transactions.stats.paymentPending', 'Payment Due'), COMPLETED: t('transactions.stats.completed', 'Completed'), DISPUTE: 'Dispute' };
+            return (
             <button
               key={f.value}
               onClick={() => setStatusFilter(f.value as typeof statusFilter)}
@@ -127,9 +131,9 @@ export const FarmerTransactionsPage: React.FC = () => {
                   : 'bg-white text-gray-600 border-gray-200 hover:border-[#194D2E]/40'
               }`}
             >
-              {f.label}
+              {labels[f.value] || f.label}
             </button>
-          ))}
+          )})}
         </div>
       </div>
 

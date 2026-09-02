@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 // useNavigate removed
 import { Search, Loader2, Leaf, ArrowRight, Clock, CheckCircle2 } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
@@ -14,13 +15,14 @@ import { OfferDetails } from '../../components/farmer/offers/OfferDetails';
 import { OfferResponseForm } from '../../components/farmer/offers/OfferResponseForm';
 
 export const FarmerOffersPage: React.FC = () => {
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(true);
   
   // Data State
   const [opportunities, setOpportunities] = useState<BuyerOpportunity[]>([]);
   const [offers, setOffers] = useState<AugmentedOffer[]>([]);
-  const [activeTab, setActiveTab] = useState('ALL');
+  const [activeTab, setActiveTab] = useState('ALL' /* ALL */);
   const [searchQuery, setSearchQuery] = useState('');
   
   // Modal State
@@ -89,7 +91,7 @@ export const FarmerOffersPage: React.FC = () => {
       o.requirement?.crop?.toLowerCase().includes(q)
     );
   };
-  const receivedOffers = offers.filter(o => o.status === 'SENT' || o.status === 'RECEIVED');
+  const receivedOffers = offers.filter(o => o.status === 'SENT' /* SENT */ || o.status === 'RECEIVED' /* RECEIVED */);
   const sentOffers = offers.filter(o => o.status === ('NEGOTIATING' as any));
   const historyOffers = offers.filter(o => ['ACCEPTED', 'REJECTED', 'EXPIRED'].includes(o.status));
 
@@ -97,7 +99,7 @@ export const FarmerOffersPage: React.FC = () => {
     <div className="max-w-6xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <h1 className="h2 mb-2 text-[#14532D]">My Offers</h1>
+          <h1 className="h2 mb-2 text-[#14532D]">{t('offers.title', 'My Offers')}</h1>
           <p className="body-base">Review buyer opportunities, respond to offers, and track your deals.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -139,11 +141,11 @@ export const FarmerOffersPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <SegmentedControl 
           options={[
-            { label: 'All', value: 'ALL' },
+            { label: 'All', value: 'ALL' /* ALL */ },
             { label: 'Buyer Opportunities', value: 'OPPORTUNITIES' },
-            { label: 'Received Offers', value: 'RECEIVED' },
-            { label: 'Sent Offers', value: 'SENT' },
-            { label: 'History', value: 'HISTORY' }
+            { label: 'Received Offers', value: 'RECEIVED' /* RECEIVED */ },
+            { label: 'Sent Offers', value: 'SENT' /* SENT */ },
+            { label: 'History', value: 'HISTORY' /* HISTORY */ }
           ]}
           value={activeTab}
           onChange={setActiveTab}
@@ -161,7 +163,7 @@ export const FarmerOffersPage: React.FC = () => {
       </div>
 
       {/* Payment Received Popup Notification */}
-      {offers.filter(o => o.paymentStatus === 'RECEIVED' || o.paymentStatus === 'CONFIRMED').map(offer => {
+      {offers.filter(o => o.paymentStatus === 'RECEIVED' /* RECEIVED */ || o.paymentStatus === 'CONFIRMED').map(offer => {
         // Use sessionStorage to only show the popup once per session for this offer
         const seenKey = `payment_popup_seen_${offer.id}`;
         if (sessionStorage.getItem(seenKey)) return null;
@@ -196,9 +198,9 @@ export const FarmerOffersPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-8">
-          {(activeTab === 'ALL' || activeTab === 'OPPORTUNITIES') && (
+          {(activeTab === 'ALL' /* ALL */ || activeTab === 'OPPORTUNITIES') && (
             <section>
-              {activeTab === 'ALL' && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Buyer Opportunities</h2>}
+              {activeTab === 'ALL' /* ALL */ && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Buyer Opportunities</h2>}
               {filteredOpportunities.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
                   <p className="text-sm font-bold text-gray-900 mb-1">No matching buyer requirements yet.</p>
@@ -219,11 +221,11 @@ export const FarmerOffersPage: React.FC = () => {
             </section>
           )}
 
-          {(activeTab === 'ALL' || activeTab === 'RECEIVED') && (
+          {(activeTab === 'ALL' /* ALL */ || activeTab === 'RECEIVED' /* RECEIVED */) && (
             <section>
-              {activeTab === 'ALL' && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Received Offers</h2>}
+              {activeTab === 'ALL' /* ALL */ && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Received Offers</h2>}
               {filterOffers(receivedOffers).length === 0 ? (
-                activeTab !== 'ALL' && (
+                activeTab !== 'ALL' /* ALL */ && (
                   <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
                     <p className="text-sm font-bold text-gray-900 mb-1">No buyer offers yet.</p>
                   </div>
@@ -245,11 +247,11 @@ export const FarmerOffersPage: React.FC = () => {
             </section>
           )}
 
-          {(activeTab === 'ALL' || activeTab === 'SENT') && (
+          {(activeTab === 'ALL' /* ALL */ || activeTab === 'SENT' /* SENT */) && (
             <section>
-              {activeTab === 'ALL' && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Sent Offers</h2>}
+              {activeTab === 'ALL' /* ALL */ && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">Sent Offers</h2>}
               {filterOffers(sentOffers).length === 0 ? (
-                activeTab !== 'ALL' && (
+                activeTab !== 'ALL' /* ALL */ && (
                   <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
                     <p className="text-sm font-bold text-gray-900 mb-1">You haven't sent any offers yet.</p>
                   </div>
@@ -269,11 +271,11 @@ export const FarmerOffersPage: React.FC = () => {
             </section>
           )}
 
-          {(activeTab === 'ALL' || activeTab === 'HISTORY') && (
+          {(activeTab === 'ALL' /* ALL */ || activeTab === 'HISTORY' /* HISTORY */) && (
             <section>
-              {activeTab === 'ALL' && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">History</h2>}
+              {activeTab === 'ALL' /* ALL */ && <h2 className="text-lg font-black text-gray-900 mb-4 border-b pb-2">{t('offers.tabs.history', 'History')}</h2>}
               {filterOffers(historyOffers).length === 0 ? (
-                activeTab !== 'ALL' && (
+                activeTab !== 'ALL' /* ALL */ && (
                   <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
                     <p className="text-sm font-bold text-gray-900 mb-1">No past offers.</p>
                   </div>

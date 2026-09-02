@@ -219,7 +219,8 @@
     "saleWindowStatus": "वर्तमान बिक्री का समय अनुकूल है",
     "saleWindowRecommendation": "निकट भविष्य में बेचने पर विचार करें",
     "viewMarketAnalysis": "बाज़ार विश्लेषण देखें",
-    "viewAllLots": "[ सभी लॉट देखें ]"
+    "viewAllLots": "[ सभी लॉट देखें ]",
+    "pendingQuality": "गुणवत्ता लंबित"
   },
   "data": {
     "crops": {
@@ -229,7 +230,12 @@
     "locations": {
       "Nashik": "नासिक",
       "Pune": "पुणे",
-      "Pimpalgaon Market": "पिंपलगांव मंडी"
+      "Pimpalgaon Market": "पिंपलगांव मंडी",
+      "Maharashtra": "महाराष्ट्र",
+      "MH": "MH",
+      "nashik": "नासिक",
+      "maharashtra": "महाराष्ट्र",
+      "mh": "MH"
     },
     "status": {
       "Decision Ready": "निर्णय के लिए तैयार",
@@ -563,9 +569,9 @@
     "decisionLabel": "निर्णय",
     "sellVsStore": "बेचना बनाम भंडारण",
     "gradeLabel": "ग्रेड",
-    "trendDeclining": "Declining",
-    "trendIncreasing": "Increasing",
-    "trendStable": "Stable",
+    "trendDeclining": "घटत",
+    "trendIncreasing": "बढ़त",
+    "trendStable": "स्थिर",
     "demoDemand": "डेमो मांग",
     "nashikFreshFoods": "नासिक फ्रेश फूड्स",
     "miniTruck": "मिनी ट्रक (1.5T)",
@@ -581,7 +587,25 @@
     "caution": "सावधानी",
     "days": "दिन",
     "confidence": "विश्वसनीयता",
-    "medium": "मध्यम"
+    "medium": "मध्यम",
+    "dynamic": {
+      "Declining": "घटत",
+      "Increasing": "बढ़त",
+      "Stable": "स्थिर",
+      "Nashik_Fresh_Foods": "नासिक फ्रेश फूड्स",
+      "Maharashtra_Agro_Traders": "महाराष्ट्र एग्रो ट्रेडर्स",
+      "Mini_Truck__1_5T_": "मिनी ट्रक (1.5T)",
+      "Nashik_Farm": "नासिक फार्म",
+      "Pimpalgaon_Baswant_APMC": "पिंपलगांव बसवंत एपीएमसी",
+      "Lasalgaon__Vinchur__APMC": "लासलगांव (विंचुर) एपीएमसी",
+      "Yeola_APMC": "येवला एपीएमसी",
+      "Manmad_APMC": "मनमाड एपीएमसी",
+      "Pimpalgaon_Cold_Chain___Warehousing__8km_": "पिंपलगांव कोल्ड चेन आणि वेअरहाउसिंग (8किमी)",
+      "Lasalgaon_Storage__15km_": "लासलगांव स्टोरेज (15किमी)",
+      "Nashik_District__Maharashtra": "नासिक जिला, महाराष्ट्र",
+      "Curated_demo": "क्यूरेटेड डेमो",
+      "CURATED_DEMO": "क्यूरेटेड डेमो"
+    }
   },
   "opportunities": {
     "title": "प्रस्ताव → अवसर",
@@ -681,5 +705,133 @@
     "nameRequired": "पूरा नाम आवश्यक है।",
     "notProvided": "प्रदान नहीं किया गया",
     "unknown": "अज्ञात"
+  },
+  "myDecisions": {
+    "title": "मेरे निर्णय",
+    "subtitle": "समझें कि अपनी उपज के साथ क्या करना है।",
+    "totalLots": "कुल लॉट",
+    "actionable": "कार्रवाई योग्य",
+    "needsAttention": "ध्यान देने की आवश्यकता है",
+    "groupOptions": "समूह विकल्प",
+    "noActive": "कोई सक्रिय निर्णय नहीं",
+    "addOrRestore": "बाजार-आधारित निर्णय प्राप्त करने के लिए एक लॉट जोड़ें या पुनर्स्थापित करें।",
+    "viewMyLots": "मेरे लॉट देखें",
+    "recommendedAction": "अनुशंसित कार्रवाई",
+    "marketPrice": "बाज़ार मूल्य",
+    "estimatedNet": "अनुमानित शुद्ध",
+    "unavailable": "अनुपलब्ध",
+    "needsAttentionText": "ध्यान देने की आवश्यकता है",
+    "confidence": "आत्मविश्वास",
+    "viewDecision": "निर्णय देखें",
+    "removeDecision": "निर्णय हटाएं?",
+    "cancel": "रद्द करें",
+    "remove": "हटाएं",
+    "priceMomentum": "मूल्य गति",
+    "marketWatch": "बाजार की निगरानी",
+    "arrivalsDown": "आवक",
+    "arrivalDataLimited": "आवक डेटा सीमित",
+    "buyerMatchLabel": "खरीदार मैच",
+    "grade": "ग्रेड",
+    "noGrade": "कोई ग्रेड नहीं",
+    "header": "मेरे निर्णय",
+    "stats": {
+      "totalLots": "कुल लॉट",
+      "actionable": "कार्रवाई योग्य",
+      "needsAttention": "ध्यान देने योग्य",
+      "groupOptions": "समूह विकल्प"
+    },
+    "empty": {
+      "title": "कोई सक्रिय निर्णय नहीं",
+      "subtitle": "बाजार-आधारित निर्णय प्राप्त करने के लिए एक लॉट जोड़ें या पुनर्स्थापित करें।",
+      "action": "मेरे लॉट देखें"
+    }
+  },
+  "offers": {
+    "title": "मेरे प्रस्ताव",
+    "subtitle": "खरीदारों और सक्रिय आवश्यकताओं द्वारा भेजे गए प्रस्तावों का प्रबंधन करें।",
+    "searchPlaceholder": "खरीदारों या फसलों की खोज करें...",
+    "buyerOpportunities": "खरीदार के अवसर",
+    "tabs": {
+      "all": "सभी",
+      "received": "प्राप्त हुए",
+      "sent": "भेजे गए",
+      "history": "इतिहास"
+    },
+    "noOffers": "आपके पास अभी तक कोई प्रस्ताव नहीं है।",
+    "noOffersDesc": "खरीदारों द्वारा प्रस्ताव भेजने या अपनी उपज से मेल खाने की प्रतीक्षा करें।"
+  },
+  "transactions": {
+    "title": "मेरा लेन-देन",
+    "subtitle": "स्वीकृत प्रस्ताव से लेकर वितरण और भुगतान तक अपनी उपज को ट्रैक करें।",
+    "demoMode": "डेमो मोड",
+    "stats": {
+      "active": "सक्रिय",
+      "completed": "पूरा हुआ",
+      "paymentPending": "भुगतान लंबित",
+      "totalValue": "कुल मूल्य"
+    },
+    "searchPlaceholder": "आईडी, फसल, खरीदार या बाजार द्वारा लेन-देन खोजें...",
+    "status": "स्थिति: ",
+    "clearFilters": "फ़िल्टर साफ़ करें",
+    "noTransactions": "कोई लेन-देन नहीं मिला",
+    "noTransactionsDesc": "अपने फ़िल्टर या खोज शब्दों को समायोजित करने का प्रयास करें।",
+    "viewDetails": "विवरण देखें"
+  },
+  "crops": {
+    "onion": "प्याज़",
+    "potato": "आलू",
+    "tomato": "टमाटर",
+    "wheat": "गेहूँ",
+    "rice": "चावल"
+  },
+  "grades": {
+    "A": "ग्रेड A",
+    "B": "बी",
+    "C": "ग्रेड C",
+    "NoGrade": "कोई ग्रेड नहीं"
+  },
+  "locations": {
+    "Nashik_Maharashtra": "नासिक, महाराष्ट्र",
+    "Pune_Maharashtra": "पुणे, महाराष्ट्र"
+  },
+  "actions": {
+    "SELL_WITHIN_WINDOW": "अगले 3-5 दिनों के भीतर बेचें",
+    "CONSIDER_STORAGE": "लघु अवधि के भंडारण पर विचार करें",
+    "MONITOR": "बाजार के संकेतों की निगरानी करें"
+  },
+  "markets": {
+    "Pimpalgaon_Baswant_APMC": "पिंपलगांव बसवंत APMC",
+    "Lasalgaon_APMC": "लासलगांव APMC",
+    "Pune_APMC": "पुणे APMC"
+  },
+  "confidence": {
+    "HIGH": "उच्च",
+    "MEDIUM": "मध्यम",
+    "LOW": "कम"
+  },
+  "decisionDetail": {
+    "whyThisDecision": "यह निर्णय क्यों?",
+    "atRisk": "जोखिम में",
+    "feasible": "संभव",
+    "unavailable": "अनुपलब्ध",
+    "recommendedMarket": "अनुशंसित बाजार",
+    "market": "बाजार",
+    "expectedMarketPrice": "अपेक्षित बाजार मूल्य",
+    "estimatedNetRealization": "अनुमानित शुद्ध प्राप्ति",
+    "logistics": "रसद",
+    "storage": "भंडारण",
+    "sellVsStore": "बेचना बनाम स्टोर",
+    "enwrAwareness": "ई-एनडब्ल्यूआर जागरूकता",
+    "back": "वापस",
+    "noActionableOption": "कोई कार्रवाई योग्य विकल्प नहीं"
+  },
+  "names": {
+    "Bhavya": "भव्य",
+    "bhavya": "भव्य",
+    "yash": "यश",
+    "Yash": "यश"
+  },
+  "units": {
+    "KG": "किलो"
   }
 }

@@ -20,8 +20,9 @@ import { ENWRAwareness } from '../../components/farmer/market/ENWRAwareness';
 import { buildDecisionViewModel } from '../../services/decisionSupport/decisionViewModel';
 import type { DecisionViewModel } from '../../services/decisionSupport/decisionViewModel';
 
-export const DecisionDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+export const NetRealisationEngine: React.FC<{ lotId?: string }> = ({ lotId }) => {
+  const { id: urlId } = useParams<{ id: string }>();
+  const id = lotId || urlId;
   const navigate = useNavigate();
   const { t } = useTranslation();
   
@@ -86,9 +87,9 @@ export const DecisionDetailPage: React.FC = () => {
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
           <XCircle size={32} />
         </div>
-        <h2 className="text-xl font-bold mb-2">Unable to load decision</h2>
-        <p className="text-gray-500 mb-6">{error || "The decision service could not be reached."}</p>
-        <Button onClick={() => window.location.reload()}>Retry</Button>
+        <h2 className="text-xl font-bold mb-2">{t('decisionDetail.errorTitle', 'Unable to load decision')}</h2>
+        <p className="text-gray-500 mb-6">{error || t('decisionDetail.errorMessage', "The decision service could not be reached.")}</p>
+        <Button onClick={() => window.location.reload()}>{t('common.retry', 'Retry')}</Button>
       </div>
     );
   }
@@ -142,14 +143,14 @@ export const DecisionDetailPage: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">
-                {lot.crop}
+                {t(`crops.${lot.crop.toLowerCase()}`, lot.crop)}
               </h2>
               <div className="flex items-center gap-2 mt-1 text-sm font-medium text-gray-600">
                 <span>{lot.quantity} {lot.unit}</span>
                 <span>•</span>
-                <span>{lot.qualityGrade ? `Grade ${lot.qualityGrade}` : 'No Grade'}</span>
+                <span>{lot.qualityGrade ? t('myDecisions.grade', 'Grade {{grade}}', { grade: lot.qualityGrade }) : t('myDecisions.noGrade', 'No Grade')}</span>
                 <span>•</span>
-                <span className="flex items-center gap-1"><MapPin size={12} /> {lot.location}</span>
+                <span className="flex items-center gap-1"><MapPin size={12} /> {t(`locations.${lot.location.replace(/, /g, '_')}`, lot.location)}</span>
               </div>
             </div>
           </div>
@@ -209,7 +210,7 @@ export const DecisionDetailPage: React.FC = () => {
       {lot.status !== 'TRANSACTION_ACTIVE' && lot.status !== 'COMPLETED' && (
         <Card className="bg-white border-gray-200">
         <div className="p-6">
-          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Why this decision?</h3>
+          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">{t('decisionDetail.whyThisDecision', 'Why this decision?')}</h3>
           <ul className="space-y-3">
             {(reasons.length ? reasons : viewModel?.reasons || []).map((r, i) => (
               <li key={i} className="flex items-start gap-3">
@@ -226,18 +227,18 @@ export const DecisionDetailPage: React.FC = () => {
       {lot.status !== 'TRANSACTION_ACTIVE' && lot.status !== 'COMPLETED' && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-white border-gray-200 p-6">
-          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">RECOMMENDED MARKET</h3>
+          <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">{t('decisionDetail.recommendedMarket', 'RECOMMENDED MARKET')}</h3>
           <div className="space-y-4">
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-              <span className="text-sm font-medium text-gray-500">Market</span>
+              <span className="text-sm font-medium text-gray-500">{t('decisionDetail.market', 'Market')}</span>
               <span className="font-bold text-gray-900">{intelligence.selectedMarketName}</span>
             </div>
             <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-              <span className="text-sm font-medium text-gray-500">Expected Market Price</span>
+              <span className="text-sm font-medium text-gray-500">{t('decisionDetail.expectedMarketPrice', 'Expected Market Price')}</span>
               <span className="font-bold text-gray-900">₹{intelligence.snapshot.modal_price?.toLocaleString() || '—'}/q</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm font-bold text-green-700">Estimated Net Realization</span>
+              <span className="text-sm font-bold text-green-700">{t('decisionDetail.estimatedNetRealization', 'Estimated Net Realization')}</span>
               <span className="font-black text-green-800 text-lg">₹{intelligence.netRealizationPerQuintal?.toLocaleString(undefined, { maximumFractionDigits: 0 }) || '---'}/q</span>
             </div>
           </div>
@@ -274,7 +275,7 @@ export const DecisionDetailPage: React.FC = () => {
       {lot.status !== 'TRANSACTION_ACTIVE' && lot.status !== 'COMPLETED' && (
         <section id="storage" className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <Card className="bg-white border-gray-200 p-6 flex flex-col">
-             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><Truck size={14}/> Logistics</h3>
+             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><Truck size={14}/> {t('decisionDetail.logistics', 'Logistics')}</h3>
              {intelligence.logistics ? (
                 <div className="flex-1 flex flex-col text-sm">
                    <div className="mb-auto">
@@ -292,7 +293,7 @@ export const DecisionDetailPage: React.FC = () => {
           </Card>
           
           <Card className="bg-white border-gray-200 p-6 flex flex-col">
-             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><Package size={14}/> Storage</h3>
+             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><Package size={14}/> {t('decisionDetail.storage', 'Storage')}</h3>
              {intelligence.storage ? (
                 <div className="flex-1 flex flex-col text-sm">
                    <div className="mb-auto">
@@ -310,7 +311,7 @@ export const DecisionDetailPage: React.FC = () => {
           </Card>
 
           <Card className="bg-white border-gray-200 p-6 flex flex-col">
-             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><TrendingUp size={14}/> Sell vs Store</h3>
+             <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-4"><TrendingUp size={14}/> {t('decisionDetail.sellVsStore', 'Sell vs Store')}</h3>
              {intelligence.sellVsStore ? (
                 <div className="flex-1 flex flex-col text-sm">
                    <div className="mb-auto space-y-2">
@@ -451,7 +452,7 @@ export const DecisionDetailPage: React.FC = () => {
                 </Button>
               ) : (
                 <Button variant="secondary" className="flex-1 sm:flex-none opacity-50 cursor-not-allowed">
-                  No Actionable Option
+                  {t('decisionDetail.noActionableOption', 'No Actionable Option')}
                 </Button>
               )}
             </div>
@@ -461,3 +462,5 @@ export const DecisionDetailPage: React.FC = () => {
     </div>
   );
 };
+
+export const DecisionDetailPage: React.FC = () => <NetRealisationEngine />;

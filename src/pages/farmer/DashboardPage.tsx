@@ -50,8 +50,8 @@ export const FarmerDashboardPage: React.FC = () => {
   const activeLots = lots.map(lot => ({
     id: lot.id,
     crop: lot.crop,
-    quantity: `${lot.quantity} ${lot.unit}`,
-    quality: lot.qualityGrade ? `Grade ${lot.qualityGrade}` : 'Pending Quality',
+    quantity: `${lot.quantity} ${t(`units.${(lot.unit || '').toUpperCase()}`, lot.unit)}`,
+    quality: lot.qualityGrade ? `${t('myDecisions.grade', 'Grade')} ${t(`grades.${lot.qualityGrade.replace(' ', '')}`, lot.qualityGrade)}` : t('dashboard.pendingQuality', 'Pending Quality'),
     location: lot.village || lot.location,
     status: lot.status,
     emoji: lot.crop === 'Onion' ? '🧅' : lot.crop === 'Potato' ? '🥔' : '🍅'
@@ -67,20 +67,27 @@ export const FarmerDashboardPage: React.FC = () => {
     <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500 pb-20 md:pb-8">
       
       {/* 1. HEADER */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[#14532D] font-display">
-            {t('dashboard.goodMorning', 'Good morning')}, {firstName} 👋
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">{t('dashboard.greetingSub', "Here's what matters for your produce today.")}</p>
-          <div className="flex items-center gap-2 mt-2 text-sm font-medium text-gray-600">
-            <MapPin size={16} className="text-brand-primary" />
-            <span>{t(`data.locations.${location.split(',')[0]}`, location.split(',')[0])}{location.includes(',') ? ', ' + location.split(',')[1].trim() : ''}</span>
+      <header className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden mb-2">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50" />
+        
+        <div className="relative z-10 flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 rounded-xl bg-green-100 text-green-700 flex items-center justify-center">
+               <UserCircle size={20} />
+             </div>
+             <h1 className="text-2xl md:text-3xl font-bold text-[#14532D] font-display">
+                {t('dashboard.goodMorning', 'Good morning')}, {t(`names.${firstName}`, firstName)} 👋
+             </h1>
           </div>
+          <div className="flex items-center gap-2 mt-2 text-sm font-medium text-gray-600 md:pl-14">
+            <MapPin size={16} className="text-brand-primary" />
+            <span>{t(`data.locations.${location.split(',')[0]}`, location.split(',')[0])}{location.includes(',') ? ', ' + t(`data.locations.${location.split(',')[1].trim()}`, location.split(',')[1].trim()) : ''}</span>
+          </div>
+          <p className="text-sm text-gray-500 mt-1 md:pl-14">{t('dashboard.greetingSub', "Here's what matters for your produce today.")}</p>
         </div>
         
         {/* Top Right Quick Actions */}
-        <div className="flex items-center gap-3 self-start relative z-50">
+        <div className="flex items-center gap-3 self-start md:self-center relative z-10 bg-gray-50 rounded-xl p-3 border border-gray-200">
           <div className="relative">
             <Badge 
               variant="info" 
@@ -113,9 +120,9 @@ export const FarmerDashboardPage: React.FC = () => {
             <UserCircle size={20} />
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* 2. PRIMARY ACTION - CREATE NEW LOT */}
+      {/* 2. QUICK ACTIONS */}
       <div className="flex justify-center py-2">
         <Button 
           variant="primary" 
@@ -152,7 +159,7 @@ export const FarmerDashboardPage: React.FC = () => {
                     {t(`data.crops.${activeDecision.crop}`, activeDecision.crop)}
                   </h3>
                   <p className="text-sm text-gray-600 font-medium mb-3">
-                    {activeDecision.quantity} • {activeDecision.quality} • {t(`data.locations.${location.split(',')[0]}`, location.split(',')[0])}
+                  {activeDecision.quantity.replace('kg', t('units.KG', 'kg'))} &bull; {activeDecision.quality.replace('Grade', t('myDecisions.grade', 'Grade')).replace('B', t('grades.B', 'B'))} &bull; {t(`data.locations.${location.split(',')[0]}`, location.split(',')[0])}
                   </p>
                   <div className="flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1.5 rounded-lg border border-green-100 w-fit">
                     <CheckCircle2 size={16} />
@@ -175,7 +182,7 @@ export const FarmerDashboardPage: React.FC = () => {
                   </p>
                 </div>
                 <div className="w-full md:w-auto shrink-0">
-                  <Button variant="primary" className="w-full md:w-auto font-bold px-8 py-3 h-auto text-base shadow-sm" onClick={() => navigate(`/farmer/decisions/${activeDecision.id}`)}>
+                  <Button variant="primary" className="w-full md:w-auto font-bold px-8 py-3 h-auto text-base shadow-sm" onClick={() => navigate(`/farmer/decisions`)}>
                     {t('dashboard.viewFullDecision', 'VIEW FULL DECISION')} <ArrowRight size={20} className="ml-2" />
                   </Button>
                 </div>

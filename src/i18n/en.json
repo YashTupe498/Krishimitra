@@ -581,7 +581,25 @@
     "caution": "CAUTION",
     "days": "days",
     "confidence": "CONFIDENCE",
-    "medium": "MEDIUM"
+    "medium": "MEDIUM",
+    "dynamic": {
+      "Declining": "Declining",
+      "Increasing": "Increasing",
+      "Stable": "Stable",
+      "Nashik_Fresh_Foods": "Nashik Fresh Foods",
+      "Maharashtra_Agro_Traders": "Maharashtra Agro Traders",
+      "Mini_Truck__1_5T_": "Mini Truck (1.5T)",
+      "Nashik_Farm": "Nashik Farm",
+      "Pimpalgaon_Baswant_APMC": "Pimpalgaon Baswant APMC",
+      "Lasalgaon__Vinchur__APMC": "Lasalgaon (Vinchur) APMC",
+      "Yeola_APMC": "Yeola APMC",
+      "Manmad_APMC": "Manmad APMC",
+      "Pimpalgaon_Cold_Chain___Warehousing__8km_": "Pimpalgaon Cold Chain & Warehousing (8km)",
+      "Lasalgaon_Storage__15km_": "Lasalgaon Storage (15km)",
+      "Nashik_District__Maharashtra": "Nashik District, Maharashtra",
+      "Curated_demo": "Curated demo",
+      "CURATED_DEMO": "CURATED DEMO"
+    }
   },
   "opportunities": {
     "title": "Offers → Opportunities",
@@ -681,5 +699,112 @@
     "nameRequired": "Full name is required.",
     "notProvided": "Not provided",
     "unknown": "Unknown"
+  },
+  "myDecisions": {
+    "title": "MY DECISIONS",
+    "subtitle": "Understand what to do with your produce.",
+    "totalLots": "TOTAL LOTS",
+    "actionable": "ACTIONABLE",
+    "needsAttention": "NEEDS ATTENTION",
+    "groupOptions": "GROUP OPTIONS",
+    "noActive": "NO ACTIVE DECISIONS",
+    "addOrRestore": "Add or restore a lot to receive a market-based decision.",
+    "viewMyLots": "View My Lots",
+    "recommendedAction": "Recommended action",
+    "marketPrice": "Market price",
+    "estimatedNet": "Estimated net",
+    "unavailable": "Unavailable",
+    "needsAttentionText": "Needs attention",
+    "confidence": "Confidence",
+    "viewDecision": "View Decision",
+    "removeDecision": "Remove decision?",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "priceMomentum": "Price momentum",
+    "marketWatch": "Market watch",
+    "arrivalsDown": "Arrivals",
+    "arrivalDataLimited": "Arrival data limited",
+    "buyerMatchLabel": "buyer match",
+    "grade": "Grade",
+    "noGrade": "No Grade"
+  },
+  "offers": {
+    "title": "My Offers",
+    "subtitle": "Manage offers sent by buyers and active requirements.",
+    "searchPlaceholder": "Search buyers or crops...",
+    "buyerOpportunities": "BUYER OPPORTUNITIES",
+    "tabs": {
+      "all": "All",
+      "received": "Received",
+      "sent": "Sent",
+      "history": "History"
+    },
+    "noOffers": "You have no offers yet.",
+    "noOffersDesc": "Wait for buyers to send offers or match your produce."
+  },
+  "transactions": {
+    "title": "My Transactions",
+    "subtitle": "Track your produce from accepted offer to delivery and payment.",
+    "demoMode": "Demo Mode",
+    "stats": {
+      "active": "Active",
+      "completed": "Completed",
+      "paymentPending": "Payment Pending",
+      "totalValue": "Total Value"
+    },
+    "searchPlaceholder": "Search transactions by ID, crop, buyer, or market...",
+    "status": "Status: ",
+    "clearFilters": "Clear Filters",
+    "noTransactions": "No transactions found",
+    "noTransactionsDesc": "Try adjusting your filters or search terms.",
+    "viewDetails": "View Details"
+  },
+  "crops": {
+    "onion": "Onion",
+    "potato": "Potato",
+    "tomato": "Tomato",
+    "wheat": "Wheat",
+    "rice": "Rice"
+  },
+  "grades": {
+    "A": "Grade A",
+    "B": "Grade B",
+    "C": "Grade C",
+    "NoGrade": "No Grade"
+  },
+  "locations": {
+    "Nashik_Maharashtra": "Nashik, Maharashtra",
+    "Pune_Maharashtra": "Pune, Maharashtra"
+  },
+  "actions": {
+    "SELL_WITHIN_WINDOW": "Sell within the next 3-5 days",
+    "CONSIDER_STORAGE": "Consider short-term storage",
+    "MONITOR": "Monitor market signals"
+  },
+  "markets": {
+    "Pimpalgaon_Baswant_APMC": "Pimpalgaon Baswant APMC",
+    "Lasalgaon_APMC": "Lasalgaon APMC",
+    "Pune_APMC": "Pune APMC"
+  },
+  "confidence": {
+    "HIGH": "HIGH",
+    "MEDIUM": "MEDIUM",
+    "LOW": "LOW"
+  },
+  "decisionDetail": {
+    "whyThisDecision": "WHY THIS DECISION?",
+    "atRisk": "AT RISK",
+    "feasible": "FEASIBLE",
+    "unavailable": "UNAVAILABLE",
+    "recommendedMarket": "RECOMMENDED MARKET",
+    "market": "Market",
+    "expectedMarketPrice": "Expected Market Price",
+    "estimatedNetRealization": "Estimated Net Realization",
+    "logistics": "LOGISTICS",
+    "storage": "STORAGE",
+    "sellVsStore": "SELL VS STORE",
+    "enwrAwareness": "E-NWR AWARENESS",
+    "back": "Back",
+    "noActionableOption": "No Actionable Option"
   }
 }

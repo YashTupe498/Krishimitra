@@ -57,7 +57,7 @@ export const SupplyIntelligencePage: React.FC = () => {
   useEffect(() => {
     if (requirement) {
       setLoading(true);
-      service.getMatches(requirement.id).then((result) => {
+      service.getMatches(requirement?.id).then((result) => {
         setMatches(result);
         setLoading(false);
       });
@@ -70,12 +70,12 @@ export const SupplyIntelligencePage: React.FC = () => {
   const intelligence = useMemo(() => {
     if (!requirement) return null;
     
-    const requiredKg = normalizeToKg(requirement.quantityRequired, requirement.quantityUnit);
+    const requiredKg = normalizeToKg(requirement?.quantityRequired, requirement?.quantityUnit);
     
     // 1. Analyze Real Compatible Lots
     let compatibleLots = matches.filter(m => 
-      m.lot.crop === requirement.crop &&
-      requirement.acceptedQualityGrades.includes(m.lot.qualityGrade as any) &&
+      m.lot.crop === requirement?.crop &&
+      (requirement?.acceptedQualityGrades || []).includes(m.lot.qualityGrade as any) &&
       m.lot.status === 'AVAILABLE'
     ).map(m => ({ ...m, kg: normalizeToKg(m.lot.quantity, m.lot.quantityUnit) }));
 
@@ -92,22 +92,22 @@ export const SupplyIntelligencePage: React.FC = () => {
         {
           match: { totalScore: 98, distanceScore: 100, qualityScore: 100, priceScore: 100, quantityScore: 90, matchesRequired: true, reasons: [] },
           kg: Math.round(demoBase * 0.25),
-          lot: { id: `DEMO-${requirement.crop.toUpperCase()}-1`, crop: requirement.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.25), quantityUnit: 'KG', district: 'Pune', status: 'AVAILABLE', farmerId: 'F1', pricePerQuintal: 2500, createdAt: new Date().toISOString() }
+          lot: { id: `DEMO-${requirement?.crop.toUpperCase()}-1`, crop: requirement?.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.25), quantityUnit: 'KG', district: 'Pune', status: 'AVAILABLE', farmerId: 'F1', pricePerQuintal: 2500, createdAt: new Date().toISOString() }
         },
         {
           match: { totalScore: 94, distanceScore: 90, qualityScore: 100, priceScore: 95, quantityScore: 85, matchesRequired: true, reasons: [] },
           kg: Math.round(demoBase * 0.33),
-          lot: { id: `DEMO-${requirement.crop.toUpperCase()}-2`, crop: requirement.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.33), quantityUnit: 'KG', district: 'Nashik', status: 'AVAILABLE', farmerId: 'F2', pricePerQuintal: 2400, createdAt: new Date().toISOString() }
+          lot: { id: `DEMO-${requirement?.crop.toUpperCase()}-2`, crop: requirement?.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.33), quantityUnit: 'KG', district: 'Nashik', status: 'AVAILABLE', farmerId: 'F2', pricePerQuintal: 2400, createdAt: new Date().toISOString() }
         },
         {
           match: { totalScore: 91, distanceScore: 100, qualityScore: 100, priceScore: 80, quantityScore: 80, matchesRequired: true, reasons: [] },
           kg: Math.round(demoBase * 0.22),
-          lot: { id: `DEMO-${requirement.crop.toUpperCase()}-3`, crop: requirement.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.22), quantityUnit: 'KG', district: 'Pune', status: 'AVAILABLE', farmerId: 'F3', pricePerQuintal: 2550, createdAt: new Date().toISOString() }
+          lot: { id: `DEMO-${requirement?.crop.toUpperCase()}-3`, crop: requirement?.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.22), quantityUnit: 'KG', district: 'Pune', status: 'AVAILABLE', farmerId: 'F3', pricePerQuintal: 2550, createdAt: new Date().toISOString() }
         },
         {
           match: { totalScore: 85, distanceScore: 90, qualityScore: 100, priceScore: 85, quantityScore: 70, matchesRequired: true, reasons: [] },
           kg: Math.round(demoBase * 0.20),
-          lot: { id: `DEMO-${requirement.crop.toUpperCase()}-4`, crop: requirement.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.20), quantityUnit: 'KG', district: 'Nashik', status: 'AVAILABLE', farmerId: 'F4', pricePerQuintal: 2450, createdAt: new Date().toISOString() }
+          lot: { id: `DEMO-${requirement?.crop.toUpperCase()}-4`, crop: requirement?.crop, qualityGrade: requirement.acceptedQualityGrades[0], quantity: Math.round(demoBase * 0.20), quantityUnit: 'KG', district: 'Nashik', status: 'AVAILABLE', farmerId: 'F4', pricePerQuintal: 2450, createdAt: new Date().toISOString() }
         }
       ];
     }
@@ -131,7 +131,7 @@ export const SupplyIntelligencePage: React.FC = () => {
 
     // Group by grade
     const sourceLotsForGrade = dataSource === 'CURATED_DEMO' ? compatibleLots : matches; 
-    const gradeGroups = sourceLotsForGrade.filter(m => m.lot.crop === requirement.crop && m.lot.status === 'AVAILABLE').reduce((acc, m) => {
+    const gradeGroups = sourceLotsForGrade.filter(m => m.lot.crop === requirement?.crop && m.lot.status === 'AVAILABLE').reduce((acc, m) => {
       const grade = m.lot.qualityGrade;
       const kg = m.kg || normalizeToKg(m.lot.quantity, m.lot.quantityUnit);
       if (!acc[grade]) acc[grade] = { totalKg: 0, count: 0 };
@@ -154,7 +154,7 @@ export const SupplyIntelligencePage: React.FC = () => {
 
     // Market Prices (find latest price for this crop)
     const marketPrices = marketResearchDataset
-      .filter(r => r.crop === requirement.crop && r.metric === 'price')
+      .filter(r => r.crop === requirement?.crop && r.metric === 'price')
       .sort((a, b) => new Date(b.observationDate || 0).getTime() - new Date(a.observationDate || 0).getTime());
     
     const latestPrice = marketPrices.length > 0 ? marketPrices[0] : null;
@@ -232,10 +232,10 @@ export const SupplyIntelligencePage: React.FC = () => {
           ) : requirement ? (
             <div>
               <div className="text-lg font-bold text-gray-900">
-                {requirement.crop} · {requirement.quantityRequired} {requirement.quantityUnit} · Grade {requirement.acceptedQualityGrades.join('/')}
+                {requirement?.crop} · {requirement?.quantityRequired} {requirement?.quantityUnit} · Grade {requirement.acceptedQualityGrades.join('/')}
               </div>
               <div className="text-sm text-gray-500 mt-1">
-                Delivery Preference: {requirement.deliveryPreference.replace('_', ' ')} · Payment: {requirement.paymentTimelineDays} days
+                Delivery Preference: {requirement?.deliveryPreference.replace('_', ' ')} · Payment: {requirement?.paymentTimelineDays} days
               </div>
             </div>
           ) : null}
@@ -348,7 +348,7 @@ export const SupplyIntelligencePage: React.FC = () => {
                   <p className="text-sm text-gray-700 mb-6">
                     Potential supply: {intelligence.aggSum.toLocaleString()} kg. Combining these lots closes your supply gap.
                   </p>
-                  <Button onClick={() => navigate(`/buyer/matching-lots?requirementId=${requirement.id}`)}>View Aggregation Options</Button>
+                  <Button onClick={() => navigate(`/buyer/matching-lots?requirementId=${requirement?.id}`)}>View Aggregation Options</Button>
                 </div>
               )}
 
@@ -371,7 +371,7 @@ export const SupplyIntelligencePage: React.FC = () => {
                           <Button 
                             variant="secondary" 
                             className="w-full text-xs py-2"
-                            onClick={() => navigate(`/buyer/lots/${m.lot.id}?requirementId=${requirement.id}`)}
+                            onClick={() => navigate(`/buyer/lots/${m.lot.id}?requirementId=${requirement?.id}`)}
                           >
                             View Lot Details
                           </Button>
@@ -424,7 +424,7 @@ export const SupplyIntelligencePage: React.FC = () => {
                 </div>
                 <div className="space-y-1">
                   {Object.entries(intelligence.gradeGroups).map(([grade, data], i) => {
-                    const isCompatible = requirement.acceptedQualityGrades.includes(grade as any);
+                    const isCompatible = (requirement?.acceptedQualityGrades || []).includes(grade as any);
                     return (
                       <div key={i} className={styles.listRow}>
                         <div className={styles.listCol}>
@@ -436,7 +436,7 @@ export const SupplyIntelligencePage: React.FC = () => {
                           )}
                         </div>
                         <div className={styles.listCol} style={{ alignItems: 'flex-end' }}>
-                          <span className={styles.listValue}>{data.totalKg.toLocaleString()} kg</span>
+                          <span className={styles.listValue}>{(data as any).totalKg.toLocaleString()} kg</span>
                         </div>
                       </div>
                     );
@@ -495,7 +495,7 @@ export const SupplyIntelligencePage: React.FC = () => {
                     </div>
                     <div className="text-sm flex justify-between">
                       <span className="text-gray-600">Destination:</span>
-                      <span className="font-bold text-gray-900">{requirement.district || 'Buyer Location'}</span>
+                      <span className="font-bold text-gray-900">{requirement?.district || 'Buyer Location'}</span>
                     </div>
                     <div className="text-sm flex justify-between">
                       <span className="text-gray-600">Estimated Transport:</span>
@@ -544,7 +544,7 @@ export const SupplyIntelligencePage: React.FC = () => {
               </div>
             </div>
             <div className={styles.recommendationAction}>
-              <Button onClick={() => navigate(`/buyer/matching-lots?requirementId=${requirement.id}`)}>
+              <Button onClick={() => navigate(`/buyer/matching-lots?requirementId=${requirement?.id}`)}>
                 {intelligence.coveragePercent === 0 ? 'Review Requirements' : 'View Matching Lots'}
               </Button>
             </div>
